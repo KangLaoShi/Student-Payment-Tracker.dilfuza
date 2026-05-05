@@ -3,21 +3,73 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>学生付费跟进管理 - 协同版</title>
+    <title>学生付费跟进管理 - NSRE</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap');
         body { font-family: 'Inter', sans-serif; -webkit-tap-highlight-color: transparent; }
         .filter-chip.active { background-color: #2563eb; color: white; border-color: #2563eb; }
-        .spinner { border: 3px solid rgba(0, 0, 0, 0.1); width: 32px; height: 32px; border-radius: 50%; border-left-color: #2563eb; animation: spin 1s linear infinite; }
+        .spinner { border: 3px solid rgba(0, 0, 0, 0.1); width: 24px; height: 24px; border-radius: 50%; border-left-color: #2563eb; animation: spin 1s linear infinite; }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
         .btn-active:active { transform: scale(0.95); transition: transform 0.1s; }
         .no-scrollbar::-webkit-scrollbar { display: none; }
+        .login-gradient { background: linear-gradient(135deg, #f8fafc 0%, #eff6ff 100%); }
+        select:disabled { background-color: #f1f5f9; cursor: not-allowed; color: #94a3b8; }
     </style>
 </head>
-<body class="bg-slate-50 text-slate-900 min-h-screen p-4 md:p-8">
-    <div id="app" class="max-w-6xl mx-auto">
+<body class="bg-slate-50 text-slate-900 min-h-screen">
+    
+    <!-- 登录页面 -->
+    <div id="login-page" class="fixed inset-0 z-[200] flex items-center justify-center p-4 login-gradient">
+        <div class="bg-white rounded-[2.5rem] shadow-2xl shadow-blue-100 w-full max-w-md p-10 text-center border border-white">
+            
+            <!-- NSRE Logo 区域 -->
+            <div class="mb-8 text-center">
+                <!-- 本地/GitHub 图片加载 -->
+                <img src="./logo.png" alt="NSRE Logo" class="h-24 w-auto object-contain mx-auto drop-shadow-sm" onerror="this.style.display='none'; document.getElementById('logo-fallback').classList.remove('hidden');" />
+                <!-- 如果找不到图片，显示的备用 NSRE 标志 -->
+                <div id="logo-fallback" class="hidden w-24 h-24 bg-gradient-to-br from-blue-500 to-blue-700 rounded-3xl mx-auto flex items-center justify-center shadow-xl shadow-blue-200 rotate-3">
+                    <span class="text-white font-black text-2xl tracking-widest -rotate-3">NSRE</span>
+                </div>
+            </div>
+
+            <h2 id="login-title" class="text-3xl font-black text-slate-800 mb-2">学生付费跟进系统</h2>
+            <p id="login-subtitle" class="text-slate-400 font-medium mb-8 text-sm">输入老师姓名，或输入 admin 进入管理员模式</p>
+            
+            <form id="login-form" class="space-y-4">
+                <div class="relative">
+                    <i data-lucide="user" class="absolute left-4 top-4 w-5 h-5 text-slate-300"></i>
+                    <input id="login-username" type="text" required 
+                        class="w-full pl-12 pr-4 py-4 bg-slate-50 border border-slate-100 rounded-2xl font-bold outline-none focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500 transition-all" 
+                        placeholder="用户名 (如: Kanglaoshi 或 admin)">
+                </div>
+                <div class="relative">
+                    <i data-lucide="lock" class="absolute left-4 top-4 w-5 h-5 text-slate-300"></i>
+                    <input id="login-password" type="password" required 
+                        class="w-full pl-12 pr-4 py-4 bg-slate-50 border border-slate-100 rounded-2xl font-bold outline-none focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500 transition-all" 
+                        placeholder="密码 (默认: 1234)">
+                </div>
+                <button type="submit" class="w-full bg-blue-600 text-white py-4 rounded-2xl font-bold shadow-lg shadow-blue-200 hover:bg-blue-700 active:scale-[0.98] transition-all">
+                    登 录
+                </button>
+            </form>
+            <p id="login-error" class="text-rose-500 text-xs font-bold mt-4 hidden italic">用户名或密码错误，请检查后重试</p>
+            
+            <div class="mt-8 flex justify-center gap-2">
+                <button onclick="setLang('zh')" class="text-[10px] font-black text-slate-400 hover:text-blue-600 uppercase tracking-widest">ZH</button>
+                <span class="text-slate-200">|</span>
+                <button onclick="setLang('uz')" class="text-[10px] font-black text-slate-400 hover:text-blue-600 uppercase tracking-widest">UZ</button>
+                <span class="text-slate-200">|</span>
+                <button onclick="setLang('ru')" class="text-[10px] font-black text-slate-400 hover:text-blue-600 uppercase tracking-widest">RU</button>
+                <span class="text-slate-200">|</span>
+                <button onclick="setLang('en')" class="text-[10px] font-black text-slate-400 hover:text-blue-600 uppercase tracking-widest">EN</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 主程序页面 (默认隐藏) -->
+    <div id="app-content" class="max-w-6xl mx-auto p-4 md:p-8 hidden">
         <!-- Header -->
         <div class="flex flex-col md:flex-row md:items-center justify-between mb-8 gap-6">
             <div>
@@ -31,28 +83,35 @@
                 </div>
             </div>
             <div class="flex items-center gap-3">
-                <!-- 语言切换 -->
+                <!-- 登录用户信息 -->
+                <div class="flex items-center gap-2 bg-white border border-slate-100 p-1.5 pr-4 rounded-xl shadow-sm mr-2">
+                    <div class="w-8 h-8 bg-blue-100 text-blue-600 rounded-lg flex items-center justify-center font-black text-xs" id="user-avatar">?</div>
+                    <span id="logged-user-name" class="text-xs font-black text-slate-700">---</span>
+                    <button onclick="logout()" class="ml-2 text-slate-300 hover:text-rose-500 transition-colors" title="退出登录">
+                        <i data-lucide="log-out" class="w-4 h-4"></i>
+                    </button>
+                </div>
+
                 <div class="relative group">
                     <button class="flex items-center gap-2 bg-white border border-slate-200 px-4 py-2.5 rounded-xl text-slate-700 hover:bg-slate-50 transition-all shadow-sm">
                         <i data-lucide="languages" class="w-4 h-4 text-blue-500"></i>
                         <span id="current-lang-label" class="font-semibold uppercase text-sm">ZH</span>
-                        <i data-lucide="chevron-down" class="w-3 h-3 text-slate-400"></i>
                     </button>
                     <div class="absolute right-0 mt-2 w-36 bg-white border border-slate-100 rounded-xl shadow-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all z-50 overflow-hidden text-sm">
-                        <button onclick="setLang('zh')" class="w-full text-left px-4 py-2.5 hover:bg-blue-50 transition-colors border-b border-slate-50">中文</button>
-                        <button onclick="setLang('uz')" class="w-full text-left px-4 py-2.5 hover:bg-blue-50 transition-colors border-b border-slate-50">O'zbek</button>
-                        <button onclick="setLang('ru')" class="w-full text-left px-4 py-2.5 hover:bg-blue-50 transition-colors border-b border-slate-50">Русский</button>
-                        <button onclick="setLang('en')" class="w-full text-left px-4 py-2.5 hover:bg-blue-50 transition-colors">English</button>
+                        <button onclick="setLang('zh')" class="w-full text-left px-4 py-2.5 hover:bg-blue-50 border-b border-slate-50">中文</button>
+                        <button onclick="setLang('uz')" class="w-full text-left px-4 py-2.5 hover:bg-blue-50 border-b border-slate-50">O'zbek</button>
+                        <button onclick="setLang('ru')" class="w-full text-left px-4 py-2.5 hover:bg-blue-50 border-b border-slate-50">Русский</button>
+                        <button onclick="setLang('en')" class="w-full text-left px-4 py-2.5 hover:bg-blue-50 border-b border-slate-50">English</button>
                     </div>
                 </div>
-                <button onclick="openAddModal()" class="btn-active flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-6 py-2.5 rounded-xl transition-all shadow-lg font-bold">
+                <button onclick="openAddModal()" class="btn-active flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-6 py-2.5 rounded-xl transition-all shadow-lg shadow-blue-200 font-bold">
                     <i data-lucide="plus" class="w-5 h-5"></i> 
                     <span id="add-btn-text">添加学生</span>
                 </button>
             </div>
         </div>
 
-        <!-- 统计卡片 -->
+        <!-- 统计 -->
         <div class="grid grid-cols-1 sm:grid-cols-3 gap-6 mb-8">
             <div class="bg-white p-6 rounded-2xl border border-slate-100 flex items-center gap-4 shadow-sm">
                 <div class="p-4 bg-blue-50 text-blue-600 rounded-2xl"><i data-lucide="users" class="w-6 h-6"></i></div>
@@ -68,35 +127,25 @@
             </div>
         </div>
 
-        <!-- 老师筛选 -->
-        <div class="mb-6 flex flex-wrap items-center gap-2 bg-white p-4 rounded-2xl border border-slate-100 shadow-sm">
+        <!-- 老师筛选 (管理员专享) -->
+        <div id="filter-section" class="mb-6 flex flex-wrap items-center gap-2 bg-white p-4 rounded-2xl border border-slate-100 shadow-sm hidden">
             <span id="filter-label" class="text-xs font-black text-slate-400 uppercase tracking-widest mr-2">筛选老师:</span>
             <div id="teacher-filter-container" class="flex flex-wrap gap-2"></div>
         </div>
 
-        <!-- 主内容区 -->
         <div id="main-content">
-            <!-- 加载中 -->
             <div id="loading-view" class="py-24 flex flex-col items-center justify-center bg-white rounded-3xl border border-slate-100">
                 <div class="spinner mb-4"></div>
-                <p id="loading-text" class="text-slate-400 font-medium animate-pulse italic">正在建立多端实时连接...</p>
+                <p id="loading-text" class="text-slate-400 font-medium animate-pulse italic">正在同步云端...</p>
             </div>
 
-            <!-- 错误视图 -->
             <div id="error-view" class="hidden py-16 flex flex-col items-center justify-center bg-white rounded-3xl border border-rose-200 px-6 text-center shadow-sm">
                 <div class="p-4 bg-rose-50 text-rose-600 rounded-full mb-4"><i data-lucide="alert-circle" class="w-8 h-8"></i></div>
                 <h3 class="text-slate-800 font-black mb-2 text-xl">连接云端失败</h3>
                 <p id="error-message" class="text-rose-500 font-mono text-sm mb-6 bg-rose-50 p-3 rounded-lg max-w-md w-full break-all"></p>
-                <div class="text-slate-500 text-xs mb-6 text-left max-w-md bg-slate-50 p-4 rounded-xl border border-slate-100">
-                    <b>排查必看：</b><br>
-                    1. 确保 Firebase 开启了 <b>Authentication -> Anonymous (匿名)</b> 登录。<br>
-                    2. 确保 <b>Firestore -> Rules (规则)</b> 已改为允许读写：<br>
-                    <code class="text-blue-600">allow read, write: if request.auth != null;</code>
-                </div>
-                <button onclick="location.reload()" class="bg-blue-600 text-white px-8 py-3 rounded-2xl font-bold active:scale-95 transition-all shadow-lg shadow-blue-100">点击重试</button>
+                <button onclick="location.reload()" class="bg-blue-600 text-white px-8 py-3 rounded-2xl font-bold active:scale-95">重试</button>
             </div>
 
-            <!-- 数据表格 -->
             <div id="table-container" class="bg-white rounded-3xl shadow-sm border border-slate-100 overflow-hidden hidden">
                 <div class="overflow-x-auto">
                     <table class="w-full text-left border-collapse">
@@ -108,58 +157,56 @@
                 </div>
                 <div id="no-data" class="hidden py-20 text-center flex flex-col items-center">
                     <i data-lucide="users-round" class="w-12 h-12 text-slate-200 mb-4"></i>
-                    <p id="no-data-text" class="text-slate-400 font-bold italic">暂无学生数据</p>
+                    <p id="no-data-text" class="text-slate-400 font-bold italic">暂无记录</p>
                 </div>
             </div>
         </div>
+    </div>
 
-        <!-- 弹窗 -->
-        <div id="modal-overlay" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm hidden items-center justify-center p-4 z-[100] transition-all">
-            <div class="bg-white rounded-[2rem] shadow-2xl w-full max-w-md p-8 overflow-y-auto max-h-[90vh] scale-95 transition-all" id="modal-box">
-                <div class="flex justify-between items-center mb-6">
-                    <h3 id="modal-title" class="text-2xl font-black text-slate-800"></h3>
-                    <button onclick="toggleModal(false)" class="text-slate-300 hover:text-slate-500 transition-colors"><i data-lucide="x"></i></button>
-                </div>
-                <form id="student-form" class="space-y-5">
-                    <input type="hidden" id="input-id">
-                    <div>
-                        <label id="label-name" class="block text-[10px] font-black text-slate-400 uppercase mb-2 tracking-widest text-left">学生姓名</label>
-                        <input id="input-name" type="text" required class="w-full px-5 py-3.5 bg-slate-50 border border-slate-100 rounded-2xl font-bold outline-none focus:ring-4 focus:ring-blue-500/10 transition-all">
-                    </div>
-                    <div>
-                        <label id="label-teacher" class="block text-[10px] font-black text-slate-400 uppercase mb-2 tracking-widest text-left">负责人</label>
-                        <select id="input-teacher" required class="w-full px-5 py-3.5 bg-slate-50 border border-slate-100 rounded-2xl font-bold outline-none appearance-none">
-                            <option value="" disabled selected id="opt-placeholder-teacher"></option>
-                            <option value="Kanglaoshi">Kanglaoshi</option>
-                            <option value="Lilaoshi">Lilaoshi</option>
-                            <option value="Pailaoshi">Pailaoshi</option>
-                            <option value="Anlaoshi">Anlaoshi</option>
-                            <option value="Tielaoshi">Tielaoshi</option>
-                            <option value="Lanyinglaoshi">Lanyinglaoshi</option>
-                            <option value="Zenglaoshi">Zenglaoshi</option>
-
-                        </select>
-                    </div>
-                    <div class="grid grid-cols-2 gap-4">
-                        <div>
-                            <label id="label-total" class="block text-[10px] font-black text-slate-400 uppercase mb-2 tracking-widest text-center">包总量</label>
-                            <input id="input-total" type="number" value="12" required class="w-full px-5 py-3.5 bg-slate-50 border border-slate-100 rounded-2xl font-bold outline-none text-center">
-                        </div>
-                        <div>
-                            <label id="label-used" class="block text-[10px] font-black text-slate-400 uppercase mb-2 tracking-widest text-center">已消耗</label>
-                            <input id="input-used" type="number" value="0" required class="w-full px-5 py-3.5 bg-slate-50 border border-slate-100 rounded-2xl font-bold outline-none text-center">
-                        </div>
-                    </div>
-                    <div>
-                        <label id="label-date" class="block text-[10px] font-black text-slate-400 uppercase mb-2 tracking-widest text-left">付费日期</label>
-                        <input id="input-date" type="date" class="w-full px-5 py-3.5 bg-slate-50 border border-slate-100 rounded-2xl font-bold outline-none">
-                    </div>
-                    <div class="flex gap-4 pt-4">
-                        <button type="button" onclick="toggleModal(false)" id="btn-cancel" class="flex-1 py-4 border border-slate-100 rounded-2xl font-bold text-slate-500 hover:bg-slate-50">取消</button>
-                        <button type="submit" id="btn-save" class="flex-1 py-4 bg-blue-600 text-white font-bold rounded-2xl shadow-lg active:scale-95 transition-all">确认保存</button>
-                    </div>
-                </form>
+    <!-- Modal -->
+    <div id="modal-overlay" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm hidden items-center justify-center p-4 z-[100] transition-all">
+        <div class="bg-white rounded-[2rem] shadow-2xl w-full max-w-md p-8 overflow-y-auto max-h-[90vh] scale-95 transition-all" id="modal-box">
+            <div class="flex justify-between items-center mb-6">
+                <h3 id="modal-title" class="text-2xl font-black text-slate-800"></h3>
+                <button onclick="toggleModal(false)" class="text-slate-300 hover:text-slate-500 transition-colors"><i data-lucide="x"></i></button>
             </div>
+            <form id="student-form" class="space-y-5 text-left">
+                <input type="hidden" id="input-id">
+                <div>
+                    <label id="label-name" class="block text-[10px] font-black text-slate-400 uppercase mb-2 tracking-widest text-left">学生姓名</label>
+                    <input id="input-name" type="text" required class="w-full px-5 py-3.5 bg-slate-50 border border-slate-100 rounded-2xl font-bold outline-none focus:ring-4 focus:ring-blue-500/10 transition-all">
+                </div>
+                <div>
+                    <label id="label-teacher" class="block text-[10px] font-black text-slate-400 uppercase mb-2 tracking-widest text-left">负责人</label>
+                    <select id="input-teacher" required class="w-full px-5 py-3.5 bg-slate-50 border border-slate-100 rounded-2xl font-bold outline-none appearance-none">
+                        <option value="" disabled id="opt-placeholder-teacher"></option>
+                        <option value="Kanglaoshi">Kanglaoshi</option>
+                        <option value="Lilaoshi">Lilaoshi</option>
+                        <option value="Pailaoshi">Pailaoshi</option>
+                        <option value="Anlaoshi">Anlaoshi</option>
+                        <option value="Tielaoshi">Tielaoshi</option>
+                        <option value="Lanyinglaoshi">Lanyinglaoshi</option>
+                    </select>
+                </div>
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label id="label-total" class="block text-[10px] font-black text-slate-400 uppercase mb-2 tracking-widest text-center">总量</label>
+                        <input id="input-total" type="number" value="12" required class="w-full px-5 py-3.5 bg-slate-50 border border-slate-100 rounded-2xl font-bold outline-none text-center focus:ring-4 focus:ring-blue-500/10">
+                    </div>
+                    <div>
+                        <label id="label-used" class="block text-[10px] font-black text-slate-400 uppercase mb-2 tracking-widest text-center">已上</label>
+                        <input id="input-used" type="number" value="0" required class="w-full px-5 py-3.5 bg-slate-50 border border-slate-100 rounded-2xl font-bold outline-none text-center focus:ring-4 focus:ring-blue-500/10">
+                    </div>
+                </div>
+                <div>
+                    <label id="label-date" class="block text-[10px] font-black text-slate-400 uppercase mb-2 tracking-widest text-left">付费日期</label>
+                    <input id="input-date" type="date" class="w-full px-5 py-3.5 bg-slate-50 border border-slate-100 rounded-2xl font-bold outline-none focus:ring-4 focus:ring-blue-500/10">
+                </div>
+                <div class="flex gap-4 pt-4">
+                    <button type="button" onclick="toggleModal(false)" id="btn-cancel" class="flex-1 py-4 border border-slate-100 rounded-2xl font-bold text-slate-500 hover:bg-slate-50 transition-colors">取消</button>
+                    <button type="submit" id="btn-save" class="flex-1 py-4 bg-blue-600 text-white font-bold rounded-2xl shadow-lg shadow-blue-200 active:scale-95 transition-all">保存</button>
+                </div>
+            </form>
         </div>
     </div>
 
@@ -168,7 +215,9 @@
         import { getAuth, signInAnonymously, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
         import { getFirestore, doc, setDoc, collection, onSnapshot, updateDoc, deleteDoc, query, enableIndexedDbPersistence, serverTimestamp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
-        // 配置已集成
+        // 立即渲染图标，防止在未登录界面图标不显示
+        document.addEventListener("DOMContentLoaded", () => { lucide.createIcons(); });
+
         const firebaseConfig = {
             apiKey: "AIzaSyDsuB8A4RBJz3PlDvzAEhKA3FEDoDmFfh8",
             authDomain: "studenttracker-a8384.firebaseapp.com",
@@ -179,35 +228,50 @@
             measurementId: "G-NNHPEQED1F"
         };
 
-        const teacherList = ["Kanglaoshi", "Lilaoshi", "Pailaoshi", "Anlaoshi", "Tielaoshi", "Lanyinglaoshi", "Zenglaoshi"];
+        const teacherList = ["Kanglaoshi", "Lilaoshi", "Pailaoshi", "Anlaoshi", "Tielaoshi", "Lanyinglaoshi"];
+        
+        const userCredentials = {
+            "admin": "1234",       
+            "Kanglaoshi": "1234",   
+            "Lilaoshi": "1234",
+            "Pailaoshi": "1234",
+            "Anlaoshi": "1234",
+            "Tielaoshi": "1234",
+            "Lanyinglaoshi": "1234"
+        };
+
         const tDict = {
             zh: {
-                title: "学生管理系统", subtitle: "协作版 · 实时云同步", addBtn: "添加学生", statTotal: "学生总数", statWarning: "即将到期", statOverdue: "需要缴费",
+                loginTitle: "学生付费跟进系统", loginSubtitle: "请输入用户名和密码", loginError: "用户名或密码错误，请检查后重试", loginPlaceholder: "用户名 (如: Kanglaoshi 或 admin)", loginPassPlaceholder: "密码 (默认: 1234)",
+                title: "学生付费跟进管理", subtitle: "协作版 · 实时云同步", addBtn: "添加学生", statTotal: "学生总数", statWarning: "即将到期", statOverdue: "需要缴费",
                 thName: "学生姓名", thTeacher: "老师", thProgress: "进度", thRemaining: "剩余", thLastPay: "付费日期", thStatus: "状态", thActions: "操作",
                 statusPaid: "充足", statusWarning: "预警", statusOverdue: "欠费", modalTitleAdd: "添加新学生", modalTitleEdit: "编辑信息", labelName: "学生姓名", 
                 labelTeacher: "负责老师", labelTotal: "课包总量", labelUsed: "已上课时", labelPayDate: "付费日期", btnCancel: "取消", btnSave: "确认保存", 
-                noData: "暂无数据", confirmDelete: "确定要永久删除吗？", filterAll: "全部", filterLabel: "筛选老师:", actionPlus: "+1 节", syncReady: "在线同步中"
+                noData: "暂无数据", confirmDelete: "确定要永久删除吗？", filterAll: "全部", filterLabel: "筛选老师:", actionPlus: "+1 节"
             },
             uz: {
+                loginTitle: "Talabalar Nazorati", loginSubtitle: "Ism va parolingizni kiriting", loginError: "Ism yoki parol noto'g'ri", loginPlaceholder: "Ism (Masalan: Kanglaoshi yoki admin)", loginPassPlaceholder: "Parol (standart: 1234)",
                 title: "Talabalar Nazorati", subtitle: "Bulutli sinxronizatsiya", addBtn: "Talaba qo'shish", statTotal: "Jami", statWarning: "Ogohlantirish", statOverdue: "To'lov kerak",
                 thName: "Ismi", thTeacher: "O'qituvchi", thProgress: "Holati", thRemaining: "Qolgan", thLastPay: "To'lov sanasi", thStatus: "Holati", thActions: "Amallar",
                 statusPaid: "Yetarli", statusWarning: "Muddati yaqin", statusOverdue: "To'lov kerak", modalTitleAdd: "Yangi talaba", modalTitleEdit: "Tahrirlash", labelName: "Talaba ismi", 
                 labelTeacher: "Mas'ul", labelTotal: "Jami darslar", labelUsed: "O'tilgan", labelPayDate: "To'lov sanasi", btnCancel: "Bekor qilish", btnSave: "Saqlash", 
-                noData: "Ma'lumot yo'q", confirmDelete: "O'chirilsinmi?", filterAll: "Hammasi", filterLabel: "O'qituvchi:", actionPlus: "+1 dars", syncReady: "Onlayn sinxronizatsiya"
+                noData: "Ma'lumot yo'q", confirmDelete: "O'chirilsinmi?", filterAll: "Hammasi", filterLabel: "O'qituvchi:", actionPlus: "+1 dars"
             },
             ru: {
+                loginTitle: "Контроль оплаты", loginSubtitle: "Введите имя пользователя и пароль", loginError: "Неверное имя или пароль", loginPlaceholder: "Имя (например: Kanglaoshi или admin)", loginPassPlaceholder: "Пароль (по умолчанию: 1234)",
                 title: "Контроль оплаты", subtitle: "Синхронизация", addBtn: "Добавить", statTotal: "Всего", statWarning: "Внимание", statOverdue: "Долг",
                 thName: "Имя", thTeacher: "Учитель", thProgress: "Прогресс", thRemaining: "Осталось", thLastPay: "Дата оплаты", thStatus: "Статус", thActions: "Действия",
                 statusPaid: "Достаточно", statusWarning: "Истекает", statusOverdue: "Нужна оплата", modalTitleAdd: "Новый студент", modalTitleEdit: "Изменить", labelName: "Имя студента", 
                 labelTeacher: "Учитель", labelTotal: "Всего уроков", labelUsed: "Пройдено", labelPayDate: "Дата оплаты", btnCancel: "Отмена", btnSave: "Сохранить", 
-                noData: "Нет записей", confirmDelete: "Удалить?", filterAll: "Все", filterLabel: "Учитель:", actionPlus: "+1 урок", syncReady: "В сети"
+                noData: "Нет записей", confirmDelete: "Удалить?", filterAll: "Все", filterLabel: "Учитель:", actionPlus: "+1 урок"
             },
             en: {
+                loginTitle: "Payment Tracker", loginSubtitle: "Enter username and password", loginError: "Invalid username or password", loginPlaceholder: "Username (e.g., Kanglaoshi or admin)", loginPassPlaceholder: "Password (default: 1234)",
                 title: "Student Tracker", subtitle: "Real-time Cloud Sync", addBtn: "Add Student", statTotal: "Total Students", statWarning: "Warning", statOverdue: "Payment Due",
                 thName: "Name", thTeacher: "Teacher", thProgress: "Progress", thRemaining: "Left", thLastPay: "Payment Date", thStatus: "Status", thActions: "Actions",
                 statusPaid: "Paid", statusWarning: "Warning", statusOverdue: "Overdue", modalTitleAdd: "Add Student", modalTitleEdit: "Edit Student", labelName: "Student Name", 
                 labelTeacher: "Teacher", labelTotal: "Total Pack", labelUsed: "Used Lessons", labelPayDate: "Payment Date", btnCancel: "Cancel", btnSave: "Save", 
-                noData: "No results", confirmDelete: "Delete student?", filterAll: "All", filterLabel: "Filter:", actionPlus: "+1 Lesson", syncReady: "Online Sync"
+                noData: "No results", confirmDelete: "Delete student?", filterAll: "All", filterLabel: "Filter:", actionPlus: "+1 Lesson"
             }
         };
 
@@ -215,99 +279,180 @@
         let selectedTeacher = 'all';
         let students = [];
         let isFirstLoad = true;
-
-        const showError = (msg) => {
-            document.getElementById('loading-view').classList.add('hidden');
-            document.getElementById('error-view').classList.remove('hidden');
-            document.getElementById('error-message').innerText = msg;
-            lucide.createIcons();
-        };
+        let loggedUser = null;
+        let isAdmin = false;
 
         const startApp = async () => {
+            const app = initializeApp(firebaseConfig);
+            const auth = getAuth(app);
+            const db = getFirestore(app);
+            try { await enableIndexedDbPersistence(db); } catch (e) {}
+
+            onAuthStateChanged(auth, (user) => {
+                if (user) {
+                    const studentsCol = collection(db, 'students-data');
+                    onSnapshot(query(studentsCol), (snapshot) => {
+                        students = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+                        if (isFirstLoad) {
+                            document.getElementById('loading-view').classList.add('hidden');
+                            document.getElementById('table-container').classList.remove('hidden');
+                            document.getElementById('sync-status').classList.remove('hidden');
+                            isFirstLoad = false;
+                        }
+                        if (loggedUser) render();
+                    });
+                }
+            });
+
+            // 无论身份验证是否成功，都确保执行登录检查逻辑
             try {
-                const app = initializeApp(firebaseConfig);
-                const auth = getAuth(app);
-                const db = getFirestore(app);
+                await signInAnonymously(auth);
+            } catch(e) {
+                console.warn("匿名登录由于配置或网络受限:", e);
+            }
+
+            const checkLogin = () => {
+                const savedUser = sessionStorage.getItem('loggedTeacher');
+                if (savedUser && (teacherList.includes(savedUser) || savedUser === 'admin')) {
+                    loggedUser = savedUser;
+                    isAdmin = (savedUser === 'admin');
+                    
+                    document.getElementById('login-page').classList.add('hidden');
+                    document.getElementById('app-content').classList.remove('hidden');
+                    
+                    document.getElementById('logged-user-name').innerText = isAdmin ? '管理员 (Admin)' : savedUser;
+                    document.getElementById('user-avatar').innerText = isAdmin ? 'A' : savedUser.charAt(0).toUpperCase();
+
+                    if (!isAdmin) {
+                        document.getElementById('filter-section').classList.add('hidden');
+                    } else {
+                        document.getElementById('filter-section').classList.remove('hidden');
+                    }
+                    
+                    if (!isFirstLoad) render();
+                }
+            };
+
+            document.getElementById('login-form').onsubmit = (e) => {
+                e.preventDefault();
+                const name = document.getElementById('login-username').value.trim();
+                const pass = document.getElementById('login-password').value.trim();
                 
-                try { await enableIndexedDbPersistence(db); } catch (e) {}
+                if (userCredentials[name] && userCredentials[name] === pass) {
+                    sessionStorage.setItem('loggedTeacher', name);
+                    checkLogin();
+                } else {
+                    const err = document.getElementById('login-error');
+                    err.classList.remove('hidden');
+                    setTimeout(() => err.classList.add('hidden'), 3000);
+                }
+            };
 
-                onAuthStateChanged(auth, (user) => {
-                    if (user) {
-                        const studentsCol = collection(db, 'students-data');
-                        onSnapshot(query(studentsCol), (snapshot) => {
-                            students = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-                            if (isFirstLoad) {
-                                document.getElementById('loading-view').classList.add('hidden');
-                                document.getElementById('table-container').classList.remove('hidden');
-                                document.getElementById('sync-status').classList.remove('hidden');
-                                isFirstLoad = false;
-                            }
-                            render();
-                        }, (err) => showError("拒绝访问: " + err.code + "。请确认 Firestore 规则已发布。"));
-                    }
-                });
+            window.logout = () => {
+                sessionStorage.removeItem('loggedTeacher');
+                location.reload();
+            };
 
-                await signInAnonymously(auth).catch(err => showError("登录失败: " + err.code + "。请开启 Anonymous 登录方法。"));
+            checkLogin();
 
-                // Window Global Actions
-                window.setLang = (l) => { currentLang = l; document.getElementById('current-lang-label').innerText = l.toUpperCase(); render(); };
-                window.setTeacherFilter = (t) => { selectedTeacher = t; render(); };
-                window.toggleModal = (show) => {
-                    const overlay = document.getElementById('modal-overlay');
-                    const box = document.getElementById('modal-box');
-                    if(show) { overlay.style.display = 'flex'; setTimeout(() => { box.style.transform = 'scale(1)'; }, 10); }
-                    else { box.style.transform = 'scale(0.95)'; setTimeout(() => { overlay.style.display = 'none'; }, 150); }
+            window.setLang = (l) => { currentLang = l; document.getElementById('current-lang-label').innerText = l.toUpperCase(); render(); };
+            window.setTeacherFilter = (t) => { selectedTeacher = t; render(); };
+            
+            window.toggleModal = (show) => {
+                const overlay = document.getElementById('modal-overlay');
+                const box = document.getElementById('modal-box');
+                if(show) { overlay.style.display = 'flex'; setTimeout(() => box.style.transform = 'scale(1)', 10); }
+                else { box.style.transform = 'scale(0.95)'; setTimeout(() => overlay.style.display = 'none', 150); }
+            };
+            
+            window.openAddModal = () => {
+                document.getElementById('student-form').reset();
+                document.getElementById('input-id').value = "";
+                document.getElementById('modal-title').innerText = tDict[currentLang].modalTitleAdd;
+                
+                const teacherSelect = document.getElementById('input-teacher');
+                if (!isAdmin) {
+                    teacherSelect.value = loggedUser;
+                    teacherSelect.disabled = true;
+                } else {
+                    teacherSelect.value = "";
+                    teacherSelect.disabled = false;
+                }
+                
+                window.toggleModal(true);
+            };
+            
+            window.openEditModal = (id) => {
+                const s = students.find(item => item.id === id);
+                if (!s) return;
+                document.getElementById('input-id').value = s.id;
+                document.getElementById('input-name').value = s.name;
+                document.getElementById('input-total').value = s.totalLessons;
+                document.getElementById('input-used').value = s.usedLessons;
+                document.getElementById('input-date').value = s.lastPaymentDate || "";
+                
+                const teacherSelect = document.getElementById('input-teacher');
+                teacherSelect.value = s.teacher;
+                if (!isAdmin) {
+                    teacherSelect.disabled = true;
+                } else {
+                    teacherSelect.disabled = false;
+                }
+
+                document.getElementById('modal-title').innerText = tDict[currentLang].modalTitleEdit;
+                window.toggleModal(true);
+            };
+            
+            document.getElementById('student-form').onsubmit = async (e) => {
+                e.preventDefault();
+                const id = document.getElementById('input-id').value;
+                const data = {
+                    name: document.getElementById('input-name').value,
+                    teacher: isAdmin ? document.getElementById('input-teacher').value : loggedUser,
+                    totalLessons: parseInt(document.getElementById('input-total').value),
+                    usedLessons: parseInt(document.getElementById('input-used').value),
+                    lastPaymentDate: document.getElementById('input-date').value,
+                    updatedAt: serverTimestamp()
                 };
-                window.openAddModal = () => {
-                    document.getElementById('student-form').reset();
-                    document.getElementById('input-id').value = "";
-                    document.getElementById('modal-title').innerText = tDict[currentLang].modalTitleAdd;
-                    window.toggleModal(true);
-                };
-                window.openEditModal = (id) => {
-                    const s = students.find(item => item.id === id);
-                    if (!s) return;
-                    document.getElementById('input-id').value = s.id;
-                    document.getElementById('input-name').value = s.name;
-                    document.getElementById('input-teacher').value = s.teacher;
-                    document.getElementById('input-total').value = s.totalLessons;
-                    document.getElementById('input-used').value = s.usedLessons;
-                    document.getElementById('input-date').value = s.lastPaymentDate || "";
-                    document.getElementById('modal-title').innerText = tDict[currentLang].modalTitleEdit;
-                    window.toggleModal(true);
-                };
-                document.getElementById('student-form').onsubmit = async (e) => {
-                    e.preventDefault();
-                    const id = document.getElementById('input-id').value;
-                    const data = {
-                        name: document.getElementById('input-name').value,
-                        teacher: document.getElementById('input-teacher').value,
-                        totalLessons: parseInt(document.getElementById('input-total').value),
-                        usedLessons: parseInt(document.getElementById('input-used').value),
-                        lastPaymentDate: document.getElementById('input-date').value,
-                        updatedAt: serverTimestamp()
-                    };
-                    window.toggleModal(false);
-                    if (id) await updateDoc(doc(db, 'students-data', id), data);
-                    else await setDoc(doc(collection(db, 'students-data')), data);
-                };
-                window.updateLesson = async (id) => {
-                    const s = students.find(item => item.id === id);
-                    if (s && s.usedLessons < s.totalLessons) {
-                        await updateDoc(doc(db, 'students-data', id), { usedLessons: s.usedLessons + 1, updatedAt: serverTimestamp() });
-                    }
-                };
-                window.deleteStudent = async (id) => {
-                    if (confirm(tDict[currentLang].confirmDelete)) {
-                        await deleteDoc(doc(db, 'students-data', id));
-                    }
-                };
-            } catch (err) { showError("错误: " + err.message); }
+                window.toggleModal(false);
+                if (id) await updateDoc(doc(db, 'students-data', id), data);
+                else await setDoc(doc(collection(db, 'students-data')), data);
+            };
+            
+            window.updateLesson = async (id) => {
+                const s = students.find(item => item.id === id);
+                if (s && s.usedLessons < s.totalLessons) {
+                    await updateDoc(doc(db, 'students-data', id), { usedLessons: s.usedLessons + 1, updatedAt: serverTimestamp() });
+                }
+            };
+            
+            window.deleteStudent = async (id) => {
+                if (confirm(tDict[currentLang].confirmDelete)) {
+                    await deleteDoc(doc(db, 'students-data', id));
+                }
+            };
+
+            render(); // 初始化先渲染一次未登录界面语言
         };
 
         const render = () => {
             const t = tDict[currentLang];
-            const filtered = selectedTeacher === 'all' ? students : students.filter(s => s.teacher === selectedTeacher);
+            
+            // 总是渲染登录页语言（免登录即生效）
+            document.getElementById('login-title').innerText = t.loginTitle;
+            document.getElementById('login-subtitle').innerText = t.loginSubtitle;
+            document.getElementById('login-error').innerText = t.loginError;
+            document.getElementById('login-username').placeholder = t.loginPlaceholder;
+            document.getElementById('login-password').placeholder = t.loginPassPlaceholder;
+
+            if (!loggedUser) return; // 未登录时不渲染后续主界面数据
+            
+            let filtered = [];
+            if (isAdmin) {
+                filtered = selectedTeacher === 'all' ? students : students.filter(s => s.teacher === selectedTeacher);
+            } else {
+                filtered = students.filter(s => s.teacher === loggedUser);
+            }
             
             document.getElementById('page-title').innerText = t.title;
             document.getElementById('page-subtitle').innerText = t.subtitle;
@@ -325,19 +470,20 @@
             document.getElementById('btn-save').innerText = t.btnSave;
             document.getElementById('opt-placeholder-teacher').innerText = t.labelTeacher;
             document.getElementById('no-data-text').innerText = t.noData;
-            document.getElementById('sync-text').innerText = t.syncReady;
 
-            const overdueCount = filtered.filter(s => (s.totalLessons - s.usedLessons) <= 0).length;
-            const warningCount = filtered.filter(s => { let r = s.totalLessons - s.usedLessons; return r > 0 && r <= 3; }).length;
+            const overdue = filtered.filter(s => (s.totalLessons - s.usedLessons) <= 0).length;
+            const warning = filtered.filter(s => { let r = s.totalLessons - s.usedLessons; return r > 0 && r <= 3; }).length;
             document.getElementById('stat-total-val').innerText = filtered.length;
-            document.getElementById('stat-warning-val').innerText = warningCount;
-            document.getElementById('stat-overdue-val').innerText = overdueCount;
+            document.getElementById('stat-warning-val').innerText = warning;
+            document.getElementById('stat-overdue-val').innerText = overdue;
 
-            const fc = document.getElementById('teacher-filter-container');
-            fc.innerHTML = `<button onclick="setTeacherFilter('all')" class="filter-chip px-5 py-2 rounded-full text-[10px] font-black uppercase tracking-wider border transition-all ${selectedTeacher==='all'?'active':''} shadow-sm">${t.filterAll}</button>`;
-            teacherList.forEach(name => {
-                fc.innerHTML += `<button onclick="setTeacherFilter('${name}')" class="filter-chip px-5 py-2 rounded-full text-[10px] font-black uppercase tracking-wider border transition-all ${selectedTeacher===name?'active':''} shadow-sm">${name}</button>`;
-            });
+            if (isAdmin) {
+                const fc = document.getElementById('teacher-filter-container');
+                fc.innerHTML = `<button onclick="setTeacherFilter('all')" class="filter-chip px-5 py-2 rounded-full text-[10px] font-black uppercase tracking-wider border transition-all ${selectedTeacher==='all'?'active':''} shadow-sm">${t.filterAll}</button>`;
+                teacherList.forEach(name => {
+                    fc.innerHTML += `<button onclick="setTeacherFilter('${name}')" class="filter-chip px-5 py-2 rounded-full text-[10px] font-black uppercase tracking-wider border transition-all ${selectedTeacher===name?'active':''} shadow-sm">${name}</button>`;
+                });
+            }
 
             document.getElementById('table-head-row').innerHTML = `
                 <th class="px-6 py-5 text-[10px] font-black text-slate-400 uppercase tracking-widest">${t.thName}</th>
@@ -356,9 +502,9 @@
                 document.getElementById('no-data').classList.add('hidden');
                 filtered.sort((a,b) => (a.totalLessons - a.usedLessons) - (b.totalLessons - b.usedLessons)).forEach(s => {
                     const rem = s.totalLessons - s.usedLessons;
-                    let stLabel = t.statusPaid, stClass = "bg-emerald-100 text-emerald-700 border-emerald-200 shadow-sm shadow-emerald-50";
-                    if (rem <= 0) { stLabel = t.statusOverdue; stClass = "bg-rose-100 text-rose-700 border-rose-200 shadow-sm shadow-rose-50"; }
-                    else if (rem <= 3) { stLabel = t.statusWarning; stClass = "bg-amber-100 text-amber-700 border-amber-200 shadow-sm shadow-amber-50"; }
+                    let stLabel = t.statusPaid, stClass = "bg-emerald-100 text-emerald-700 border-emerald-200 shadow-emerald-50";
+                    if (rem <= 0) { stLabel = t.statusOverdue; stClass = "bg-rose-100 text-rose-700 border-rose-200 shadow-rose-50"; }
+                    else if (rem <= 3) { stLabel = t.statusWarning; stClass = "bg-amber-100 text-amber-700 border-amber-200 shadow-amber-50"; }
                     
                     tbody.innerHTML += `
                         <tr class="hover:bg-slate-50/50 transition-colors group">
@@ -374,7 +520,7 @@
                             </td>
                             <td class="px-6 py-5 font-black text-slate-800 text-lg">${rem}</td>
                             <td class="px-6 py-5 text-slate-500 text-xs font-medium">${s.lastPaymentDate || '---'}</td>
-                            <td class="px-6 py-5"><span class="px-3 py-1.5 rounded-full text-[10px] font-black uppercase tracking-wider border ${stClass}">${stLabel}</span></td>
+                            <td class="px-6 py-5"><span class="px-3 py-1.5 rounded-full text-[10px] font-black uppercase tracking-wider border shadow-sm ${stClass}">${stLabel}</span></td>
                             <td class="px-6 py-5 text-right">
                                 <div class="flex justify-end gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
                                     <button onclick="updateLesson('${s.id}')" class="btn-active text-[10px] font-bold px-3 py-1.5 bg-blue-50 text-blue-600 rounded-lg border border-blue-100 shadow-sm">${t.actionPlus}</button>
