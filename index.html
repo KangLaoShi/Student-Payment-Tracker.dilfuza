@@ -122,7 +122,7 @@
                         <button onclick="setLang('zh')" class="lang-item w-full text-left px-5 py-2.5 text-[10px] font-bold rounded-xl transition-colors mb-1">中文 (ZH)</button>
                         <button onclick="setLang('uz')" class="lang-item w-full text-left px-5 py-2.5 text-[10px] font-bold rounded-xl transition-colors mb-1">O'zbek (UZ)</button>
                         <button onclick="setLang('ru')" class="lang-item w-full text-left px-5 py-2.5 text-[10px] font-bold rounded-xl transition-colors mb-1">Русский (RU)</button>
-                        <button onclick="setLang('en')" class="lang-item w-full text-left px-5 py-2.5 text-[10px] font-bold rounded-xl transition-colors" id="item-lang-en">English (EN)</button>
+                        <button onclick="setLang('en')" class="lang-item w-full text-left px-5 py-2.5 text-[10px] font-bold rounded-xl transition-colors text-[#1A2E35]">English (EN)</button>
                     </div>
                 </div>
 
@@ -291,6 +291,15 @@
                 noData: "Yo'q", confirmDelete: "O'chirilsinmi?", filterAll: "Hammasi", filterLabel: "Mas'ul:", filterClassLabel: "Guruh:", filterStatusLabel: "Holat:", actionPlus: "+1 dars", historyTitle: "Tarix", historyEmpty: "Yo'q", btnClose: "Yopish", manualAdd: "Qo'shish", btnUpdate: "Yangilash", alertNoDate: "Sana tanlang",
                 days: ["Yak", "Dush", "Sesh", "Chor", "Pay", "Jum", "Shan"], confirmDeleteRecord: "O'chirilsinmi?", btnOk: "Ha", btnAbort: "Yo'q"
             },
+            ru: {
+                loginTitle: "Контроль оплаты", loginPlaceholder: "admin или Kanglaoshi", loginPassPlaceholder: "Пароль (1234)", loginSubtitle: "Academic Intelligence Portal", loginHint: "Логин: admin или Kanglaoshi / Пароль: 1234",
+                dashboardTitle: "Управление Оплатой", subtitle: "Синхронизация Данных", addBtn: "Добавить", statTotal: "Студентов", statWarning: "Внимание", statOverdue: "Должники",
+                thName: "ФИО Студента", thTeacher: "Преподаватель", thClass: "Группа", thProgress: "Прогресс", thRemaining: "Осталось", thLastPay: "Последняя оплата", thStatus: "Статус", thActions: "Действия",
+                statusPaid: "Достаточно", statusWarning: "Истекает", statusOverdue: "Нужна оплата", modalTitleAdd: "Добавить студента", modalTitleEdit: "Редактировать данные", labelName: "ФИО", 
+                labelTeacher: "Преподаватель", labelClass: "Класс/Группа", placeholderClass: "Введите", placeholderTeacher: "Выберите учителя", labelTotal: "Всего уроков", labelUsed: "Пройдено", labelPayDate: "Дата оплаты", btnCancel: "Отмена", btnSave: "Сохранить", 
+                noData: "Нет данных", confirmDelete: "Вы уверены, что хотите навсегда удалить этого студента?", filterAll: "Все", filterLabel: "Ответственный:", filterClassLabel: "Фильтр по классу:", filterStatusLabel: "Фильтр по статусу:", actionPlus: "+1 урок", historyTitle: "История посещений", historyEmpty: "Записей нет", btnClose: "Закрыть окно", manualAdd: "Добавить", btnUpdate: "Обновить", alertNoDate: "Сначала выберите дату",
+                days: ["Вс", "Пн", "Вт", "Ср", "Чт", "Пт", "Сб"], confirmDeleteRecord: "Удалить эту запись о посещении?", btnOk: "Да", btnAbort: "Нет"
+            },
             en: {
                 loginTitle: "Tracker Pro", loginPlaceholder: "admin or Kanglaoshi", loginPassPlaceholder: "Password (1234)", loginSubtitle: "Academic Operations Portal", loginHint: "Tips: User admin or Kanglaoshi / Pass 1234",
                 dashboardTitle: "Dashboard", subtitle: "Academic Operations Portal", addBtn: "Add New", statTotal: "Students", statWarning: "Warning", statOverdue: "Due",
@@ -338,7 +347,7 @@
             auth = getAuth(app);
             db = getFirestore(app);
 
-            // 挂载全局窗口函数，防止 render 时找不到
+            // 挂载全局窗口函数
             window.logout = () => { sessionStorage.removeItem('loggedTeacher'); location.reload(); };
             window.setLang = (l) => { currentLang = l; render(); };
             window.setTeacherFilter = (t) => { selectedTeacher = t; selectedClass = 'all'; render(); };
