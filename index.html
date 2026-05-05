@@ -127,10 +127,18 @@
             </div>
         </div>
 
-        <!-- 老师筛选 (管理员专享) -->
-        <div id="filter-section" class="mb-6 flex flex-wrap items-center gap-2 bg-white p-4 rounded-2xl border border-slate-100 shadow-sm hidden">
-            <span id="filter-label" class="text-xs font-black text-slate-400 uppercase tracking-widest mr-2">筛选老师:</span>
-            <div id="teacher-filter-container" class="flex flex-wrap gap-2"></div>
+        <!-- 筛选区域 -->
+        <div id="filter-section" class="mb-6 bg-white p-4 rounded-2xl border border-slate-100 shadow-sm flex flex-col gap-4 hidden">
+            <!-- 老师筛选 (管理员专享) -->
+            <div id="teacher-filter-wrap" class="flex flex-wrap items-center gap-2 hidden">
+                <span id="filter-label" class="text-xs font-black text-slate-400 uppercase tracking-widest w-16 shrink-0">筛选老师:</span>
+                <div id="teacher-filter-container" class="flex flex-wrap gap-2"></div>
+            </div>
+            <!-- 班级筛选 (所有人可见) -->
+            <div id="class-filter-wrap" class="flex flex-wrap items-center gap-2">
+                <span id="filter-class-label" class="text-xs font-black text-slate-400 uppercase tracking-widest w-16 shrink-0">筛选班级:</span>
+                <div id="class-filter-container" class="flex flex-wrap gap-2"></div>
+            </div>
         </div>
 
         <div id="main-content">
@@ -268,7 +276,7 @@
                 thName: "学生姓名", thTeacher: "老师", thClass: "班级", thProgress: "进度", thRemaining: "剩余", thLastPay: "付费日期", thStatus: "状态", thActions: "操作",
                 statusPaid: "充足", statusWarning: "预警", statusOverdue: "欠费", modalTitleAdd: "添加新学生", modalTitleEdit: "编辑信息", labelName: "学生姓名", 
                 labelTeacher: "负责老师", labelClass: "班级名称", placeholderClass: "选择或输入", labelTotal: "课包总量", labelUsed: "已上课时", labelPayDate: "付费日期", btnCancel: "取消", btnSave: "确认保存", 
-                noData: "暂无数据", confirmDelete: "确定要永久删除吗？", filterAll: "全部", filterLabel: "筛选老师:", actionPlus: "+1 节"
+                noData: "暂无数据", confirmDelete: "确定要永久删除吗？", filterAll: "全部", filterLabel: "筛选老师:", filterClassLabel: "筛选班级:", actionPlus: "+1 节"
             },
             uz: {
                 loginTitle: "Talabalar Nazorati", loginSubtitle: "Ism va parolingizni kiriting", loginError: "Ism yoki parol noto'g'ri", loginPlaceholder: "Ism (Masalan: Kanglaoshi yoki admin)", loginPassPlaceholder: "Parol (standart: 1234)",
@@ -276,7 +284,7 @@
                 thName: "Ismi", thTeacher: "O'qituvchi", thClass: "Guruh", thProgress: "Holati", thRemaining: "Qolgan", thLastPay: "To'lov sanasi", thStatus: "Holati", thActions: "Amallar",
                 statusPaid: "Yetarli", statusWarning: "Muddati yaqin", statusOverdue: "To'lov kerak", modalTitleAdd: "Yangi talaba", modalTitleEdit: "Tahrirlash", labelName: "Talaba ismi", 
                 labelTeacher: "Mas'ul", labelClass: "Guruh", placeholderClass: "Tanlang/Kiriting", labelTotal: "Jami darslar", labelUsed: "O'tilgan", labelPayDate: "To'lov sanasi", btnCancel: "Bekor qilish", btnSave: "Saqlash", 
-                noData: "Ma'lumot yo'q", confirmDelete: "O'chirilsinmi?", filterAll: "Hammasi", filterLabel: "O'qituvchi:", actionPlus: "+1 dars"
+                noData: "Ma'lumot yo'q", confirmDelete: "O'chirilsinmi?", filterAll: "Hammasi", filterLabel: "O'qituvchi:", filterClassLabel: "Guruh:", actionPlus: "+1 dars"
             },
             ru: {
                 loginTitle: "Контроль оплаты", loginSubtitle: "Введите имя пользователя и пароль", loginError: "Неверное имя или пароль", loginPlaceholder: "Имя (например: Kanglaoshi или admin)", loginPassPlaceholder: "Пароль (по умолчанию: 1234)",
@@ -284,7 +292,7 @@
                 thName: "Имя", thTeacher: "Учитель", thClass: "Группа", thProgress: "Прогресс", thRemaining: "Осталось", thLastPay: "Дата оплаты", thStatus: "Статус", thActions: "Действия",
                 statusPaid: "Достаточно", statusWarning: "Истекает", statusOverdue: "Нужна оплата", modalTitleAdd: "Новый студент", modalTitleEdit: "Изменить", labelName: "Имя студента", 
                 labelTeacher: "Учитель", labelClass: "Группа", placeholderClass: "Выберите/Введите", labelTotal: "Всего уроков", labelUsed: "Пройдено", labelPayDate: "Дата оплаты", btnCancel: "Отмена", btnSave: "Сохранить", 
-                noData: "Нет записей", confirmDelete: "Удалить?", filterAll: "Все", filterLabel: "Учитель:", actionPlus: "+1 урок"
+                noData: "Нет записей", confirmDelete: "Удалить?", filterAll: "Все", filterLabel: "Учитель:", filterClassLabel: "Группа:", actionPlus: "+1 урок"
             },
             en: {
                 loginTitle: "Payment Tracker", loginSubtitle: "Enter username and password", loginError: "Invalid username or password", loginPlaceholder: "Username (e.g., Kanglaoshi or admin)", loginPassPlaceholder: "Password (default: 1234)",
@@ -292,12 +300,13 @@
                 thName: "Name", thTeacher: "Teacher", thClass: "Class", thProgress: "Progress", thRemaining: "Left", thLastPay: "Payment Date", thStatus: "Status", thActions: "Actions",
                 statusPaid: "Paid", statusWarning: "Warning", statusOverdue: "Overdue", modalTitleAdd: "Add Student", modalTitleEdit: "Edit Student", labelName: "Student Name", 
                 labelTeacher: "Teacher", labelClass: "Class", placeholderClass: "Select or type", labelTotal: "Total Pack", labelUsed: "Used Lessons", labelPayDate: "Payment Date", btnCancel: "Cancel", btnSave: "Save", 
-                noData: "No results", confirmDelete: "Delete student?", filterAll: "All", filterLabel: "Filter:", actionPlus: "+1 Lesson"
+                noData: "No results", confirmDelete: "Delete student?", filterAll: "All", filterLabel: "Filter:", filterClassLabel: "Class:", actionPlus: "+1 Lesson"
             }
         };
 
         let currentLang = 'zh';
         let selectedTeacher = 'all';
+        let selectedClass = 'all';
         let students = [];
         let isFirstLoad = true;
         let loggedUser = null;
@@ -344,10 +353,11 @@
                     document.getElementById('logged-user-name').innerText = isAdmin ? '管理员 (Admin)' : savedUser;
                     document.getElementById('user-avatar').innerText = isAdmin ? 'A' : savedUser.charAt(0).toUpperCase();
 
+                    document.getElementById('filter-section').classList.remove('hidden');
                     if (!isAdmin) {
-                        document.getElementById('filter-section').classList.add('hidden');
+                        document.getElementById('teacher-filter-wrap').classList.add('hidden');
                     } else {
-                        document.getElementById('filter-section').classList.remove('hidden');
+                        document.getElementById('teacher-filter-wrap').classList.remove('hidden');
                     }
                     
                     if (!isFirstLoad) render();
@@ -377,7 +387,8 @@
             checkLogin();
 
             window.setLang = (l) => { currentLang = l; document.getElementById('current-lang-label').innerText = l.toUpperCase(); render(); };
-            window.setTeacherFilter = (t) => { selectedTeacher = t; render(); };
+            window.setTeacherFilter = (t) => { selectedTeacher = t; selectedClass = 'all'; render(); };
+            window.setClassFilter = (c) => { selectedClass = c; render(); };
             
             window.toggleModal = (show) => {
                 const overlay = document.getElementById('modal-overlay');
@@ -390,6 +401,7 @@
                 document.getElementById('student-form').reset();
                 document.getElementById('input-id').value = "";
                 document.getElementById('input-class').value = "";
+                document.getElementById('input-total').value = "12";
                 document.getElementById('modal-title').innerText = tDict[currentLang].modalTitleAdd;
                 
                 const teacherSelect = document.getElementById('input-teacher');
@@ -445,7 +457,8 @@
             
             window.updateLesson = async (id) => {
                 const s = students.find(item => item.id === id);
-                if (s && s.usedLessons < s.totalLessons) {
+                // 解除 s.usedLessons < s.totalLessons 的限制，允许超额记课
+                if (s) {
                     await updateDoc(doc(db, 'students-data', id), { usedLessons: s.usedLessons + 1, updatedAt: serverTimestamp() });
                 }
             };
@@ -471,12 +484,19 @@
 
             if (!loggedUser) return; // 未登录时不渲染后续主界面数据
             
-            let filtered = [];
+            // 1. 先根据老师身份或管理员筛选条件，筛选出大名单
+            let teacherFiltered = [];
             if (isAdmin) {
-                filtered = selectedTeacher === 'all' ? students : students.filter(s => s.teacher === selectedTeacher);
+                teacherFiltered = selectedTeacher === 'all' ? students : students.filter(s => s.teacher === selectedTeacher);
             } else {
-                filtered = students.filter(s => s.teacher === loggedUser);
+                teacherFiltered = students.filter(s => s.teacher === loggedUser);
             }
+
+            // 2. 动态提取当前大名单下所有的班级
+            const uniqueClasses = [...new Set(teacherFiltered.map(s => s.studentClass).filter(c => c))].sort();
+
+            // 3. 结合班级筛选条件，得出最终显示的名单
+            let filtered = selectedClass === 'all' ? teacherFiltered : teacherFiltered.filter(s => s.studentClass === selectedClass);
             
             document.getElementById('page-title').innerText = t.title;
             document.getElementById('page-subtitle').innerText = t.subtitle;
@@ -485,6 +505,7 @@
             document.getElementById('stat-warning-label').innerText = t.statWarning;
             document.getElementById('stat-overdue-label').innerText = t.statOverdue;
             document.getElementById('filter-label').innerText = t.filterLabel;
+            document.getElementById('filter-class-label').innerText = t.filterClassLabel;
             document.getElementById('label-name').innerText = t.labelName;
             document.getElementById('label-teacher').innerText = t.labelTeacher;
             document.getElementById('label-class').innerText = t.labelClass;
@@ -511,15 +532,22 @@
                 });
             }
 
+            // 班级筛选渲染 (所有人可见，动态生成按钮)
+            const classFc = document.getElementById('class-filter-container');
+            classFc.innerHTML = `<button onclick="setClassFilter('all')" class="filter-chip px-5 py-2 rounded-full text-[10px] font-black uppercase tracking-wider border transition-all ${selectedClass==='all'?'active':''} shadow-sm">${t.filterAll}</button>`;
+            uniqueClasses.forEach(cls => {
+                classFc.innerHTML += `<button onclick="setClassFilter('${cls}')" class="filter-chip px-5 py-2 rounded-full text-[10px] font-black uppercase tracking-wider border transition-all ${selectedClass===cls?'active':''} shadow-sm">${cls}</button>`;
+            });
+
             document.getElementById('table-head-row').innerHTML = `
-                <th class="px-6 py-5 text-[10px] font-black text-slate-400 uppercase tracking-widest">${t.thName}</th>
-                <th class="px-6 py-5 text-[10px] font-black text-slate-400 uppercase tracking-widest">${t.thTeacher}</th>
-                <th class="px-6 py-5 text-[10px] font-black text-slate-400 uppercase tracking-widest">${t.thClass}</th>
-                <th class="px-6 py-5 text-[10px] font-black text-slate-400 uppercase tracking-widest">${t.thProgress}</th>
-                <th class="px-6 py-5 text-[10px] font-black text-slate-400 uppercase tracking-widest">${t.thRemaining}</th>
-                <th class="px-6 py-5 text-[10px] font-black text-slate-400 uppercase tracking-widest">${t.thLastPay}</th>
-                <th class="px-6 py-5 text-[10px] font-black text-slate-400 uppercase tracking-widest">${t.thStatus}</th>
-                <th class="px-6 py-5 text-[10px] font-black text-slate-400 uppercase tracking-widest text-right">${t.thActions}</th>
+                <th class="px-4 py-4 text-[10px] font-black text-slate-400 uppercase tracking-widest whitespace-nowrap min-w-[120px] w-40">${t.thName}</th>
+                <th class="px-4 py-4 text-[10px] font-black text-slate-400 uppercase tracking-widest whitespace-nowrap">${t.thTeacher}</th>
+                <th class="px-4 py-4 text-[10px] font-black text-slate-400 uppercase tracking-widest whitespace-nowrap">${t.thClass}</th>
+                <th class="px-4 py-4 text-[10px] font-black text-slate-400 uppercase tracking-widest whitespace-nowrap w-24">${t.thProgress}</th>
+                <th class="px-4 py-4 text-[10px] font-black text-slate-400 uppercase tracking-widest whitespace-nowrap">${t.thRemaining}</th>
+                <th class="px-4 py-4 text-[10px] font-black text-slate-400 uppercase tracking-widest whitespace-nowrap">${t.thLastPay}</th>
+                <th class="px-4 py-4 text-[10px] font-black text-slate-400 uppercase tracking-widest whitespace-nowrap min-w-[80px]">${t.thStatus}</th>
+                <th class="px-4 py-4 text-[10px] font-black text-slate-400 uppercase tracking-widest text-right whitespace-nowrap w-20">${t.thActions}</th>
             `;
 
             const tbody = document.getElementById('student-table-body');
@@ -535,23 +563,27 @@
                     
                     tbody.innerHTML += `
                         <tr class="hover:bg-slate-50/50 transition-colors group">
-                            <td class="px-6 py-5 font-bold text-slate-700">${s.name}</td>
-                            <td class="px-6 py-5"><span class="bg-slate-100 px-3 py-1 rounded-lg text-[10px] font-bold text-slate-500 uppercase tracking-wider">${s.teacher}</span></td>
-                            <td class="px-6 py-5 font-bold text-blue-600 text-[11px] uppercase">${s.studentClass || '---'}</td>
-                            <td class="px-6 py-5">
-                                <div class="flex items-center gap-3">
-                                    <span class="text-xs font-black text-slate-400 w-5">${s.usedLessons}</span>
-                                    <div class="w-16 h-2 bg-slate-100 rounded-full overflow-hidden shadow-inner">
-                                        <div class="h-full rounded-full transition-all duration-700 ${rem<=3?'bg-amber-500':'bg-blue-600'}" style="width: ${(s.usedLessons/s.totalLessons)*100}%"></div>
+                            <td class="px-4 py-4">
+                                <div class="font-bold text-slate-700 text-sm whitespace-normal break-words line-clamp-2 min-w-[120px] w-40" title="${s.name}">${s.name}</div>
+                            </td>
+                            <td class="px-4 py-4"><span class="bg-slate-100 px-3 py-1 rounded-lg text-[10px] font-bold text-slate-500 uppercase tracking-wider whitespace-nowrap">${s.teacher}</span></td>
+                            <td class="px-4 py-4 font-bold text-blue-600 text-[11px] uppercase whitespace-nowrap">${s.studentClass || '---'}</td>
+                            <td class="px-4 py-4 w-24">
+                                <div class="flex items-center gap-2">
+                                    <span class="text-xs font-black ${rem < 0 ? 'text-rose-600' : 'text-slate-400'} w-4">${s.usedLessons}</span>
+                                    <div class="w-12 h-2 bg-slate-100 rounded-full overflow-hidden shadow-inner shrink-0">
+                                        <div class="h-full rounded-full transition-all duration-700 ${rem < 0 ? 'bg-rose-600' : (rem<=3 ? 'bg-amber-500' : 'bg-blue-600')}" style="width: ${Math.min((s.usedLessons/s.totalLessons)*100, 100)}%"></div>
                                     </div>
                                 </div>
                             </td>
-                            <td class="px-6 py-5 font-black text-slate-800 text-lg">${rem}</td>
-                            <td class="px-6 py-5 text-slate-500 text-xs font-medium">${s.lastPaymentDate || '---'}</td>
-                            <td class="px-6 py-5"><span class="px-3 py-1.5 rounded-full text-[10px] font-black uppercase tracking-wider border shadow-sm ${stClass}">${stLabel}</span></td>
-                            <td class="px-6 py-5 text-right">
-                                <div class="flex justify-end gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                                    <button onclick="updateLesson('${s.id}')" class="btn-active text-[10px] font-bold px-3 py-1.5 bg-blue-50 text-blue-600 rounded-lg border border-blue-100 shadow-sm">${t.actionPlus}</button>
+                            <td class="px-4 py-4 font-black ${rem < 0 ? 'text-rose-600' : 'text-slate-800'} text-lg">${rem}</td>
+                            <td class="px-4 py-4 text-slate-500 text-xs font-medium whitespace-nowrap">${s.lastPaymentDate || '---'}</td>
+                            <td class="px-4 py-4 whitespace-nowrap">
+                                <span class="px-3 py-1.5 rounded-full text-[10px] font-black uppercase tracking-wider border shadow-sm inline-block text-center min-w-[70px] ${stClass}">${stLabel}</span>
+                            </td>
+                            <td class="px-4 py-4 text-right whitespace-nowrap w-20">
+                                <div class="flex justify-end gap-1">
+                                    <button onclick="updateLesson('${s.id}')" class="btn-active text-[10px] font-bold px-3 py-1.5 bg-blue-50 text-blue-600 rounded-lg border border-blue-100 shadow-sm whitespace-nowrap">${t.actionPlus}</button>
                                     <button onclick="openEditModal('${s.id}')" class="p-2 text-slate-300 hover:text-blue-500 transition-colors"><i data-lucide="edit-3" class="w-4 h-4"></i></button>
                                     <button onclick="deleteStudent('${s.id}')" class="p-2 text-rose-300 hover:text-rose-600 transition-colors"><i data-lucide="trash-2" class="w-4 h-4"></i></button>
                                 </div>
