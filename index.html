@@ -73,9 +73,11 @@
     <div id="login-page" class="fixed inset-0 z-[500] flex items-center justify-center p-4 bg-[#1A2E35]">
         <div class="absolute inset-0 opacity-10" style="background-image: url('https://www.transparenttextures.com/patterns/carbon-fibre.png');"></div>
         <div class="bg-white rounded-[40px] shadow-2xl w-full max-w-md p-12 text-center relative z-10 border-t-8 border-[#2C5F56]">
+            <!-- Logo 区域 -->
             <div class="mb-8">
-                <div class="w-20 h-20 bg-[#2C5F56] rounded-[28px] mx-auto flex items-center justify-center shadow-2xl shadow-[#2C5F56]/20">
-                    <span class="text-white font-black text-3xl italic">NS</span>
+                <img src="./logo.png" alt="NSRE Logo" class="h-20 w-auto mx-auto object-contain drop-shadow-md" onerror="this.style.display='none'; document.getElementById('logo-fallback').classList.remove('hidden');" />
+                <div id="logo-fallback" class="hidden w-20 h-20 bg-[#2C5F56] rounded-[28px] mx-auto flex items-center justify-center shadow-2xl shadow-[#2C5F56]/20">
+                    <span class="text-white font-black text-3xl italic tracking-tighter">NS</span>
                 </div>
             </div>
             <h2 id="login-title" class="text-3xl font-[800] text-[#1A2E35] mb-2 tracking-tight">学生付费跟进系统</h2>
@@ -374,7 +376,7 @@
                 document.getElementById('btn-close-history').innerText = t.btnClose;
                 const list = document.getElementById('history-list'); list.innerHTML = '';
                 const history = s.attendanceHistory || [];
-                if (history.length === 0) list.innerHTML = `<div class="py-12 text-center text-slate-400 italic text-sm">${t.historyEmpty}</div>`;
+                if (history.length === 0) list.innerHTML = `<div class="py-12 text-center text-slate-300 italic text-sm">${t.historyEmpty}</div>`;
                 else {
                     [...history].reverse().forEach((record, revIndex) => {
                         const originalIndex = history.length - 1 - revIndex;
