@@ -3,176 +3,250 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>学生付费跟进管理 - NSRE</title>
+    <title>NSRE Dashboard - Student Management</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap');
-        body { font-family: 'Inter', sans-serif; -webkit-tap-highlight-color: transparent; }
-        .filter-chip.active { background-color: #2563eb; color: white; border-color: #2563eb; }
-        .lang-item.active { color: #2563eb; font-weight: 900; background-color: #eff6ff; }
-        .spinner { border: 3px solid rgba(0, 0, 0, 0.1); width: 24px; height: 24px; border-radius: 50%; border-left-color: #2563eb; animation: spin 1s linear infinite; }
-        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-        .btn-active:active { transform: scale(0.95); transition: transform 0.1s; }
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
+        
+        :root {
+            --brand-green: #2C5F56;
+            --brand-mint: #F8FAF9;
+            --brand-yellow: #FFC554;
+        }
+
+        body { 
+            font-family: 'Plus Jakarta Sans', sans-serif; 
+            -webkit-tap-highlight-color: transparent;
+            background-color: var(--brand-mint);
+            color: #1A2E35;
+        }
+
         .no-scrollbar::-webkit-scrollbar { display: none; }
-        .login-gradient { background: linear-gradient(135deg, #f8fafc 0%, #eff6ff 100%); }
+        ::-webkit-scrollbar { width: 5px; height: 5px; }
+        ::-webkit-scrollbar-thumb { background: #D1DEDC; border-radius: 10px; }
+
+        /* 高级圆角卡片 */
+        .card-modern {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 28px;
+            box-shadow: 0 4px 20px -2px rgba(44, 95, 86, 0.05);
+            border: 1px solid rgba(255, 255, 255, 1);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .btn-active:active { transform: scale(0.95); }
+        
+        .hover-lift:hover { 
+            transform: translateY(-4px); 
+            box-shadow: 0 20px 30px -10px rgba(44, 95, 86, 0.1);
+        }
+
+        /* 筛选器选中态 */
+        .filter-chip.active { 
+            background: var(--brand-green); 
+            color: white; 
+            box-shadow: 0 8px 15px -3px rgba(44, 95, 86, 0.2);
+            border-color: var(--brand-green);
+        }
+        
+        .lang-item.active { background-color: var(--brand-green); color: white; font-weight: 800; }
+
+        /* 呼吸渐变背景 */
+        .bg-mesh {
+            background-color: var(--brand-mint);
+            background-image: 
+                radial-gradient(at 0% 0%, rgba(44, 95, 86, 0.03) 0px, transparent 50%),
+                radial-gradient(at 100% 0%, rgba(255, 197, 84, 0.05) 0px, transparent 50%);
+        }
+
+        .table-row-modern:hover {
+            background-color: rgba(44, 95, 86, 0.03);
+            transform: translateX(4px);
+        }
     </style>
 </head>
-<body class="bg-slate-50 text-slate-900 min-h-screen">
+<body class="bg-mesh min-h-screen">
     
     <!-- 登录页面 -->
-    <div id="login-page" class="fixed inset-0 z-[200] flex items-center justify-center p-4 login-gradient">
-        <div class="bg-white rounded-[2.5rem] shadow-2xl shadow-blue-100 w-full max-w-md p-10 text-center border border-white">
-            <div class="mb-8 text-center">
-                <img src="./logo.png" alt="NSRE Logo" class="h-24 w-auto mx-auto drop-shadow-sm" onerror="this.style.display='none'; document.getElementById('logo-fallback').classList.remove('hidden');" />
-                <div id="logo-fallback" class="hidden w-24 h-24 bg-gradient-to-br from-blue-500 to-blue-700 rounded-3xl mx-auto flex items-center justify-center shadow-xl shadow-blue-200 rotate-3">
-                    <span class="text-white font-black text-2xl tracking-widest -rotate-3">NSRE</span>
+    <div id="login-page" class="fixed inset-0 z-[500] flex items-center justify-center p-4 bg-[#1A2E35]">
+        <div class="absolute inset-0 opacity-10" style="background-image: url('https://www.transparenttextures.com/patterns/carbon-fibre.png');"></div>
+        <div class="bg-white rounded-[40px] shadow-2xl w-full max-w-md p-12 text-center relative z-10 border-t-8 border-[#2C5F56]">
+            <div class="mb-8">
+                <div class="w-20 h-20 bg-[#2C5F56] rounded-[28px] mx-auto flex items-center justify-center shadow-2xl shadow-[#2C5F56]/20">
+                    <span class="text-white font-black text-3xl italic">NS</span>
                 </div>
             </div>
-            <h2 id="login-title" class="text-3xl font-black text-slate-800 mb-2">学生付费跟进系统</h2>
-            <p id="login-subtitle" class="text-slate-400 font-medium mb-8 text-sm italic">输入老师姓名或 admin 进入系统</p>
+            <h2 id="login-title" class="text-3xl font-[800] text-[#1A2E35] mb-2 tracking-tight">学生付费跟进系统</h2>
+            <p id="login-subtitle" class="text-[#2C5F56] font-bold mb-10 text-xs uppercase tracking-[0.2em]">Academic Operations Portal</p>
             
-            <form id="login-form" class="space-y-4">
-                <div class="relative">
-                    <i data-lucide="user" class="absolute left-4 top-4 w-5 h-5 text-slate-300"></i>
-                    <input id="login-username" type="text" required class="w-full pl-12 pr-4 py-4 bg-slate-50 border border-slate-100 rounded-2xl font-bold outline-none focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500 transition-all" placeholder="用户名">
-                </div>
-                <div class="relative">
-                    <i data-lucide="lock" class="absolute left-4 top-4 w-5 h-5 text-slate-300"></i>
-                    <input id="login-password" type="password" required class="w-full pl-12 pr-4 py-4 bg-slate-50 border border-slate-100 rounded-2xl font-bold outline-none focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500 transition-all" placeholder="密码 (默认: 1234)">
-                </div>
-                <button type="submit" class="w-full bg-blue-600 text-white py-4 rounded-2xl font-bold shadow-lg shadow-blue-200 hover:bg-blue-700 active:scale-[0.98] transition-all">登 录</button>
+            <form id="login-form" class="space-y-5 text-left mb-6">
+                <div><input id="login-username" type="text" required class="w-full px-6 py-5 bg-slate-50 rounded-3xl font-bold outline-none border-none focus:ring-2 focus:ring-[#2C5F56]/10" placeholder="admin 或 Kanglaoshi"></div>
+                <div><input id="login-password" type="password" required class="w-full px-6 py-5 bg-slate-50 rounded-3xl font-bold outline-none border-none focus:ring-2 focus:ring-[#2C5F56]/10" placeholder="密码 (1234)"></div>
+                <button type="submit" class="w-full bg-[#2C5F56] text-white py-5 rounded-3xl font-bold shadow-xl shadow-[#2C5F56]/20 hover:opacity-90 active:scale-[0.98] transition-all mt-2 uppercase tracking-widest text-sm italic">Enter Dashboard</button>
+                <p id="login-hint" class="text-[10px] text-slate-400 text-center font-bold uppercase tracking-widest mt-4">提示: 账号 admin 或 Kanglaoshi / 密码 1234</p>
             </form>
-            <p id="login-error" class="text-rose-500 text-xs font-bold mt-4 hidden italic">用户名或密码错误</p>
-            <div class="mt-8 flex justify-center gap-2">
-                <button onclick="setLang('zh')" class="text-[10px] font-black text-slate-400 hover:text-blue-600 uppercase tracking-widest px-2 py-1 rounded">ZH</button>
-                <span class="text-slate-200">|</span>
-                <button onclick="setLang('uz')" class="text-[10px] font-black text-slate-400 hover:text-blue-600 uppercase tracking-widest px-2 py-1 rounded">UZ</button>
-                <span class="text-slate-200">|</span>
-                <button onclick="setLang('ru')" class="text-[10px] font-black text-slate-400 hover:text-blue-600 uppercase tracking-widest px-2 py-1 rounded">RU</button>
-                <span class="text-slate-200">|</span>
-                <button onclick="setLang('en')" class="text-[10px] font-black text-slate-400 hover:text-blue-600 uppercase tracking-widest px-2 py-1 rounded">EN</button>
+
+            <div class="flex justify-center gap-3 border-t border-slate-50 pt-6">
+                <button onclick="setLang('zh')" class="text-[10px] font-black text-slate-400 hover:text-[#2C5F56] transition-colors uppercase tracking-widest">ZH</button>
+                <span class="text-slate-200">/</span>
+                <button onclick="setLang('uz')" class="text-[10px] font-black text-slate-400 hover:text-[#2C5F56] transition-colors uppercase tracking-widest">UZ</button>
+                <span class="text-slate-200">/</span>
+                <button onclick="setLang('ru')" class="text-[10px] font-black text-slate-400 hover:text-[#2C5F56] transition-colors uppercase tracking-widest">RU</button>
+                <span class="text-slate-200">/</span>
+                <button onclick="setLang('en')" class="text-[10px] font-black text-slate-400 hover:text-[#2C5F56] transition-colors uppercase tracking-widest">EN</button>
             </div>
+            <p id="login-error" class="text-rose-500 text-xs font-bold mt-6 hidden italic">Invalid Credentials.</p>
         </div>
     </div>
 
     <!-- 主页面 -->
-    <div id="app-content" class="max-w-6xl mx-auto p-4 md:p-8 hidden">
-        <div class="flex flex-col md:flex-row md:items-center justify-between mb-8 gap-6">
-            <div>
-                <h1 id="page-title" class="text-3xl font-extrabold text-slate-800 tracking-tight">学生付费跟进管理</h1>
-                <p id="page-subtitle" class="text-slate-500 font-medium text-sm mt-1">协作版 · 实时云同步</p>
+    <div id="app-content" class="max-w-[1440px] mx-auto p-4 md:p-8 hidden">
+        
+        <!-- 头部一行式导航 -->
+        <header class="relative z-[100] flex flex-col lg:flex-row lg:items-center justify-between mb-10 gap-6 bg-white/60 p-6 rounded-[32px] border border-white shadow-sm">
+            <div class="flex flex-col">
+                <h1 id="page-title-main" class="text-2xl md:text-3xl font-[900] text-[#1A2E35] tracking-tight">学生付费跟进管理</h1>
+                <p id="page-subtitle" class="text-[#2C5F56]/50 font-bold text-[10px] uppercase tracking-[0.2em] mt-1">Management Dashboard</p>
             </div>
             
-            <div class="flex items-center gap-3">
-                <!-- 语言切换下拉按钮 -->
+            <div class="flex flex-wrap items-center gap-3">
+                <!-- 语言 -->
                 <div class="relative group">
-                    <button id="lang-dropdown-btn" class="flex items-center gap-2 bg-white border border-slate-200 px-4 h-[48px] rounded-xl text-slate-700 hover:bg-slate-50 transition-all shadow-sm font-bold text-xs uppercase tracking-widest">
-                        <i data-lucide="globe" class="w-4 h-4 text-blue-500"></i>
+                    <button class="flex items-center gap-2 bg-white px-5 h-[52px] rounded-full text-[#1A2E35] hover:bg-slate-50 transition-all shadow-sm font-bold text-[10px] uppercase tracking-widest border border-[#D1DEDC]">
+                        <i data-lucide="globe" class="w-3.5 h-3.5 text-[#2C5F56]"></i>
                         <span id="current-lang-text">ZH</span>
                         <i data-lucide="chevron-down" class="w-3 h-3 text-slate-300"></i>
                     </button>
-                    <!-- 下拉菜单内容 -->
-                    <div class="absolute right-0 mt-2 w-32 bg-white border border-slate-100 rounded-xl shadow-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all z-[150] overflow-hidden">
-                        <button onclick="setLang('zh')" class="lang-item w-full text-left px-4 py-2.5 text-xs font-bold hover:bg-blue-50 transition-colors border-b border-slate-50" id="item-lang-zh">中文 (ZH)</button>
-                        <button onclick="setLang('uz')" class="lang-item w-full text-left px-4 py-2.5 text-xs font-bold hover:bg-blue-50 transition-colors border-b border-slate-50" id="item-lang-uz">O'zbek (UZ)</button>
-                        <button onclick="setLang('ru')" class="lang-item w-full text-left px-4 py-2.5 text-xs font-bold hover:bg-blue-50 transition-colors border-b border-slate-50" id="item-lang-ru">Русский (RU)</button>
-                        <button onclick="setLang('en')" class="lang-item w-full text-left px-4 py-2.5 text-xs font-bold hover:bg-blue-50 transition-colors" id="item-lang-en">English (EN)</button>
+                    <div class="absolute right-0 mt-2 w-44 bg-white border border-[#D1DEDC] rounded-[24px] shadow-2xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all z-[150] overflow-hidden p-2">
+                        <button onclick="setLang('zh')" class="lang-item w-full text-left px-5 py-2.5 text-[10px] font-bold rounded-xl transition-colors mb-1">中文 (ZH)</button>
+                        <button onclick="setLang('uz')" class="lang-item w-full text-left px-5 py-2.5 text-[10px] font-bold rounded-xl transition-colors mb-1">O'zbek (UZ)</button>
+                        <button onclick="setLang('ru')" class="lang-item w-full text-left px-5 py-2.5 text-[10px] font-bold rounded-xl transition-colors mb-1">Русский (RU)</button>
+                        <button onclick="setLang('en')" class="lang-item w-full text-left px-5 py-2.5 text-[10px] font-bold rounded-xl transition-colors" id="item-lang-en">English (EN)</button>
                     </div>
                 </div>
 
-                <!-- 登录用户信息 -->
-                <div class="flex items-center gap-2 bg-white border border-slate-200 p-1.5 pr-4 rounded-xl shadow-sm h-[48px]">
-                    <div class="w-8 h-8 bg-blue-100 text-blue-600 rounded-lg flex items-center justify-center font-black text-xs" id="user-avatar">?</div>
-                    <span id="logged-user-name" class="text-xs font-black text-slate-700">---</span>
-                    <button onclick="logout()" class="ml-2 text-slate-300 hover:text-rose-500 transition-colors"><i data-lucide="log-out" class="w-4 h-4"></i></button>
+                <!-- 用户 -->
+                <div class="flex items-center gap-3 bg-[#1A2E35] px-5 h-[52px] rounded-full shadow-lg">
+                    <div class="w-8 h-8 bg-[#FFC554] text-[#1A2E35] rounded-lg flex items-center justify-center font-black text-[10px]" id="user-avatar">?</div>
+                    <span id="logged-user-name" class="text-[11px] font-bold text-white tracking-tight">---</span>
+                    <button onclick="logout()" class="ml-1 text-slate-500 hover:text-rose-400 transition-colors"><i data-lucide="power" class="w-3.5 h-3.5"></i></button>
                 </div>
 
-                <!-- 添加学生按钮 -->
-                <button onclick="openAddModal()" class="btn-active flex items-center gap-2 bg-blue-600 text-white px-6 h-[48px] rounded-xl transition-all shadow-lg shadow-blue-200 font-bold whitespace-nowrap">
-                    <i data-lucide="plus" class="w-5 h-5"></i><span id="add-btn-text">添加学生</span>
+                <!-- 添加按钮 -->
+                <button onclick="openAddModal()" class="btn-active flex items-center gap-2 bg-[#2C5F56] text-white px-6 h-[52px] rounded-full transition-all shadow-xl shadow-[#2C5F56]/20 font-bold whitespace-nowrap text-xs">
+                    <i data-lucide="plus-circle" class="w-4 h-4"></i><span id="add-btn-text">添加学生</span>
                 </button>
             </div>
-        </div>
+        </header>
 
-        <!-- 统计 -->
-        <div class="grid grid-cols-1 sm:grid-cols-3 gap-6 mb-8 text-center sm:text-left">
-            <div class="bg-white p-6 rounded-2xl border border-slate-100 flex items-center gap-4 shadow-sm">
-                <div class="p-4 bg-blue-50 text-blue-600 rounded-2xl"><i data-lucide="users" class="w-6 h-6"></i></div>
-                <div><p id="stat-total-label" class="text-xs font-bold text-slate-400 uppercase tracking-wider">学生总数</p><p id="stat-total-val" class="text-3xl font-black text-slate-800">0</p></div>
+        <main class="space-y-8">
+            <!-- 统计卡片 -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div class="card-modern p-6 flex items-center gap-6 hover-lift border-l-8 border-[#2C5F56]">
+                    <div class="w-14 h-14 bg-[#F0F6F5] text-[#2C5F56] rounded-2xl flex items-center justify-center"><i data-lucide="users-2" class="w-6 h-6"></i></div>
+                    <div><p id="stat-total-label" class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-0.5">Total</p><p id="stat-total-val" class="text-3xl font-[900] text-[#1A2E35]">0</p></div>
+                </div>
+                <div class="card-modern p-6 flex items-center gap-6 hover-lift border-l-8 border-[#FFC554]">
+                    <div class="w-14 h-14 bg-amber-50 text-amber-600 rounded-2xl flex items-center justify-center"><i data-lucide="hourglass" class="w-6 h-6"></i></div>
+                    <div><p id="stat-warning-label" class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-0.5">Warning</p><p id="stat-warning-val" class="text-3xl font-[900] text-[#1A2E35]">0</p></div>
+                </div>
+                <div class="card-modern p-6 flex items-center gap-6 hover-lift border-l-8 border-rose-500">
+                    <div class="w-14 h-14 bg-rose-50 text-rose-500 rounded-2xl flex items-center justify-center"><i data-lucide="alert-octagon" class="w-6 h-6"></i></div>
+                    <div><p id="stat-overdue-label" class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-0.5">Overdue</p><p id="stat-overdue-val" class="text-3xl font-[900] text-rose-500">0</p></div>
+                </div>
             </div>
-            <div class="bg-white p-6 rounded-2xl border border-slate-100 flex items-center gap-4 shadow-sm">
-                <div class="p-4 bg-amber-50 text-amber-600 rounded-2xl"><i data-lucide="timer" class="w-6 h-6"></i></div>
-                <div><p id="stat-warning-label" class="text-xs font-bold text-slate-400 uppercase tracking-wider">即将到期</p><p id="stat-warning-val" class="text-3xl font-black text-amber-600">0</p></div>
-            </div>
-            <div class="bg-white p-6 rounded-2xl border border-slate-100 flex items-center gap-4 shadow-sm">
-                <div class="p-4 bg-rose-50 text-rose-600 rounded-2xl"><i data-lucide="wallet" class="w-6 h-6"></i></div>
-                <div><p id="stat-overdue-label" class="text-xs font-bold text-slate-400 uppercase tracking-wider">欠费预警</p><p id="stat-overdue-val" class="text-3xl font-black text-rose-600">0</p></div>
-            </div>
-        </div>
 
-        <!-- 筛选 -->
-        <div id="filter-section" class="mb-6 bg-white p-4 rounded-2xl border border-slate-100 shadow-sm flex flex-col gap-4">
-            <div id="teacher-filter-wrap" class="flex flex-wrap items-center gap-2 hidden">
-                <span id="filter-label" class="text-xs font-black text-slate-400 uppercase tracking-widest w-16 shrink-0">老师:</span>
-                <div id="teacher-filter-container" class="flex flex-wrap gap-2"></div>
+            <!-- 筛选区域 (紧凑三行) -->
+            <div class="card-modern p-5 space-y-2">
+                <div id="teacher-filter-wrap" class="hidden flex flex-col gap-1.5">
+                    <span id="filter-label" class="text-[9px] font-black text-[#2C5F56]/40 uppercase tracking-[0.2em] ml-2">Responsibility:</span>
+                    <div id="teacher-filter-container" class="flex flex-wrap gap-1.5"></div>
+                </div>
+                <div id="class-filter-wrap" class="flex flex-col gap-1.5 pt-3 border-t border-slate-50">
+                    <span id="filter-class-label" class="text-[9px] font-black text-[#2C5F56]/40 uppercase tracking-[0.2em] ml-2">Class Level:</span>
+                    <div id="class-filter-container" class="flex flex-wrap gap-1.5"></div>
+                </div>
+                <div id="status-filter-wrap" class="flex flex-col gap-1.5 pt-3 border-t border-slate-50">
+                    <span id="filter-status-label" class="text-[9px] font-black text-[#2C5F56]/40 uppercase tracking-[0.2em] ml-2">Filter Status:</span>
+                    <div id="status-filter-container" class="flex flex-wrap gap-1.5"></div>
+                </div>
             </div>
-            <div id="class-filter-wrap" class="flex flex-wrap items-center gap-2">
-                <span id="filter-class-label" class="text-xs font-black text-slate-400 uppercase tracking-widest w-16 shrink-0">班级:</span>
-                <div id="class-filter-container" class="flex flex-wrap gap-2"></div>
-            </div>
-            <div id="status-filter-wrap" class="flex flex-wrap items-center gap-2">
-                <span id="filter-status-label" class="text-xs font-black text-slate-400 uppercase tracking-widest w-16 shrink-0">状态:</span>
-                <div id="status-filter-container" class="flex flex-wrap gap-2"></div>
-            </div>
-        </div>
 
-        <div id="table-container" class="bg-white rounded-3xl shadow-sm border border-slate-100 overflow-hidden">
-            <div class="overflow-x-auto">
-                <table class="w-full text-left border-collapse">
-                    <thead class="bg-slate-50/80 border-b border-slate-100 text-[10px] font-black text-slate-400 uppercase tracking-widest">
-                        <tr id="table-head-row"></tr>
-                    </thead>
-                    <tbody id="student-table-body" class="divide-y divide-slate-50"></tbody>
-                </table>
+            <!-- 数据表格 -->
+            <div class="card-modern overflow-hidden">
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left border-separate border-spacing-0">
+                        <thead class="bg-[#F7FAF9]/80 border-b border-slate-100">
+                            <tr id="table-head-row"></tr>
+                        </thead>
+                        <tbody id="student-table-body" class="divide-y divide-slate-50"></tbody>
+                    </table>
+                </div>
             </div>
-        </div>
+        </main>
     </div>
 
-    <!-- 学生信息编辑 Modal -->
-    <div id="modal-overlay" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm hidden items-center justify-center p-4 z-[100] transition-all">
-        <div class="bg-white rounded-[2rem] shadow-2xl w-full max-w-md p-8 overflow-y-auto max-h-[90vh] scale-95 transition-all" id="modal-box">
-            <div class="flex justify-between items-center mb-6"><h3 id="modal-title" class="text-2xl font-black text-slate-800"></h3><button onclick="toggleModal(false)" class="text-slate-300"><i data-lucide="x"></i></button></div>
-            <form id="student-form" class="space-y-5 text-left">
+    <!-- 编辑 Modal -->
+    <div id="modal-overlay" class="fixed inset-0 bg-[#1A2E35]/90 backdrop-blur-lg hidden items-center justify-center p-4 z-[600] transition-all">
+        <div class="bg-white rounded-[40px] shadow-2xl w-full max-w-md p-10 overflow-y-auto max-h-[90vh] border-t-8 border-[#FFC554]" id="modal-box">
+            <div class="flex justify-between items-center mb-10">
+                <h3 id="modal-title" class="text-2xl font-[900] text-[#1A2E35] tracking-tight">编辑信息</h3>
+                <button onclick="toggleModal(false)" class="p-3 bg-slate-50 rounded-full text-slate-300 hover:text-rose-500 transition-colors"><i data-lucide="x"></i></button>
+            </div>
+            <form id="student-form" class="space-y-6 text-left">
                 <input type="hidden" id="input-id">
-                <div><label id="label-name" class="block text-[10px] font-black text-slate-400 uppercase mb-2">学生姓名</label><input id="input-name" type="text" required class="w-full px-5 py-3.5 bg-slate-50 border border-slate-100 rounded-2xl font-bold outline-none focus:ring-2 focus:ring-blue-500/20"></div>
-                <div class="grid grid-cols-2 gap-4">
-                    <div><label id="label-teacher" class="block text-[10px] font-black text-slate-400 uppercase mb-2 tracking-widest">负责人</label><select id="input-teacher" required class="w-full px-5 py-3.5 bg-slate-50 border border-slate-100 rounded-2xl font-bold outline-none appearance-none"></select></div>
-                    <div><label id="label-class" class="block text-[10px] font-black text-slate-400 uppercase mb-2 tracking-widest">班级</label><input id="input-class" list="class-list" type="text" class="w-full px-5 py-3.5 bg-slate-50 border border-slate-100 rounded-2xl font-bold outline-none focus:ring-2 focus:ring-blue-500/20"><datalist id="class-list"><option value="HSK1-1"><option value="HSK1-2"><option value="HSK1-3"><option value="HSK2-1"><option value="HSK2-2"><option value="HSK2-3"><option value="HSK3-1"><option value="HSK3-2"><option value="HSK3-3"><option value="HSK4"><option value="HSK5"></datalist></div>
+                <div class="space-y-1">
+                    <label id="label-name" class="text-[10px] font-black text-slate-300 uppercase ml-4 tracking-widest">Full Name</label>
+                    <input id="input-name" type="text" required class="w-full px-6 py-5 bg-[#F7FAF9] rounded-3xl font-bold outline-none border-none">
                 </div>
                 <div class="grid grid-cols-2 gap-4">
-                    <div><label id="label-total" class="block text-[10px] font-black text-slate-400 uppercase mb-2 text-center tracking-widest">总量</label><select id="input-total" class="w-full px-5 py-3.5 bg-slate-50 border border-slate-100 rounded-2xl font-bold outline-none text-center"></select></div>
-                    <div><label id="label-used" class="block text-[10px] font-black text-slate-400 uppercase mb-2 text-center tracking-widest">已上</label><input id="input-used" type="number" required class="w-full px-5 py-3.5 bg-slate-50 border border-slate-100 rounded-2xl font-bold outline-none text-center focus:ring-2 focus:ring-blue-500/20"></div>
+                    <div class="space-y-1">
+                        <label id="label-teacher" class="text-[10px] font-black text-slate-300 uppercase ml-4 tracking-widest">Teacher</label>
+                        <select id="input-teacher" required class="w-full px-6 py-5 bg-[#F7FAF9] rounded-3xl font-bold outline-none appearance-none border-none"></select>
+                    </div>
+                    <div class="space-y-1">
+                        <label id="label-class" class="text-[10px] font-black text-slate-300 uppercase ml-4 tracking-widest">Class ID</label>
+                        <input id="input-class" list="class-list" type="text" class="w-full px-6 py-5 bg-[#F7FAF9] rounded-3xl font-bold outline-none border-none">
+                    </div>
                 </div>
-                <div><label id="label-date" class="block text-[10px] font-black text-slate-400 uppercase mb-2">最近付费日期</label><input id="input-date" type="date" class="w-full px-5 py-3.5 bg-slate-50 border border-slate-100 rounded-2xl font-bold outline-none focus:ring-2 focus:ring-blue-500/20"></div>
-                <div class="flex gap-4 pt-4"><button type="button" onclick="toggleModal(false)" id="btn-cancel" class="flex-1 py-4 border rounded-2xl font-bold text-slate-500">取消</button><button type="submit" id="btn-save" class="flex-1 py-4 bg-blue-600 text-white font-bold rounded-2xl shadow-lg active:scale-95">保存</button></div>
+                <div class="grid grid-cols-2 gap-4">
+                    <div class="space-y-1 text-center">
+                        <label id="label-total" class="text-[10px] font-black text-slate-300 uppercase tracking-widest">Package</label>
+                        <select id="input-total" class="w-full px-6 py-5 bg-[#F7FAF9] rounded-3xl font-bold outline-none border-none text-center appearance-none"></select>
+                    </div>
+                    <div class="space-y-1 text-center">
+                        <label id="label-used" class="text-[10px] font-black text-slate-300 uppercase tracking-widest">Used</label>
+                        <input id="input-used" type="number" required class="w-full px-6 py-5 bg-[#F7FAF9] rounded-3xl font-bold outline-none border-none text-center">
+                    </div>
+                </div>
+                <div class="space-y-1">
+                    <label id="label-date" class="text-[10px] font-black text-slate-300 uppercase ml-4 tracking-widest">Payment Date</label>
+                    <input id="input-date" type="date" class="w-full px-6 py-5 bg-[#F7FAF9] rounded-3xl font-bold outline-none border-none">
+                </div>
+                <div class="flex gap-4 pt-6">
+                    <button type="button" onclick="toggleModal(false)" id="btn-cancel" class="flex-1 py-5 rounded-3xl font-black text-slate-400 hover:bg-slate-50 transition-colors uppercase tracking-widest text-[10px]">Cancel</button>
+                    <button type="submit" id="btn-save" class="flex-1 py-5 bg-[#2C5F56] text-white font-black rounded-3xl shadow-xl shadow-[#2C5F56]/20 active:scale-95 transition-all uppercase tracking-widest text-xs">Save Student</button>
+                </div>
             </form>
         </div>
     </div>
 
     <!-- 上课记录 Modal -->
-    <div id="history-modal-overlay" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm hidden items-center justify-center p-4 z-[100] transition-all">
-        <div class="bg-white rounded-[2rem] shadow-2xl w-full max-w-md p-8 overflow-hidden scale-95 transition-all flex flex-col max-h-[85vh]" id="history-modal-box">
-            <div class="flex justify-between items-center mb-6 shrink-0"><h3 id="history-modal-title" class="text-xl font-black text-slate-800 tracking-tight"></h3><button onclick="toggleHistoryModal(false)" class="text-slate-300 hover:text-slate-500"><i data-lucide="x"></i></button></div>
-            
-            <div class="flex gap-2 mb-4 shrink-0">
-                <input type="date" id="manual-date-input" class="flex-1 px-4 py-3 bg-slate-50 border border-slate-100 rounded-xl font-bold outline-none focus:ring-2 focus:ring-blue-500/20 text-slate-700">
-                <button onclick="handleRecordAction()" id="btn-record-action" class="px-5 py-3 bg-blue-600 text-white font-bold rounded-xl transition-all shadow-sm active:scale-95 whitespace-nowrap">补签</button>
-                <button onclick="cancelRecordEdit()" id="btn-record-cancel" class="hidden px-4 py-3 bg-slate-100 text-slate-400 font-bold rounded-xl">✕</button>
+    <div id="history-modal-overlay" class="fixed inset-0 bg-[#1A2E35]/95 backdrop-blur-xl hidden items-center justify-center p-4 z-[700] transition-all">
+        <div class="bg-white rounded-[40px] shadow-2xl w-full max-w-md p-12 overflow-hidden flex flex-col max-h-[90vh] border-t-8 border-[#FFC554]" id="history-modal-box">
+            <div class="flex justify-between items-center mb-10 shrink-0">
+                <h3 id="history-modal-title" class="text-2xl font-[900] text-[#1A2E35] tracking-tight">Logs</h3>
+                <button onclick="toggleHistoryModal(false)" class="p-3 bg-slate-50 rounded-full text-slate-300 hover:text-rose-500 transition-colors"><i data-lucide="x"></i></button>
             </div>
-
-            <div id="history-list" class="space-y-3 overflow-y-auto pr-2 no-scrollbar flex-1 mb-6"></div>
-            <div class="shrink-0 mt-auto"><button onclick="toggleHistoryModal(false)" id="btn-close-history" class="w-full py-4 bg-slate-100 text-slate-700 font-bold rounded-2xl active:scale-95 transition-colors">关闭</button></div>
+            <div class="flex gap-3 mb-8 shrink-0">
+                <input type="date" id="manual-date-input" class="flex-1 px-6 py-4 bg-[#F7FAF9] rounded-3xl font-bold outline-none border-none text-[#1A2E35]">
+                <button onclick="handleRecordAction()" id="btn-record-action" class="px-8 py-4 bg-[#2C5F56] text-white font-black rounded-3xl shadow-lg active:scale-95 transition-all uppercase text-[10px]">Add Log</button>
+                <button onclick="cancelRecordEdit()" id="btn-record-cancel" class="hidden px-4 py-4 bg-rose-50 text-rose-500 font-bold rounded-2xl">✕</button>
+            </div>
+            <div id="history-list" class="space-y-4 overflow-y-auto pr-2 no-scrollbar flex-1 mb-8"></div>
+            <div class="shrink-0"><button onclick="toggleHistoryModal(false)" id="btn-close-history" class="w-full py-5 bg-[#F7FAF9] text-slate-400 font-black rounded-3xl active:scale-95 transition-colors uppercase tracking-widest text-[10px]">Close Window</button></div>
         </div>
     </div>
 
@@ -188,40 +262,40 @@
 
         const tDict = {
             zh: {
-                loginTitle: "学生付费跟进系统", loginSubtitle: "输入用户名和密码 (默认: 1234)", loginError: "用户名或密码错误", loginPlaceholder: "用户名", loginPassPlaceholder: "密码",
-                title: "学生付费跟进管理", subtitle: "协作版 · 实时云同步", addBtn: "添加学生", statTotal: "学生总数", statWarning: "即将到期", statOverdue: "欠费预警",
-                thName: "学生姓名", thTeacher: "老师", thClass: "班级", thProgress: "进度", thRemaining: "剩余", thLastPay: "付费日期", thStatus: "状态", thActions: "操作",
-                statusPaid: "充足", statusWarning: "预警", statusOverdue: "欠费", modalTitleAdd: "添加新学生", modalTitleEdit: "编辑信息", labelName: "学生姓名", 
-                labelTeacher: "负责老师", labelClass: "班级名称", placeholderClass: "选择或输入", labelTotal: "课包总量", labelUsed: "已上课时", labelPayDate: "付费日期", btnCancel: "取消", btnSave: "确认保存", 
-                noData: "暂无数据", confirmDelete: "确定要永久删除该生吗？", filterAll: "全部", filterLabel: "老师:", filterClassLabel: "班级:", filterStatusLabel: "状态:", actionPlus: "+1 节", historyTitle: "上课记录", historyEmpty: "暂无记录", btnClose: "关闭", manualAdd: "补签", btnUpdate: "更新", alertNoDate: "请先选择日期",
+                loginTitle: "学生付费跟进系统", loginPlaceholder: "admin 或 Kanglaoshi", loginPassPlaceholder: "密码 (1234)", loginSubtitle: "Academic Operations Portal", loginHint: "提示: 账号 admin 或 Kanglaoshi / 密码 1234",
+                dashboardTitle: "学生付费跟进管理", subtitle: "协作版 · 实时云同步", addBtn: "添加学生", statTotal: "学生总数", statWarning: "即将到期", statOverdue: "欠费预警",
+                thName: "学生姓名", thTeacher: "负责", thClass: "班级", thProgress: "进度", thRemaining: "剩余", thLastPay: "最近付费", thStatus: "状态", thActions: "管理",
+                statusPaid: "充足", statusWarning: "预警", statusOverdue: "欠费", modalTitleAdd: "添加新学生", modalTitleEdit: "编辑信息", labelName: "姓名", 
+                labelTeacher: "负责老师", labelClass: "班级名称", placeholderClass: "选择或输入", placeholderTeacher: "请选择老师", labelTotal: "总量", labelUsed: "已上", labelPayDate: "最近付费日期", btnCancel: "取消", btnSave: "保存", 
+                noData: "暂无数据", confirmDelete: "确定要永久删除该生吗？", filterAll: "全部", filterLabel: "负责人:", filterClassLabel: "班级筛选:", filterStatusLabel: "状态筛选:", actionPlus: "+1 记课", historyTitle: "上课记录", historyEmpty: "暂无记录", btnClose: "关闭窗口", manualAdd: "补签", btnUpdate: "更新日期", alertNoDate: "请先选择日期",
                 days: ["周日", "周一", "周二", "周三", "周四", "周五", "周六"], confirmDeleteRecord: "确定要删除这条上课记录吗？"
             },
             uz: {
-                loginTitle: "Talabalar Nazorati", loginSubtitle: "Ism va parolingizni kiriting (standart: 1234)", loginError: "Xato", loginPlaceholder: "Ism", loginPassPlaceholder: "Parol",
-                title: "Talabalar Nazorati", subtitle: "Bulutli tizim", addBtn: "Qo'shish", statTotal: "Jami", statWarning: "Ogoh", statOverdue: "Qarz",
-                thName: "Ismi", thTeacher: "Mas'ul", thClass: "Guruh", thProgress: "Holat", thRemaining: "Qolgan", thLastPay: "Sana", thStatus: "Holat", thActions: "Amal",
-                statusPaid: "Yetarli", statusWarning: "Yaqin", statusOverdue: "Qarz", modalTitleAdd: "Yangi", modalTitleEdit: "Tahrir", labelName: "Talaba ismi", 
-                labelTeacher: "O'qituvchi", labelClass: "Guruh", placeholderClass: "Yozing", labelTotal: "Jami", labelUsed: "O'tilgan", labelPayDate: "Sana", btnCancel: "Bekor", btnSave: "Saqlash", 
-                noData: "Yo'q", confirmDelete: "O'chirilsinmi?", filterAll: "Hammasi", filterLabel: "Mas'ul:", filterClassLabel: "Guruh:", filterStatusLabel: "Holat:", actionPlus: "+1 dars", historyTitle: "Tarix", historyEmpty: "Yo'q", btnClose: "Yopish", manualAdd: "Qo'shish", btnUpdate: "Yangilash", alertNoDate: "Sanani tanlang",
-                days: ["Yak", "Dush", "Sesh", "Chor", "Pay", "Jum", "Shan"], confirmDeleteRecord: "Dars tarixini o'chirilsinmi?"
+                loginTitle: "Talabalar Nazorati", loginPlaceholder: "admin yoki Kanglaoshi", loginPassPlaceholder: "Parol (1234)", loginSubtitle: "Portalga Kirish", loginHint: "Login: admin yoki Kanglaoshi / Parol: 1234",
+                dashboardTitle: "To'lov Monitoringi", subtitle: "Akademik Operatsiyalari", addBtn: "Qo'shish", statTotal: "Jami", statWarning: "Ogoh", statOverdue: "Qarz",
+                thName: "Ism", thTeacher: "Mas'ul", thClass: "Guruh", thProgress: "Holat", thRemaining: "Qolgan", thLastPay: "To'lov", thStatus: "Holat", thActions: "Amal",
+                statusPaid: "Yetarli", statusWarning: "Yaqin", statusOverdue: "Qarz", modalTitleAdd: "Yangi", modalTitleEdit: "Tahrir", labelName: "Ismi", 
+                labelTeacher: "O'qituvchi", labelClass: "Guruh", placeholderClass: "Yozing", placeholderTeacher: "Tanlang", labelTotal: "Jami", labelUsed: "O'tilgan", labelPayDate: "Sana", btnCancel: "Bekor", btnSave: "Saqlash", 
+                noData: "Yo'q", confirmDelete: "O'chirilsinmi?", filterAll: "Hammasi", filterLabel: "Mas'ul:", filterClassLabel: "Guruh:", filterStatusLabel: "Holat:", actionPlus: "+1 dars", historyTitle: "Tarix", historyEmpty: "Yo'q", btnClose: "Yopish", manualAdd: "Qo'shish", btnUpdate: "Yangilash", alertNoDate: "Sana tanlang",
+                days: ["Yak", "Dush", "Sesh", "Chor", "Pay", "Jum", "Shan"], confirmDeleteRecord: "O'chirilsinmi?"
             },
             ru: {
-                loginTitle: "Контроль оплаты", loginSubtitle: "Введите имя и пароль (1234)", loginError: "Ошибка", loginPlaceholder: "Имя", loginPassPlaceholder: "Пароль",
-                title: "Контроль оплаты", subtitle: "Синхронизация", addBtn: "Добавить", statTotal: "Всего", statWarning: "Внимание", statOverdue: "Долг",
+                loginTitle: "Контроль оплаты", loginPlaceholder: "admin или Kanglaoshi", loginPassPlaceholder: "Пароль (1234)", loginSubtitle: "Академический Портал", loginHint: "Логин: admin или Kanglaoshi / Пароль: 1234",
+                dashboardTitle: "Управление Оплатой", subtitle: "Синхронизация Данных", addBtn: "Добавить", statTotal: "Всего", statWarning: "Срок", statOverdue: "Долг",
                 thName: "Имя", thTeacher: "Учитель", thClass: "Группа", thProgress: "Прогресс", thRemaining: "Осталось", thLastPay: "Дата", thStatus: "Статус", thActions: "Действия",
                 statusPaid: "Оплачено", statusWarning: "Срок", statusOverdue: "Долг", modalTitleAdd: "Новый", modalTitleEdit: "Изменить", labelName: "Имя", 
-                labelTeacher: "Учитель", labelClass: "Группа", placeholderClass: "Введите", labelTotal: "Всего", labelUsed: "Пройдено", labelPayDate: "Дата", btnCancel: "Отмена", btnSave: "Сохранить", 
+                labelTeacher: "Учитель", labelClass: "Группа", placeholderClass: "Введите", placeholderTeacher: "Выберите", labelTotal: "Всего", labelUsed: "Пройдено", labelPayDate: "Дата", btnCancel: "Отмена", btnSave: "Сохранить", 
                 noData: "Нет", confirmDelete: "Удалить?", filterAll: "Все", filterLabel: "Учитель:", filterClassLabel: "Группа:", filterStatusLabel: "Статус:", actionPlus: "+1 урок", historyTitle: "История", historyEmpty: "Нет", btnClose: "Закрыть", manualAdd: "Добавить", btnUpdate: "Обновить", alertNoDate: "Выберите дату",
-                days: ["Вс", "Пн", "Вт", "Ср", "Чт", "Пт", "Сб"], confirmDeleteRecord: "Удалить запись об уроке?"
+                days: ["Вс", "Пн", "Вт", "Ср", "Чт", "Пт", "Сб"], confirmDeleteRecord: "Удалить?"
             },
             en: {
-                loginTitle: "Payment Tracker", loginSubtitle: "Enter credentials (default: 1234)", loginError: "Error", loginPlaceholder: "User", loginPassPlaceholder: "Pass",
-                title: "Payment Tracker", subtitle: "Cloud Sync", addBtn: "Add Student", statTotal: "Total", statWarning: "Warning", statOverdue: "Due",
-                thName: "Name", thTeacher: "Teacher", thClass: "Class", thProgress: "Progress", thRemaining: "Left", thLastPay: "Pay Date", thStatus: "Status", thActions: "Actions",
-                statusPaid: "Paid", statusWarning: "Warning", statusOverdue: "Overdue", modalTitleAdd: "Add Student", modalTitleEdit: "Edit Student", labelName: "Student Name", 
-                labelTeacher: "Teacher", labelClass: "Class", placeholderClass: "Type", labelTotal: "Total", labelUsed: "Used", labelPayDate: "Pay Date", btnCancel: "Cancel", btnSave: "Save", 
-                noData: "Empty", confirmDelete: "Delete student?", filterAll: "All", filterLabel: "Teacher:", filterClassLabel: "Class:", filterStatusLabel: "Status:", actionPlus: "+1", historyTitle: "History", historyEmpty: "No history", btnClose: "Close", manualAdd: "Add", btnUpdate: "Update", alertNoDate: "Select date",
-                days: ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"], confirmDeleteRecord: "Delete this record?"
+                loginTitle: "Tracker Pro", loginPlaceholder: "admin or Kanglaoshi", loginPassPlaceholder: "Password (1234)", loginSubtitle: "Academic Operations Portal", loginHint: "Tips: User admin or Kanglaoshi / Pass 1234",
+                dashboardTitle: "Dashboard", subtitle: "Academic Operations Portal", addBtn: "Add New", statTotal: "Students", statWarning: "Warning", statOverdue: "Due",
+                thName: "Full Name", thTeacher: "Rep.", thClass: "Class", thProgress: "Progress", thRemaining: "Left", thLastPay: "Last Pay", thStatus: "Status", thActions: "Actions",
+                statusPaid: "Paid", statusWarning: "Low", statusOverdue: "Due", modalTitleAdd: "New Student", modalTitleEdit: "Edit Info", labelName: "Name", 
+                labelTeacher: "Teacher", labelClass: "Class", placeholderClass: "Type", placeholderTeacher: "Select", labelTotal: "Total Pack", labelUsed: "Used", labelPayDate: "Date", btnCancel: "Cancel", btnSave: "Save", 
+                noData: "Empty", confirmDelete: "Delete student?", filterAll: "All", filterLabel: "Rep:", filterClassLabel: "Level:", filterStatusLabel: "Status:", actionPlus: "+1", historyTitle: "History", historyEmpty: "No history", btnClose: "Close", manualAdd: "Add", btnUpdate: "Update", alertNoDate: "Select date",
+                days: ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"], confirmDeleteRecord: "Delete?"
             }
         };
 
@@ -262,7 +336,7 @@
                     isAdmin = (savedUser === 'admin');
                     document.getElementById('login-page').classList.add('hidden');
                     document.getElementById('app-content').classList.remove('hidden');
-                    document.getElementById('logged-user-name').innerText = isAdmin ? 'Admin' : savedUser;
+                    document.getElementById('logged-user-name').innerText = isAdmin ? 'Root Admin' : savedUser;
                     document.getElementById('user-avatar').innerText = isAdmin ? 'A' : savedUser.charAt(0).toUpperCase();
                     document.getElementById('teacher-filter-wrap').classList.toggle('hidden', !isAdmin);
                     render();
@@ -288,97 +362,57 @@
             window.setTeacherFilter = (t) => { selectedTeacher = t; selectedClass = 'all'; render(); };
             window.setClassFilter = (c) => { selectedClass = c; render(); };
             window.setStatusFilter = (s) => { selectedStatus = s; render(); };
-            
-            window.toggleModal = (show) => {
-                document.getElementById('modal-overlay').style.display = show ? 'flex' : 'none';
-            };
-
-            window.toggleHistoryModal = (show) => {
-                if (!show) window.cancelRecordEdit();
-                document.getElementById('history-modal-overlay').style.display = show ? 'flex' : 'none';
-            };
+            window.toggleModal = (show) => { document.getElementById('modal-overlay').style.display = show ? 'flex' : 'none'; };
+            window.toggleHistoryModal = (show) => { if (!show) window.cancelRecordEdit(); document.getElementById('history-modal-overlay').style.display = show ? 'flex' : 'none'; };
 
             window.openHistoryModal = (id) => {
                 currentHistoryStudentId = id;
                 const s = students.find(item => item.id === id);
                 if (!s) return;
                 const t = tDict[currentLang] || tDict['zh'];
-                document.getElementById('history-modal-title').innerText = s.name + ' - ' + t.historyTitle;
+                document.getElementById('history-modal-title').innerText = s.name;
                 document.getElementById('btn-close-history').innerText = t.btnClose;
-                
-                const list = document.getElementById('history-list');
-                list.innerHTML = '';
+                const list = document.getElementById('history-list'); list.innerHTML = '';
                 const history = s.attendanceHistory || [];
-                
-                if (history.length === 0) {
-                    list.innerHTML = `<p class="text-slate-400 text-sm italic text-center py-10">${t.historyEmpty}</p>`;
-                } else {
+                if (history.length === 0) list.innerHTML = `<div class="py-12 text-center text-slate-400 italic text-sm">${t.historyEmpty}</div>`;
+                else {
                     [...history].reverse().forEach((record, revIndex) => {
                         const originalIndex = history.length - 1 - revIndex;
-                        list.innerHTML += `
-                            <div class="flex items-center justify-between p-4 bg-slate-50 rounded-2xl border border-slate-100 group">
-                                <div class="flex items-center gap-4">
-                                    <div class="w-8 h-8 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center text-xs font-black shadow-sm">${history.length - revIndex}</div>
-                                    <span class="text-sm font-bold text-slate-700">${record}</span>
-                                </div>
-                                <div class="flex items-center gap-1">
-                                    <button onclick="startEditRecord(${originalIndex}, '${record}')" class="p-2 text-slate-300 hover:text-blue-500 transition-colors"><i data-lucide="edit-2" class="w-4 h-4"></i></button>
-                                    <button onclick="deleteRecord(${originalIndex})" class="p-2 text-slate-300 hover:text-rose-500 transition-colors"><i data-lucide="trash-2" class="w-4 h-4"></i></button>
-                                </div>
-                            </div>
-                        `;
+                        list.innerHTML += `<div class="flex items-center justify-between p-6 bg-[#F7FAF9] rounded-[24px] border border-white group hover:bg-[#F0F6F5] transition-all"><div class="flex items-center gap-4"><div class="w-10 h-10 rounded-2xl bg-white text-[#2C5F56] flex items-center justify-center text-xs font-black shadow-sm">${history.length - revIndex}</div><span class="text-sm font-bold text-[#1A2E35] tracking-tight">${record}</span></div><div class="flex items-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity"><button onclick="startEditRecord(${originalIndex}, '${record}')" class="p-2.5 bg-white text-slate-300 hover:text-[#2C5F56] rounded-xl transition-colors"><i data-lucide="edit-2" class="w-4 h-4"></i></button><button onclick="deleteRecord(${originalIndex})" class="p-2.5 bg-white text-slate-300 hover:text-rose-500 rounded-xl transition-colors"><i data-lucide="trash-2" class="w-4 h-4"></i></button></div></div>`;
                     });
                 }
-                window.toggleHistoryModal(true);
-                lucide.createIcons();
+                window.toggleHistoryModal(true); lucide.createIcons();
             };
 
             window.startEditRecord = (index, currentText) => {
-                editingRecordIndex = index;
-                const dateMatch = currentText.match(/\d{4}-\d{2}-\d{2}/);
+                editingRecordIndex = index; const dateMatch = currentText.match(/\d{4}-\d{2}-\d{2}/);
                 if (dateMatch) document.getElementById('manual-date-input').value = dateMatch[0];
                 document.getElementById('btn-record-action').innerText = tDict[currentLang].btnUpdate;
                 document.getElementById('btn-record-cancel').classList.remove('hidden');
             };
 
-            window.cancelRecordEdit = () => {
-                editingRecordIndex = -1;
-                document.getElementById('manual-date-input').value = "";
-                document.getElementById('btn-record-action').innerText = tDict[currentLang].manualAdd;
-                document.getElementById('btn-record-cancel').classList.add('hidden');
-            };
+            window.cancelRecordEdit = () => { editingRecordIndex = -1; document.getElementById('manual-date-input').value = ""; document.getElementById('btn-record-action').innerText = tDict[currentLang].manualAdd; document.getElementById('btn-record-cancel').classList.add('hidden'); };
 
-            window.handleRecordAction = async () => {
-                if (editingRecordIndex >= 0) await updateManualRecord();
-                else await addManualRecord();
-            };
+            window.handleRecordAction = async () => { if (editingRecordIndex >= 0) await updateManualRecord(); else await addManualRecord(); };
 
             window.addManualRecord = async () => {
-                const dateVal = document.getElementById('manual-date-input').value;
-                if (!dateVal) return alert(tDict[currentLang].alertNoDate);
+                const dateVal = document.getElementById('manual-date-input').value; if (!dateVal) return;
                 const s = students.find(item => item.id === currentHistoryStudentId);
                 if (s) {
-                    const dateObj = new Date(dateVal.replace(/-/g, "/"));
-                    const dayName = tDict[currentLang].days[dateObj.getDay()];
+                    const dateObj = new Date(dateVal.replace(/-/g, "/")); const dayName = tDict[currentLang].days[dateObj.getDay()];
                     const formattedDate = `${dateVal} (${dayName})`;
-                    await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'students', currentHistoryStudentId), {
-                        usedLessons: s.usedLessons + 1,
-                        attendanceHistory: [...(s.attendanceHistory || []), formattedDate]
-                    });
+                    await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'students', currentHistoryStudentId), { usedLessons: s.usedLessons + 1, attendanceHistory: [...(s.attendanceHistory || []), formattedDate] });
                     document.getElementById('manual-date-input').value = "";
                 }
             };
 
             window.updateManualRecord = async () => {
-                const dateVal = document.getElementById('manual-date-input').value;
-                if (!dateVal) return alert(tDict[currentLang].alertNoDate);
+                const dateVal = document.getElementById('manual-date-input').value; if (!dateVal) return;
                 const s = students.find(item => item.id === currentHistoryStudentId);
                 if (s && editingRecordIndex >= 0) {
-                    const dateObj = new Date(dateVal.replace(/-/g, "/"));
-                    const dayName = tDict[currentLang].days[dateObj.getDay()];
+                    const dateObj = new Date(dateVal.replace(/-/g, "/")); const dayName = tDict[currentLang].days[dateObj.getDay()];
                     const formattedDate = `${dateVal} (${dayName})`;
-                    const newHistory = [...(s.attendanceHistory || [])];
-                    newHistory[editingRecordIndex] = formattedDate;
+                    const newHistory = [...(s.attendanceHistory || [])]; newHistory[editingRecordIndex] = formattedDate;
                     await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'students', currentHistoryStudentId), { attendanceHistory: newHistory });
                     window.cancelRecordEdit();
                 }
@@ -388,82 +422,48 @@
                 if (!confirm(tDict[currentLang].confirmDeleteRecord)) return;
                 const s = students.find(item => item.id === currentHistoryStudentId);
                 if (s) {
-                    const newHistory = [...(s.attendanceHistory || [])];
-                    newHistory.splice(index, 1);
-                    await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'students', currentHistoryStudentId), {
-                        usedLessons: Math.max(0, s.usedLessons - 1),
-                        attendanceHistory: newHistory
-                    });
+                    const newHistory = [...(s.attendanceHistory || [])]; newHistory.splice(index, 1);
+                    await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'students', currentHistoryStudentId), { usedLessons: Math.max(0, s.usedLessons - 1), attendanceHistory: newHistory });
                 }
             };
 
             window.openAddModal = () => {
-                document.getElementById('student-form').reset();
-                document.getElementById('input-id').value = "";
-                const sel = document.getElementById('input-teacher');
-                sel.innerHTML = teacherList.map(t => `<option value="${t}">${t}</option>`).join('');
-                if (!isAdmin) { sel.value = loggedUser; sel.disabled = true; }
-                else { sel.disabled = false; }
-                const ts = document.getElementById('input-total');
-                ts.innerHTML = [12,24,36,48,60,72,84,96,108,120,144].map(v => `<option value="${v}">${v} 节</option>`).join('');
-                document.getElementById('modal-title').innerText = tDict[currentLang].modalTitleAdd;
-                window.toggleModal(true);
+                document.getElementById('student-form').reset(); document.getElementById('input-id').value = "";
+                const sel = document.getElementById('input-teacher'); const placeholder = tDict[currentLang].placeholderTeacher;
+                sel.innerHTML = `<option value="" disabled selected>${placeholder}</option>` + teacherList.map(t => `<option value="${t}">${t}</option>`).join('');
+                if (!isAdmin) { sel.value = loggedUser; sel.disabled = true; } else { sel.value = ""; sel.disabled = false; }
+                const ts = document.getElementById('input-total'); ts.innerHTML = [12,24,36,48,60,72,84,96,108,120,144].map(v => `<option value="${v}">${v} 节</option>`).join('');
+                document.getElementById('modal-title').innerText = tDict[currentLang].modalTitleAdd; window.toggleModal(true);
             };
 
             window.openEditModal = (id) => {
-                const s = students.find(item => item.id === id);
-                document.getElementById('input-id').value = s.id;
-                document.getElementById('input-name').value = s.name;
-                document.getElementById('input-class').value = s.studentClass || "";
-                const sel = document.getElementById('input-teacher');
-                sel.innerHTML = teacherList.map(t => `<option value="${t}">${t}</option>`).join('');
-                sel.value = s.teacher;
-                sel.disabled = !isAdmin;
-                const ts = document.getElementById('input-total');
-                ts.innerHTML = [12,24,36,48,60,72,84,96,108,120,144].map(v => `<option value="${v}">${v} 节</option>`).join('');
-                ts.value = s.totalLessons;
-                document.getElementById('input-used').value = s.usedLessons;
-                document.getElementById('input-date').value = s.lastPaymentDate || "";
-                document.getElementById('modal-title').innerText = tDict[currentLang].modalTitleEdit;
-                window.toggleModal(true);
+                const s = students.find(item => item.id === id); document.getElementById('input-id').value = s.id;
+                document.getElementById('input-name').value = s.name; document.getElementById('input-class').value = s.studentClass || "";
+                const sel = document.getElementById('input-teacher'); sel.innerHTML = teacherList.map(t => `<option value="${t}">${t}</option>`).join('');
+                sel.value = s.teacher; sel.disabled = !isAdmin;
+                const ts = document.getElementById('input-total'); ts.innerHTML = [12,24,36,48,60,72,84,96,108,120,144].map(v => `<option value="${v}">${v} 节</option>`).join('');
+                ts.value = s.totalLessons; document.getElementById('input-used').value = s.usedLessons; document.getElementById('input-date').value = s.lastPaymentDate || "";
+                document.getElementById('modal-title').innerText = tDict[currentLang].modalTitleEdit; window.toggleModal(true);
             };
 
             document.getElementById('student-form').onsubmit = async (e) => {
-                e.preventDefault();
-                const id = document.getElementById('input-id').value;
-                const data = {
-                    name: document.getElementById('input-name').value,
-                    studentClass: document.getElementById('input-class').value,
-                    teacher: document.getElementById('input-teacher').value,
-                    totalLessons: parseInt(document.getElementById('input-total').value),
-                    usedLessons: parseInt(document.getElementById('input-used').value),
-                    lastPaymentDate: document.getElementById('input-date').value,
-                    updatedAt: serverTimestamp()
-                };
+                e.preventDefault(); const id = document.getElementById('input-id').value; const teacherVal = document.getElementById('input-teacher').value; if (!teacherVal) return;
+                const data = { name: document.getElementById('input-name').value, studentClass: document.getElementById('input-class').value, teacher: teacherVal, totalLessons: parseInt(document.getElementById('input-total').value), usedLessons: parseInt(document.getElementById('input-used').value), lastPaymentDate: document.getElementById('input-date').value, updatedAt: serverTimestamp() };
                 window.toggleModal(false);
                 if (id) await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'students', id), data);
-                else {
-                    data.attendanceHistory = [];
-                    await setDoc(doc(collection(db, 'artifacts', appId, 'public', 'data', 'students')), data);
-                }
+                else { data.attendanceHistory = []; await setDoc(doc(collection(db, 'artifacts', appId, 'public', 'data', 'students')), data); }
             };
 
             window.updateLesson = async (id) => {
                 const s = students.find(item => item.id === id);
                 if (s) {
-                    const now = new Date();
-                    const dayName = tDict[currentLang].days[now.getDay()];
-                    const ds = now.getFullYear() + '-' + String(now.getMonth()+1).padStart(2,'0') + '-' + String(now.getDate()).padStart(2,'0') + ` (${dayName}) ` + String(now.getHours()).padStart(2,'0') + ':' + String(now.getMinutes()).padStart(2,'0');
-                    await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'students', id), {
-                        usedLessons: s.usedLessons + 1,
-                        attendanceHistory: [...(s.attendanceHistory || []), ds]
-                    });
+                    const now = new Date(); const dayName = tDict[currentLang].days[now.getDay()];
+                    const ds = now.getFullYear() + '-' + String(now.getMonth()+1).padStart(2,'0') + '-' + String(now.getDate()).padStart(2,'0') + ` (${dayName})`;
+                    await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'students', id), { usedLessons: s.usedLessons + 1, attendanceHistory: [...(s.attendanceHistory || []), ds] });
                 }
             };
 
-            window.deleteStudent = async (id) => {
-                if (confirm(tDict[currentLang].confirmDelete)) await deleteDoc(doc(db, 'artifacts', appId, 'public', 'data', 'students', id));
-            };
+            window.deleteStudent = async (id) => { if (confirm(tDict[currentLang].confirmDelete)) await deleteDoc(doc(db, 'artifacts', appId, 'public', 'data', 'students', id)); };
 
             checkLogin();
         };
@@ -471,14 +471,14 @@
         const render = () => {
             const t = tDict[currentLang] || tDict['zh'];
             document.getElementById('login-title').innerText = t.loginTitle;
-            document.getElementById('login-subtitle').innerText = t.loginSubtitle;
             document.getElementById('login-username').placeholder = t.loginPlaceholder;
             document.getElementById('login-password').placeholder = t.loginPassPlaceholder;
+            document.getElementById('login-hint').innerText = t.loginHint;
             if (!loggedUser) return;
 
             document.getElementById('current-lang-text').innerText = currentLang.toUpperCase();
-            document.querySelectorAll('.lang-item').forEach(btn => {
-                btn.classList.toggle('active', btn.id === `item-lang-${currentLang}`);
+            document.querySelectorAll('.lang-item').forEach(btn => { 
+                btn.classList.toggle('active', btn.onclick.toString().includes(`'${currentLang}'`)); 
             });
 
             let baseFiltered = isAdmin ? (selectedTeacher === 'all' ? students : students.filter(s => s.teacher === selectedTeacher)) : students.filter(s => s.teacher === loggedUser);
@@ -493,47 +493,52 @@
                 return true;
             });
 
-            document.getElementById('page-title').innerText = t.title;
+            document.getElementById('page-title-main').innerText = t.dashboardTitle;
+            document.getElementById('page-subtitle').innerText = t.subtitle;
             document.getElementById('add-btn-text').innerText = t.addBtn;
+            document.getElementById('stat-total-label').innerText = t.statTotal;
+            document.getElementById('stat-warning-label').innerText = t.statWarning;
+            document.getElementById('stat-overdue-label').innerText = t.statOverdue;
+            
             document.getElementById('stat-total-val').innerText = classFiltered.length;
             document.getElementById('stat-warning-val').innerText = classFiltered.filter(s => { let r = s.totalLessons - s.usedLessons; return r > 0 && r <= 3; }).length;
             document.getElementById('stat-overdue-val').innerText = classFiltered.filter(s => (s.totalLessons - s.usedLessons) <= 0).length;
 
             if (isAdmin) {
                 const tc = document.getElementById('teacher-filter-container');
-                tc.innerHTML = `<button onclick="setTeacherFilter('all')" class="filter-chip px-4 py-2 rounded-xl text-[10px] font-black border ${selectedTeacher==='all'?'active':''} transition-all shadow-sm">${t.filterAll}</button>`;
-                teacherList.forEach(name => tc.innerHTML += `<button onclick="setTeacherFilter('${name}')" class="filter-chip px-4 py-2 rounded-xl text-[10px] font-black border ${selectedTeacher===name?'active':''} transition-all shadow-sm">${name}</button>`);
+                tc.innerHTML = `<button onclick="setTeacherFilter('all')" class="filter-chip px-5 py-2.5 rounded-2xl text-[10px] font-black border border-[#D1DEDC] bg-white shadow-sm transition-all ${selectedTeacher==='all'?'active':''}">${t.filterAll}</button>`;
+                teacherList.forEach(name => tc.innerHTML += `<button onclick="setTeacherFilter('${name}')" class="filter-chip px-5 py-2.5 rounded-2xl text-[10px] font-black border border-[#D1DEDC] bg-white shadow-sm transition-all ${selectedTeacher===name?'active':''}">${name}</button>`);
             }
 
             const cc = document.getElementById('class-filter-container');
-            cc.innerHTML = `<button onclick="setClassFilter('all')" class="filter-chip px-4 py-2 rounded-xl text-[10px] font-black border ${selectedClass==='all'?'active':''} transition-all shadow-sm">${t.filterAll}</button>`;
-            classes.forEach(c => cc.innerHTML += `<button onclick="setClassFilter('${c}')" class="filter-chip px-4 py-2 rounded-xl text-[10px] font-black border ${selectedClass===c?'active':''} transition-all shadow-sm">${c}</button>`);
+            cc.innerHTML = `<button onclick="setClassFilter('all')" class="filter-chip px-5 py-2.5 rounded-2xl text-[10px] font-black border border-[#D1DEDC] bg-white shadow-sm transition-all ${selectedClass==='all'?'active':''}">${t.filterAll}</button>`;
+            classes.forEach(c => cc.innerHTML += `<button onclick="setClassFilter('${c}')" class="filter-chip px-5 py-2.5 rounded-2xl text-[10px] font-black border border-[#D1DEDC] bg-white shadow-sm transition-all ${selectedClass===c?'active':''}">${c}</button>`);
 
             const sc = document.getElementById('status-filter-container');
             sc.innerHTML = `
-                <button onclick="setStatusFilter('all')" class="filter-chip px-4 py-2 rounded-xl text-[10px] font-black border ${selectedStatus==='all'?'active':''} transition-all shadow-sm">${t.filterAll}</button>
-                <button onclick="setStatusFilter('paid')" class="filter-chip px-4 py-2 rounded-xl text-[10px] font-black border ${selectedStatus==='paid'?'active':''} transition-all shadow-sm">${t.statusPaid}</button>
-                <button onclick="setStatusFilter('warning')" class="filter-chip px-4 py-2 rounded-xl text-[10px] font-black border ${selectedStatus==='warning'?'active':''} transition-all shadow-sm">${t.statusWarning}</button>
-                <button onclick="setStatusFilter('overdue')" class="filter-chip px-4 py-2 rounded-xl text-[10px] font-black border ${selectedStatus==='overdue'?'active':''} transition-all shadow-sm">${t.statusOverdue}</button>
+                <button onclick="setStatusFilter('all')" class="filter-chip px-6 py-3 rounded-full text-[10px] font-black border border-[#D1DEDC] bg-white shadow-sm transition-all ${selectedStatus==='all'?'active':''}">${t.filterAll}</button>
+                <button onclick="setStatusFilter('paid')" class="filter-chip px-6 py-3 rounded-full text-[10px] font-black border border-[#D1DEDC] bg-white shadow-sm transition-all ${selectedStatus==='paid'?'active':''}">${t.statusPaid}</button>
+                <button onclick="setStatusFilter('warning')" class="filter-chip px-6 py-3 rounded-full text-[10px] font-black border border-[#D1DEDC] bg-white shadow-sm transition-all ${selectedStatus==='warning'?'active':''}">${t.statusWarning}</button>
+                <button onclick="setStatusFilter('overdue')" class="filter-chip px-6 py-3 rounded-full text-[10px] font-black border border-[#D1DEDC] bg-white shadow-sm transition-all ${selectedStatus==='overdue'?'active':''}">${t.statusOverdue}</button>
             `;
 
-            document.getElementById('table-head-row').innerHTML = `<th class="px-4 py-4 min-w-[120px] w-40 text-[10px] font-black text-slate-400 uppercase tracking-widest">${t.thName}</th><th class="px-4 py-4 text-[10px] font-black text-slate-400 uppercase tracking-widest">${t.thTeacher}</th><th class="px-4 py-4 text-[10px] font-black text-slate-400 uppercase tracking-widest">${t.thClass}</th><th class="px-4 py-4 w-24 text-[10px] font-black text-slate-400 uppercase tracking-widest">${t.thProgress}</th><th class="px-4 py-4 text-[10px] font-black text-slate-400 uppercase tracking-widest">${t.thRemaining}</th><th class="px-4 py-4 text-[10px] font-black text-slate-400 uppercase tracking-widest">${t.thLastPay}</th><th class="px-4 py-4 text-[10px] font-black text-slate-400 uppercase tracking-widest">${t.thStatus}</th><th class="px-4 py-4 text-right w-20 text-[10px] font-black text-slate-400 uppercase tracking-widest">${t.thActions}</th>`;
+            document.getElementById('table-head-row').innerHTML = `<th class="px-8 py-6 min-w-[140px] w-48 text-[10px] font-black text-slate-400 uppercase tracking-widest">${t.thName}</th><th class="px-8 py-6 text-[10px] font-black text-slate-400 uppercase tracking-widest">${t.thTeacher}</th><th class="px-8 py-6 text-[10px] font-black text-slate-400 uppercase tracking-widest">${t.thClass}</th><th class="px-8 py-6 w-40 text-[10px] font-black text-slate-400 uppercase tracking-widest">${t.thProgress}</th><th class="px-8 py-6 text-[10px] font-black text-slate-400 uppercase tracking-widest">${t.thRemaining}</th><th class="px-8 py-6 text-[10px] font-black text-slate-400 uppercase tracking-widest text-center">${t.thLastPay}</th><th class="px-8 py-6 text-[10px] font-black text-slate-400 uppercase tracking-widest text-center">${t.thStatus}</th><th class="px-8 py-6 text-right w-24 text-[10px] font-black text-slate-400 uppercase tracking-widest">${t.thActions}</th>`;
 
             const tbody = document.getElementById('student-table-body');
             tbody.innerHTML = '';
             filtered.sort((a,b) => (a.totalLessons-a.usedLessons) - (b.totalLessons-b.usedLessons)).forEach(s => {
                 const rem = s.totalLessons - s.usedLessons;
-                const status = rem <= 0 ? {l:t.statusOverdue, c:"bg-rose-100 text-rose-700"} : (rem <= 3 ? {l:t.statusWarning, c:"bg-amber-100 text-amber-700"} : {l:t.statusPaid, c:"bg-emerald-100 text-emerald-700"});
+                const status = rem <= 0 ? {l:t.statusOverdue, c:"bg-rose-50 text-rose-500"} : (rem <= 3 ? {l:t.statusWarning, c:"bg-amber-50 text-amber-600"} : {l:t.statusPaid, c:"bg-[#F0F6F5] text-[#2C5F56]"});
                 tbody.innerHTML += `
-                    <tr class="hover:bg-slate-50 transition-colors">
-                        <td class="px-4 py-4"><div onclick="openHistoryModal('${s.id}')" class="font-bold text-blue-600 text-sm whitespace-normal break-words line-clamp-2 min-w-[120px] w-40 cursor-pointer flex items-center gap-1 hover:underline"><i data-lucide="calendar-clock" class="w-3 h-3 text-blue-300"></i> ${s.name}</div></td>
-                        <td class="px-4 py-4"><span class="bg-slate-100 px-2 py-1 rounded text-[10px] font-bold text-slate-500 uppercase tracking-wider">${s.teacher}</span></td>
-                        <td class="px-4 py-4 font-bold text-blue-600 text-[11px] uppercase whitespace-nowrap">${s.studentClass || '---'}</td>
-                        <td class="px-4 py-4 w-24"><div class="flex items-center gap-2"><span class="text-xs font-black ${rem<0?'text-rose-600':'text-slate-400'}">${s.usedLessons}</span><div class="w-10 h-2 bg-slate-100 rounded-full overflow-hidden shadow-inner"><div class="h-full ${rem<0?'bg-rose-600':(rem<=3?'bg-amber-500':'bg-blue-600')}" style="width:${Math.min((s.usedLessons/s.totalLessons)*100,100)}%"></div></div></div></td>
-                        <td class="px-4 py-4 font-black ${rem<0?'text-rose-600':'text-slate-800'} text-lg">${rem}</td>
-                        <td class="px-4 py-4 text-slate-500 text-xs font-medium">${s.lastPaymentDate || '---'}</td>
-                        <td class="px-4 py-4"><span class="px-2 py-1 rounded-full text-[10px] font-black border whitespace-nowrap shadow-sm ${status.c}">${status.l}</span></td>
-                        <td class="px-4 py-4 text-right whitespace-nowrap w-20"><div class="flex justify-end gap-1"><button onclick="updateLesson('${s.id}')" class="bg-blue-50 text-blue-600 text-[10px] font-bold px-2 py-1 rounded-lg border border-blue-100 active:scale-95 transition-all shadow-sm">${t.actionPlus}</button><button onclick="openEditModal('${s.id}')" class="p-1.5 text-slate-300 hover:text-blue-500 transition-colors"><i data-lucide="edit-3" class="w-4 h-4"></i></button><button onclick="deleteStudent('${s.id}')" class="p-1.5 text-rose-300 hover:text-rose-600 transition-colors"><i data-lucide="trash-2" class="w-4 h-4"></i></button></div></td>
+                    <tr class="table-row-modern transition-all duration-300">
+                        <td class="px-8 py-7"><div onclick="openHistoryModal('${s.id}')" class="font-extrabold text-[#1A2E35] text-sm cursor-pointer flex items-center gap-2 hover:text-[#2C5F56] transition-colors"><i data-lucide="calendar-check" class="w-4 h-4 text-slate-200"></i> ${s.name}</div></td>
+                        <td class="px-8 py-7"><span class="bg-[#F0F6F5] text-[#2C5F56] px-4 py-2 rounded-2xl text-[9px] font-black uppercase tracking-wider shadow-sm border border-white">${s.teacher}</span></td>
+                        <td class="px-8 py-7 font-bold text-slate-400 text-[11px] uppercase whitespace-nowrap tracking-wide">${s.studentClass || '---'}</td>
+                        <td class="px-8 py-7 w-40"><div class="flex items-center gap-3"><span class="text-xs font-black ${rem<0?'text-rose-500':'text-slate-400'}">${s.usedLessons}</span><div class="w-20 h-3 bg-slate-100 rounded-full overflow-hidden shadow-inner"><div class="h-full rounded-full ${rem<0?'bg-rose-600':(rem<=3?'bg-[#FFC554]':'bg-[#2C5F56]')}" style="width:${Math.min((s.usedLessons/s.totalLessons)*100,100)}%"></div></div></div></td>
+                        <td class="px-8 py-7 font-[900] ${rem<0?'text-rose-500':'text-[#1A2E35]'} text-xl tracking-tight">${rem}</td>
+                        <td class="px-8 py-7 text-slate-400 text-xs font-bold text-center italic">${s.lastPaymentDate || '---'}</td>
+                        <td class="px-8 py-7 text-center"><span class="px-4 py-2 rounded-full text-[9px] font-black border border-white whitespace-nowrap shadow-sm uppercase tracking-widest ${status.c}">${status.l}</span></td>
+                        <td class="px-8 py-7 text-right whitespace-nowrap w-24"><div class="flex justify-end gap-2"><button onclick="updateLesson('${s.id}')" class="bg-[#2C5F56] text-white text-[9px] font-black px-4 py-2.5 rounded-full active:scale-95 transition-all shadow-lg shadow-[#2C5F56]/10 uppercase">${t.actionPlus}</button><button onclick="openEditModal('${s.id}')" class="p-2.5 bg-white text-slate-200 hover:text-[#2C5F56] rounded-xl transition-all shadow-sm border border-slate-50"><i data-lucide="edit-3" class="w-4 h-4"></i></button></div></td>
                     </tr>
                 `;
             });
@@ -551,7 +556,6 @@
             document.getElementById('filter-label').innerText = t.filterLabel;
             document.getElementById('filter-class-label').innerText = t.filterClassLabel;
             document.getElementById('filter-status-label').innerText = t.filterStatusLabel;
-
             lucide.createIcons();
         };
 
