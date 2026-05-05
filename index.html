@@ -176,18 +176,16 @@
         import { getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
         import { getFirestore, doc, setDoc, collection, onSnapshot, updateDoc, deleteDoc, query, enableIndexedDbPersistence, serverTimestamp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
-        // --- Firebase 配置区 ---
-        // 如果您在 GitHub Pages 上运行，请将下面的 manualConfig 替换为您自己的 Firebase 项目配置
-        const manualConfig = null; 
-        /* 示例:
-        const manualConfig = {
-            apiKey: "AIzaSyDsuB8A4RBJz3PlDvzAEhKA3FEDoDmFfh8",
-            authDomain: "studenttracker-a8384.firebaseapp.com",
-            projectId: "studenttracker-a8384",
-            storageBucket: "studenttracker-a8384.firebasestorage.app",
-            messagingSenderId: "181463996376",
-            appId: "1:181463996376:web:77b32e8a82a63c5eb004ad",
-            measurementId: "G-NNHPEQED1F"
+        
+const firebaseConfig = {
+  apiKey: "AIzaSyDsuB8A4RBJz3PlDvzAEhKA3FEDoDmFfh8",
+  authDomain: "studenttracker-a8384.firebaseapp.com",
+  projectId: "studenttracker-a8384",
+  storageBucket: "studenttracker-a8384.firebasestorage.app",
+  messagingSenderId: "181463996376",
+  appId: "1:181463996376:web:77b32e8a82a63c5eb004ad",
+  measurementId: "G-NNHPEQED1F"
+};
         };
         */
 
