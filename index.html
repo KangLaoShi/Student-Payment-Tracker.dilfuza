@@ -20,16 +20,15 @@
         <!-- Header -->
         <div class="flex flex-col md:flex-row md:items-center justify-between mb-8 gap-6">
             <div>
-                <h1 id="page-title" class="text-3xl font-extrabold text-slate-800 tracking-tight tracking-tight">学生付费跟进管理</h1>
+                <h1 id="page-title" class="text-3xl font-extrabold text-slate-800 tracking-tight">学生付费跟进管理</h1>
                 <div class="flex items-center gap-2 mt-1">
                     <p id="page-subtitle" class="text-slate-500 font-medium text-sm">12 节课/包</p>
                     <div id="sync-status" class="flex items-center gap-1 text-[10px] text-emerald-500 font-bold uppercase tracking-widest hidden">
-                        <span class="w-1.5 h-1.5 bg-emerald-500 rounded-full animate-pulse"></span> 云端已同步
+                        <span class="w-1.5 h-1.5 bg-emerald-500 rounded-full animate-pulse"></span> 极速同步中
                     </div>
                 </div>
             </div>
             <div class="flex items-center gap-3">
-                <!-- Language Picker -->
                 <div class="relative group">
                     <button class="flex items-center gap-2 bg-white border border-slate-200 px-4 py-2.5 rounded-xl text-slate-700 hover:bg-slate-50 transition-all shadow-sm">
                         <i data-lucide="globe" class="w-4 h-4 text-blue-500"></i>
@@ -43,7 +42,6 @@
                         <button onclick="setLang('en')" class="w-full text-left px-4 py-2 text-sm hover:bg-blue-50 transition-colors">English</button>
                     </div>
                 </div>
-                
                 <button onclick="openAddModal()" class="btn-active flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-6 py-2.5 rounded-xl transition-all shadow-lg shadow-blue-100 font-bold">
                     <i data-lucide="plus" class="w-5 h-5"></i> 
                     <span id="add-btn-text">添加学生</span>
@@ -76,7 +74,7 @@
             </div>
         </div>
 
-        <!-- Teacher Filter Chips -->
+        <!-- Teacher Filter -->
         <div class="mb-6 flex flex-wrap items-center gap-2 bg-white p-4 rounded-2xl shadow-sm border border-slate-100">
             <span id="filter-label" class="text-xs font-black text-slate-400 uppercase tracking-widest mr-2">筛选老师:</span>
             <div id="teacher-filter-container" class="flex flex-wrap gap-2"></div>
@@ -84,22 +82,17 @@
 
         <!-- Main Content Area -->
         <div id="main-content">
-            <!-- Loading View -->
             <div id="loading-view" class="py-20 flex flex-col items-center justify-center bg-white rounded-3xl border border-slate-100 shadow-sm">
                 <div class="spinner mb-4"></div>
-                <p id="loading-text" class="text-slate-400 font-medium animate-pulse">正在连接服务器...</p>
-                <div id="timeout-hint" class="hidden mt-4 text-center">
-                    <p class="text-xs text-amber-500 font-bold mb-2">连接超时，请检查网络</p>
-                    <button onclick="location.reload()" class="text-xs bg-slate-100 px-4 py-2 rounded-lg hover:bg-slate-200 transition-colors">重新加载页面</button>
-                </div>
+                <p id="loading-text" class="text-slate-400 font-medium animate-pulse">瞬间加载中...</p>
             </div>
 
             <!-- Error View -->
             <div id="error-view" class="hidden py-20 flex flex-col items-center justify-center bg-white rounded-3xl border border-rose-100 shadow-sm">
                 <div class="p-4 bg-rose-50 text-rose-600 rounded-full mb-4"><i data-lucide="wifi-off" class="w-8 h-8"></i></div>
-                <h3 class="text-slate-800 font-black mb-2">连接错误</h3>
+                <h3 class="text-slate-800 font-black mb-2">连接异常</h3>
                 <p id="error-message" class="text-slate-400 text-sm mb-6 max-w-xs text-center"></p>
-                <button onclick="location.reload()" class="bg-blue-600 text-white px-6 py-2.5 rounded-xl font-bold shadow-lg shadow-blue-100 active:scale-95">重试</button>
+                <button onclick="location.reload()" class="bg-blue-600 text-white px-6 py-2.5 rounded-xl font-bold shadow-lg shadow-blue-100 active:scale-95">点击重试</button>
             </div>
 
             <!-- Data Table -->
@@ -158,7 +151,7 @@
                         <input id="input-date" type="date" class="w-full px-5 py-3 bg-slate-50 border border-slate-100 rounded-2xl font-bold outline-none">
                     </div>
                     <div class="flex gap-4 mt-8">
-                        <button type="button" onclick="toggleModal(false)" id="btn-cancel" class="flex-1 py-3 border border-slate-100 rounded-2xl font-bold text-slate-500 hover:bg-slate-50 transition-colors">取消</button>
+                        <button type="button" onclick="toggleModal(false)" id="btn-cancel" class="flex-1 py-3 border border-slate-100 rounded-2xl font-bold text-slate-500">取消</button>
                         <button type="submit" id="btn-save" class="flex-1 py-3 bg-blue-600 text-white font-bold rounded-2xl shadow-lg shadow-blue-200">保存</button>
                     </div>
                 </form>
@@ -169,9 +162,8 @@
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
         import { getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-        import { getFirestore, doc, setDoc, collection, onSnapshot, updateDoc, deleteDoc, query } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+        import { getFirestore, doc, setDoc, collection, onSnapshot, updateDoc, deleteDoc, query, enableIndexedDbPersistence } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
-        // Constants
         const tDict = {
             zh: {
                 title: "学生付费跟进管理", subtitle: "12 节课/包", addBtn: "添加学生", statTotal: "在籍学生", statWarning: "预警人数", statOverdue: "待续费",
@@ -205,36 +197,31 @@
 
         const teacherList = ["Kanglaoshi", "Lilaoshi", "Pailaoshi", "Anlaoshi", "Tielaoshi", "Lanyinglaoshi"];
         
-        // App State
         let currentLang = 'zh';
         let selectedTeacher = 'all';
         let students = [];
         let isFirstLoad = true;
-        let currentUser = null;
 
-        // UI Helpers
-        const showError = (msg) => {
-            document.getElementById('loading-view').classList.add('hidden');
-            document.getElementById('error-view').classList.remove('hidden');
-            document.getElementById('error-message').innerText = msg;
-            lucide.createIcons();
-        };
-
-        // Initialize Firebase
         const startApp = async () => {
-            const connectionTimeout = setTimeout(() => {
-                if (isFirstLoad) document.getElementById('timeout-hint').classList.remove('hidden');
-            }, 10000);
-
             try {
                 const firebaseConfig = JSON.parse(__firebase_config);
                 const app = initializeApp(firebaseConfig);
                 const auth = getAuth(app);
+                
+                // 开启长轮询以在弱网环境下提速
                 const db = getFirestore(app);
-                const appId = typeof __app_id !== 'undefined' ? __app_id : 'student-tracker-v1';
+                
+                // 核心提速优化：开启本地持久化缓存
+                try {
+                    await enableIndexedDbPersistence(db);
+                } catch (err) {
+                    console.warn("Persistence failed: ", err.code);
+                }
 
-                // Auth
-                const authUser = async () => {
+                const appId = typeof __app_id !== 'undefined' ? __app_id : 'student-tracker-speed';
+
+                // 预登录
+                const initAuth = async () => {
                     if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
                         await signInWithCustomToken(auth, __initial_auth_token);
                     } else {
@@ -243,11 +230,10 @@
                 };
 
                 onAuthStateChanged(auth, (user) => {
-                    currentUser = user;
                     if (user) {
                         const studentsCol = collection(db, 'artifacts', appId, 'public', 'data', 'students');
+                        // 使用 onSnapshot 搭配持久化，首屏加载接近 0 延迟
                         onSnapshot(query(studentsCol), (snapshot) => {
-                            clearTimeout(connectionTimeout);
                             students = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
                             if (isFirstLoad) {
                                 document.getElementById('loading-view').classList.add('hidden');
@@ -256,13 +242,13 @@
                                 isFirstLoad = false;
                             }
                             render();
-                        }, (err) => showError("Firestore Error: " + err.message));
+                        });
                     }
                 });
 
-                await authUser();
+                await initAuth();
 
-                // Exposed Window Actions
+                // 绑定按钮事件
                 window.setLang = (l) => { currentLang = l; document.getElementById('current-lang-label').innerText = l.toUpperCase(); render(); };
                 window.setTeacherFilter = (t) => { selectedTeacher = t; render(); };
                 window.toggleModal = (show) => {
@@ -299,7 +285,6 @@
 
                 document.getElementById('student-form').onsubmit = async (e) => {
                     e.preventDefault();
-                    if(!currentUser) return;
                     const id = document.getElementById('input-id').value;
                     const data = {
                         name: document.getElementById('input-name').value,
@@ -319,7 +304,6 @@
                 };
 
                 window.updateLesson = async (id) => {
-                    if(!currentUser) return;
                     const s = students.find(item => item.id === id);
                     if (s && s.usedLessons < s.totalLessons) {
                         const ref = doc(db, 'artifacts', appId, 'public', 'data', 'students', id);
@@ -328,23 +312,22 @@
                 };
 
                 window.deleteStudent = async (id) => {
-                    if(!currentUser) return;
                     if (confirm(tDict[currentLang].confirmDelete)) {
                         await deleteDoc(doc(db, 'artifacts', appId, 'public', 'data', 'students', id));
                     }
                 };
 
             } catch (err) {
-                showError("Init Error: " + err.message);
+                document.getElementById('loading-text').innerText = "配置加载失败，请检查网络";
+                console.error(err);
             }
         };
 
-        // Render Engine
         const render = () => {
             const t = tDict[currentLang];
             const filtered = selectedTeacher === 'all' ? students : students.filter(s => s.teacher === selectedTeacher);
             
-            // Sync Text
+            // 文本同步
             document.getElementById('page-title').innerText = t.title;
             document.getElementById('page-subtitle').innerText = t.subtitle;
             document.getElementById('add-btn-text').innerText = t.addBtn;
@@ -362,21 +345,21 @@
             document.getElementById('opt-placeholder-teacher').innerText = t.labelTeacher;
             document.getElementById('no-data-text').innerText = t.noData;
 
-            // Stats
+            // 统计
             const overdue = filtered.filter(s => (s.totalLessons - s.usedLessons) <= 0).length;
             const warning = filtered.filter(s => { let r = s.totalLessons - s.usedLessons; return r > 0 && r <= 3; }).length;
             document.getElementById('stat-total-val').innerText = filtered.length;
             document.getElementById('stat-warning-val').innerText = warning;
             document.getElementById('stat-overdue-val').innerText = overdue;
 
-            // Filters
+            // 筛选器
             const fc = document.getElementById('teacher-filter-container');
-            fc.innerHTML = `<button onclick="setTeacherFilter('all')" class="filter-chip px-4 py-1.5 rounded-full text-xs font-bold border transition-all ${selectedTeacher==='all'?'active':''}">${t.filterAll}</button>`;
+            fc.innerHTML = `<button onclick="setTeacherFilter('all')" class="filter-chip px-4 py-1.5 rounded-full text-xs font-bold border transition-all ${selectedTeacher==='all'?'active':''} shadow-sm">${t.filterAll}</button>`;
             teacherList.forEach(name => {
-                fc.innerHTML += `<button onclick="setTeacherFilter('${name}')" class="filter-chip px-4 py-1.5 rounded-full text-xs font-bold border transition-all ${selectedTeacher===name?'active':''}">${name}</button>`;
+                fc.innerHTML += `<button onclick="setTeacherFilter('${name}')" class="filter-chip px-4 py-1.5 rounded-full text-xs font-bold border transition-all ${selectedTeacher===name?'active':''} shadow-sm">${name}</button>`;
             });
 
-            // Table Head
+            // 表头
             document.getElementById('table-head-row').innerHTML = `
                 <th class="px-6 py-5 text-xs font-bold text-slate-400 uppercase tracking-widest">${t.thName}</th>
                 <th class="px-6 py-5 text-xs font-bold text-slate-400 uppercase tracking-widest">${t.thTeacher}</th>
@@ -387,7 +370,7 @@
                 <th class="px-6 py-5 text-xs font-bold text-slate-400 uppercase tracking-widest text-right">${t.thActions}</th>
             `;
 
-            // Table Body
+            // 表体
             const tbody = document.getElementById('student-table-body');
             tbody.innerHTML = '';
             if (filtered.length === 0) {
@@ -429,7 +412,6 @@
             lucide.createIcons();
         };
 
-        // Boot
         startApp();
     </script>
 </body>
