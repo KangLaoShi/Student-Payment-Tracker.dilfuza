@@ -12,7 +12,6 @@
         .filter-chip.active { background-color: #2563eb; color: white; border-color: #2563eb; }
         .spinner { border: 3px solid rgba(0, 0, 0, 0.1); width: 32px; height: 32px; border-radius: 50%; border-left-color: #2563eb; animation: spin 1s linear infinite; }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-        /* 交互反馈动画 */
         .btn-active:active { transform: scale(0.95); transition: transform 0.1s; }
     </style>
 </head>
@@ -21,7 +20,7 @@
         <!-- Header -->
         <div class="flex flex-col md:flex-row md:items-center justify-between mb-8 gap-6">
             <div>
-                <h1 id="page-title" class="text-3xl font-extrabold text-slate-800 tracking-tight">学生付费跟进管理</h1>
+                <h1 id="page-title" class="text-3xl font-extrabold text-slate-800 tracking-tight tracking-tight">学生付费跟进管理</h1>
                 <div class="flex items-center gap-2 mt-1">
                     <p id="page-subtitle" class="text-slate-500 font-medium text-sm">12 节课/包</p>
                     <div id="sync-status" class="flex items-center gap-1 text-[10px] text-emerald-500 font-bold uppercase tracking-widest hidden">
@@ -83,13 +82,27 @@
             <div id="teacher-filter-container" class="flex flex-wrap gap-2"></div>
         </div>
 
-        <!-- Loading / Data Container -->
+        <!-- Main Content Area -->
         <div id="main-content">
-            <div id="loading-view" class="py-20 flex flex-col items-center justify-center">
+            <!-- Loading View -->
+            <div id="loading-view" class="py-20 flex flex-col items-center justify-center bg-white rounded-3xl border border-slate-100 shadow-sm">
                 <div class="spinner mb-4"></div>
-                <p class="text-slate-400 font-medium animate-pulse">正在连接服务器...</p>
+                <p id="loading-text" class="text-slate-400 font-medium animate-pulse">正在连接服务器...</p>
+                <div id="timeout-hint" class="hidden mt-4 text-center">
+                    <p class="text-xs text-amber-500 font-bold mb-2">连接超时，请检查网络</p>
+                    <button onclick="location.reload()" class="text-xs bg-slate-100 px-4 py-2 rounded-lg hover:bg-slate-200 transition-colors">重新加载页面</button>
+                </div>
             </div>
 
+            <!-- Error View -->
+            <div id="error-view" class="hidden py-20 flex flex-col items-center justify-center bg-white rounded-3xl border border-rose-100 shadow-sm">
+                <div class="p-4 bg-rose-50 text-rose-600 rounded-full mb-4"><i data-lucide="wifi-off" class="w-8 h-8"></i></div>
+                <h3 class="text-slate-800 font-black mb-2">连接错误</h3>
+                <p id="error-message" class="text-slate-400 text-sm mb-6 max-w-xs text-center"></p>
+                <button onclick="location.reload()" class="bg-blue-600 text-white px-6 py-2.5 rounded-xl font-bold shadow-lg shadow-blue-100 active:scale-95">重试</button>
+            </div>
+
+            <!-- Data Table -->
             <div id="table-container" class="bg-white rounded-3xl shadow-sm border border-slate-100 overflow-hidden hidden">
                 <div class="overflow-x-auto">
                     <table class="w-full text-left">
@@ -133,20 +146,20 @@
                     <div class="grid grid-cols-2 gap-4">
                         <div>
                             <label id="label-total" class="block text-xs font-black text-slate-400 uppercase mb-2">总量</label>
-                            <input id="input-total" type="number" value="12" required class="w-full px-5 py-3 bg-slate-50 border border-slate-100 rounded-2xl font-bold outline-none focus:border-blue-500">
+                            <input id="input-total" type="number" value="12" required class="w-full px-5 py-3 bg-slate-50 border border-slate-100 rounded-2xl font-bold outline-none">
                         </div>
                         <div>
                             <label id="label-used" class="block text-xs font-black text-slate-400 uppercase mb-2">已上</label>
-                            <input id="input-used" type="number" value="0" required class="w-full px-5 py-3 bg-slate-50 border border-slate-100 rounded-2xl font-bold outline-none focus:border-blue-500">
+                            <input id="input-used" type="number" value="0" required class="w-full px-5 py-3 bg-slate-50 border border-slate-100 rounded-2xl font-bold outline-none">
                         </div>
                     </div>
                     <div>
                         <label id="label-date" class="block text-xs font-black text-slate-400 uppercase mb-2">付费日期</label>
-                        <input id="input-date" type="date" class="w-full px-5 py-3 bg-slate-50 border border-slate-100 rounded-2xl font-bold outline-none focus:border-blue-500">
+                        <input id="input-date" type="date" class="w-full px-5 py-3 bg-slate-50 border border-slate-100 rounded-2xl font-bold outline-none">
                     </div>
                     <div class="flex gap-4 mt-8">
                         <button type="button" onclick="toggleModal(false)" id="btn-cancel" class="flex-1 py-3 border border-slate-100 rounded-2xl font-bold text-slate-500 hover:bg-slate-50 transition-colors">取消</button>
-                        <button type="submit" id="btn-save" class="flex-1 py-3 bg-blue-600 text-white font-bold rounded-2xl shadow-lg shadow-blue-200 hover:bg-blue-700 transition-all">保存</button>
+                        <button type="submit" id="btn-save" class="flex-1 py-3 bg-blue-600 text-white font-bold rounded-2xl shadow-lg shadow-blue-200">保存</button>
                     </div>
                 </form>
             </div>
@@ -156,14 +169,9 @@
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
         import { getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-        import { getFirestore, doc, setDoc, getDoc, collection, onSnapshot, updateDoc, deleteDoc, query } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+        import { getFirestore, doc, setDoc, collection, onSnapshot, updateDoc, deleteDoc, query } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
-        const firebaseConfig = JSON.parse(__firebase_config);
-        const app = initializeApp(firebaseConfig);
-        const auth = getAuth(app);
-        const db = getFirestore(app);
-        const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-tracker';
-
+        // Constants
         const tDict = {
             zh: {
                 title: "学生付费跟进管理", subtitle: "12 节课/包", addBtn: "添加学生", statTotal: "在籍学生", statWarning: "预警人数", statOverdue: "待续费",
@@ -187,7 +195,7 @@
                 noData: "Нет записей", confirmDelete: "Удалить?", filterAll: "Все", filterLabel: "Учитель:", actionPlus: "+1 урок"
             },
             en: {
-                title: "Payment Tracker", subtitle: "12 lessons/pack", addBtn: "Add Student", statTotal: "Total Students", statWarning: "Warning", statOverdue: "Payment Due",
+                title: "Payment Tracker", subtitle: "12 lessons/pack", addBtn: "Add Student", statTotal: "Active Students", statWarning: "Warning", statOverdue: "Payment Due",
                 thName: "Name", thTeacher: "Teacher", thProgress: "Progress", thRemaining: "Left", thLastPay: "Payment Date", thStatus: "Status", thActions: "Actions",
                 statusPaid: "Paid", statusWarning: "Warning", statusOverdue: "Overdue", modalTitleAdd: "Add Student", modalTitleEdit: "Edit Student", labelName: "Name", 
                 labelTeacher: "Teacher", labelTotal: "Total", labelUsed: "Used", labelPayDate: "Payment Date", btnCancel: "Cancel", btnSave: "Save", 
@@ -196,115 +204,164 @@
         };
 
         const teacherList = ["Kanglaoshi", "Lilaoshi", "Pailaoshi", "Anlaoshi", "Tielaoshi", "Lanyinglaoshi"];
+        
+        // App State
         let currentLang = 'zh';
         let selectedTeacher = 'all';
         let students = [];
         let isFirstLoad = true;
+        let currentUser = null;
 
-        // --- Firebase Init ---
-        const init = async () => {
-            if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
-                await signInWithCustomToken(auth, __initial_auth_token);
-            } else {
-                await signInAnonymously(auth);
-            }
+        // UI Helpers
+        const showError = (msg) => {
+            document.getElementById('loading-view').classList.add('hidden');
+            document.getElementById('error-view').classList.remove('hidden');
+            document.getElementById('error-message').innerText = msg;
+            lucide.createIcons();
         };
 
-        onAuthStateChanged(auth, (user) => {
-            if (user) {
-                const studentsCol = collection(db, 'artifacts', appId, 'public', 'data', 'students');
-                // Firestore onSnapshot 默认带有延迟补偿 (Latency Compensation)
-                // 即：本地修改会立即触发快照回调，无需等待服务器返回
-                onSnapshot(query(studentsCol), (snapshot) => {
-                    students = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-                    if (isFirstLoad) {
-                        document.getElementById('loading-view').classList.add('hidden');
-                        document.getElementById('table-container').classList.remove('hidden');
-                        document.getElementById('sync-status').classList.remove('hidden');
-                        isFirstLoad = false;
+        // Initialize Firebase
+        const startApp = async () => {
+            const connectionTimeout = setTimeout(() => {
+                if (isFirstLoad) document.getElementById('timeout-hint').classList.remove('hidden');
+            }, 10000);
+
+            try {
+                const firebaseConfig = JSON.parse(__firebase_config);
+                const app = initializeApp(firebaseConfig);
+                const auth = getAuth(app);
+                const db = getFirestore(app);
+                const appId = typeof __app_id !== 'undefined' ? __app_id : 'student-tracker-v1';
+
+                // Auth
+                const authUser = async () => {
+                    if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
+                        await signInWithCustomToken(auth, __initial_auth_token);
+                    } else {
+                        await signInAnonymously(auth);
                     }
-                    render();
-                }, (err) => console.error(err));
+                };
+
+                onAuthStateChanged(auth, (user) => {
+                    currentUser = user;
+                    if (user) {
+                        const studentsCol = collection(db, 'artifacts', appId, 'public', 'data', 'students');
+                        onSnapshot(query(studentsCol), (snapshot) => {
+                            clearTimeout(connectionTimeout);
+                            students = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+                            if (isFirstLoad) {
+                                document.getElementById('loading-view').classList.add('hidden');
+                                document.getElementById('table-container').classList.remove('hidden');
+                                document.getElementById('sync-status').classList.remove('hidden');
+                                isFirstLoad = false;
+                            }
+                            render();
+                        }, (err) => showError("Firestore Error: " + err.message));
+                    }
+                });
+
+                await authUser();
+
+                // Exposed Window Actions
+                window.setLang = (l) => { currentLang = l; document.getElementById('current-lang-label').innerText = l.toUpperCase(); render(); };
+                window.setTeacherFilter = (t) => { selectedTeacher = t; render(); };
+                window.toggleModal = (show) => {
+                    const overlay = document.getElementById('modal-overlay');
+                    const box = document.getElementById('modal-box');
+                    if(show) {
+                        overlay.style.display = 'flex';
+                        setTimeout(() => box.style.transform = 'scale(1)', 10);
+                    } else {
+                        box.style.transform = 'scale(0.95)';
+                        setTimeout(() => overlay.style.display = 'none', 150);
+                    }
+                };
+
+                window.openAddModal = () => {
+                    document.getElementById('student-form').reset();
+                    document.getElementById('input-id').value = "";
+                    document.getElementById('modal-title').innerText = tDict[currentLang].modalTitleAdd;
+                    window.toggleModal(true);
+                };
+
+                window.openEditModal = (id) => {
+                    const s = students.find(item => item.id === id);
+                    if (!s) return;
+                    document.getElementById('input-id').value = s.id;
+                    document.getElementById('input-name').value = s.name;
+                    document.getElementById('input-teacher').value = s.teacher;
+                    document.getElementById('input-total').value = s.totalLessons;
+                    document.getElementById('input-used').value = s.usedLessons;
+                    document.getElementById('input-date').value = s.lastPaymentDate || "";
+                    document.getElementById('modal-title').innerText = tDict[currentLang].modalTitleEdit;
+                    window.toggleModal(true);
+                };
+
+                document.getElementById('student-form').onsubmit = async (e) => {
+                    e.preventDefault();
+                    if(!currentUser) return;
+                    const id = document.getElementById('input-id').value;
+                    const data = {
+                        name: document.getElementById('input-name').value,
+                        teacher: document.getElementById('input-teacher').value,
+                        totalLessons: parseInt(document.getElementById('input-total').value),
+                        usedLessons: parseInt(document.getElementById('input-used').value),
+                        lastPaymentDate: document.getElementById('input-date').value,
+                        updatedAt: Date.now()
+                    };
+                    window.toggleModal(false);
+                    const studentsCol = collection(db, 'artifacts', appId, 'public', 'data', 'students');
+                    if (id) {
+                        await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'students', id), data);
+                    } else {
+                        await setDoc(doc(studentsCol), data);
+                    }
+                };
+
+                window.updateLesson = async (id) => {
+                    if(!currentUser) return;
+                    const s = students.find(item => item.id === id);
+                    if (s && s.usedLessons < s.totalLessons) {
+                        const ref = doc(db, 'artifacts', appId, 'public', 'data', 'students', id);
+                        await updateDoc(ref, { usedLessons: s.usedLessons + 1, updatedAt: Date.now() });
+                    }
+                };
+
+                window.deleteStudent = async (id) => {
+                    if(!currentUser) return;
+                    if (confirm(tDict[currentLang].confirmDelete)) {
+                        await deleteDoc(doc(db, 'artifacts', appId, 'public', 'data', 'students', id));
+                    }
+                };
+
+            } catch (err) {
+                showError("Init Error: " + err.message);
             }
-        });
-
-        // --- Logic & Optimistic UI ---
-        window.setLang = (l) => { currentLang = l; document.getElementById('current-lang-label').innerText = l.toUpperCase(); render(); };
-        window.setTeacherFilter = (t) => { selectedTeacher = t; render(); };
-        window.toggleModal = (show) => {
-            const overlay = document.getElementById('modal-overlay');
-            const box = document.getElementById('modal-box');
-            if(show) {
-                overlay.style.display = 'flex';
-                setTimeout(() => box.style.transform = 'scale(1)', 10);
-            } else {
-                box.style.transform = 'scale(0.95)';
-                setTimeout(() => overlay.style.display = 'none', 150);
-            }
         };
 
-        window.openAddModal = () => {
-            document.getElementById('student-form').reset();
-            document.getElementById('input-id').value = "";
-            document.getElementById('modal-title').innerText = tDict[currentLang].modalTitleAdd;
-            window.toggleModal(true);
-        };
-
-        window.openEditModal = (id) => {
-            const s = students.find(item => item.id === id);
-            if (!s) return;
-            document.getElementById('input-id').value = s.id;
-            document.getElementById('input-name').value = s.name;
-            document.getElementById('input-teacher').value = s.teacher;
-            document.getElementById('input-total').value = s.totalLessons;
-            document.getElementById('input-used').value = s.usedLessons;
-            document.getElementById('input-date').value = s.lastPaymentDate || "";
-            document.getElementById('modal-title').innerText = tDict[currentLang].modalTitleEdit;
-            window.toggleModal(true);
-        };
-
-        document.getElementById('student-form').onsubmit = async (e) => {
-            e.preventDefault();
-            const id = document.getElementById('input-id').value;
-            const data = {
-                name: document.getElementById('input-name').value,
-                teacher: document.getElementById('input-teacher').value,
-                totalLessons: parseInt(document.getElementById('input-total').value),
-                usedLessons: parseInt(document.getElementById('input-used').value),
-                lastPaymentDate: document.getElementById('input-date').value,
-                updatedAt: Date.now()
-            };
-            window.toggleModal(false);
-            
-            // 乐观更新：Firestore 会立即触发 onSnapshot，所以这里无需手动操作数组
-            const col = collection(db, 'artifacts', appId, 'public', 'data', 'students');
-            if (id) {
-                await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'students', id), data);
-            } else {
-                await setDoc(doc(col), data);
-            }
-        };
-
-        window.updateLesson = async (id) => {
-            const s = students.find(item => item.id === id);
-            if (s && s.usedLessons < s.totalLessons) {
-                // 点击瞬间 Firestore 就会触发本地视图更新
-                const ref = doc(db, 'artifacts', appId, 'public', 'data', 'students', id);
-                await updateDoc(ref, { usedLessons: s.usedLessons + 1, updatedAt: Date.now() });
-            }
-        };
-
-        window.deleteStudent = async (id) => {
-            if (confirm(tDict[currentLang].confirmDelete)) {
-                await deleteDoc(doc(db, 'artifacts', appId, 'public', 'data', 'students', id));
-            }
-        };
-
-        // --- Render ---
+        // Render Engine
         const render = () => {
             const t = tDict[currentLang];
             const filtered = selectedTeacher === 'all' ? students : students.filter(s => s.teacher === selectedTeacher);
             
+            // Sync Text
+            document.getElementById('page-title').innerText = t.title;
+            document.getElementById('page-subtitle').innerText = t.subtitle;
+            document.getElementById('add-btn-text').innerText = t.addBtn;
+            document.getElementById('stat-total-label').innerText = t.statTotal;
+            document.getElementById('stat-warning-label').innerText = t.statWarning;
+            document.getElementById('stat-overdue-label').innerText = t.statOverdue;
+            document.getElementById('filter-label').innerText = t.filterLabel;
+            document.getElementById('label-name').innerText = t.labelName;
+            document.getElementById('label-teacher').innerText = t.labelTeacher;
+            document.getElementById('label-total').innerText = t.labelTotal;
+            document.getElementById('label-used').innerText = t.labelUsed;
+            document.getElementById('label-date').innerText = t.labelPayDate;
+            document.getElementById('btn-cancel').innerText = t.btnCancel;
+            document.getElementById('btn-save').innerText = t.btnSave;
+            document.getElementById('opt-placeholder-teacher').innerText = t.labelTeacher;
+            document.getElementById('no-data-text').innerText = t.noData;
+
             // Stats
             const overdue = filtered.filter(s => (s.totalLessons - s.usedLessons) <= 0).length;
             const warning = filtered.filter(s => { let r = s.totalLessons - s.usedLessons; return r > 0 && r <= 3; }).length;
@@ -312,7 +369,7 @@
             document.getElementById('stat-warning-val').innerText = warning;
             document.getElementById('stat-overdue-val').innerText = overdue;
 
-            // Filter Chips
+            // Filters
             const fc = document.getElementById('teacher-filter-container');
             fc.innerHTML = `<button onclick="setTeacherFilter('all')" class="filter-chip px-4 py-1.5 rounded-full text-xs font-bold border transition-all ${selectedTeacher==='all'?'active':''}">${t.filterAll}</button>`;
             teacherList.forEach(name => {
@@ -369,26 +426,11 @@
                     `;
                 });
             }
-            // Update UI strings
-            document.getElementById('page-title').innerText = t.title;
-            document.getElementById('page-subtitle').innerText = t.subtitle;
-            document.getElementById('add-btn-text').innerText = t.addBtn;
-            document.getElementById('stat-total-label').innerText = t.statTotal;
-            document.getElementById('stat-warning-label').innerText = t.statWarning;
-            document.getElementById('stat-overdue-label').innerText = t.statOverdue;
-            document.getElementById('filter-label').innerText = t.filterLabel;
-            document.getElementById('label-name').innerText = t.labelName;
-            document.getElementById('label-teacher').innerText = t.labelTeacher;
-            document.getElementById('label-total').innerText = t.labelTotal;
-            document.getElementById('label-used').innerText = t.labelUsed;
-            document.getElementById('label-date').innerText = t.labelPayDate;
-            document.getElementById('btn-cancel').innerText = t.btnCancel;
-            document.getElementById('btn-save').innerText = t.btnSave;
-            document.getElementById('opt-placeholder-teacher').innerText = t.labelTeacher;
             lucide.createIcons();
         };
 
-        init();
+        // Boot
+        startApp();
     </script>
 </body>
 </html>
