@@ -15,6 +15,19 @@
             color: white;
             border-color: #2563eb;
         }
+        /* Loading spinner animation */
+        .spinner {
+            border: 3px solid rgba(0, 0, 0, 0.1);
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            border-left-color: #2563eb;
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
     </style>
 </head>
 <body class="bg-slate-50 text-slate-900 min-h-screen p-4 md:p-8">
@@ -81,8 +94,14 @@
             </div>
         </div>
 
+        <!-- Loading Overlay -->
+        <div id="loading-spinner" class="py-20 flex flex-col items-center justify-center">
+            <div class="spinner mb-4"></div>
+            <p class="text-slate-400 font-medium animate-pulse">正在从云端同步数据...</p>
+        </div>
+
         <!-- Table Container -->
-        <div class="bg-white rounded-3xl shadow-sm border border-slate-100 overflow-hidden">
+        <div id="table-container" class="bg-white rounded-3xl shadow-sm border border-slate-100 overflow-hidden hidden">
             <div class="overflow-x-auto">
                 <table class="w-full text-left">
                     <thead class="bg-slate-50/50 border-b border-slate-100">
@@ -148,7 +167,20 @@
         </div>
     </div>
 
-    <script>
+    <!-- Firebase SDKs -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getFirestore, doc, setDoc, getDoc, collection, onSnapshot, updateDoc, deleteDoc, query } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+        // Firebase Configuration
+        const firebaseConfig = JSON.parse(__firebase_config);
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+        const appId = typeof __app_id !== 'undefined' ? __app_id : 'student-tracker-001';
+
+        // Translations & Constants
         const translations = {
             zh: {
                 title: "学生付费跟进管理", subtitle: "课包规格：12 节课/包", addBtn: "添加新学生",
@@ -189,38 +221,69 @@
         };
 
         const teachers = ["Kanglaoshi", "Lilaoshi", "Pailaoshi", "Anlaoshi", "Tielaoshi", "Lanyinglaoshi"];
+        
+        // Global State
         let currentLang = 'zh';
         let selectedTeacher = 'all';
-        let students = [
-            { id: 1, name: 'Zhang Xiaoming', teacher: 'Kanglaoshi', totalLessons: 12, usedLessons: 10, lastPaymentDate: '2024-03-01' },
-            { id: 2, name: 'Ali Karimov', teacher: 'Lilaoshi', totalLessons: 12, usedLessons: 12, lastPaymentDate: '2024-02-15' },
-            { id: 3, name: 'Ivan Petrov', teacher: 'Anlaoshi', totalLessons: 12, usedLessons: 5, lastPaymentDate: '2024-04-10' }
-        ];
+        let students = [];
+        let currentUser = null;
 
-        function setLang(lang) {
+        // Firebase Functions
+        const initAuth = async () => {
+            if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
+                await signInWithCustomToken(auth, __initial_auth_token);
+            } else {
+                await signInAnonymously(auth);
+            }
+        };
+
+        onAuthStateChanged(auth, (user) => {
+            currentUser = user;
+            if (user) {
+                startSync();
+            }
+        });
+
+        const startSync = () => {
+            // Collection Path Rule 1: /artifacts/{appId}/public/data/{collectionName}
+            const studentsCol = collection(db, 'artifacts', appId, 'public', 'data', 'students');
+            
+            // Rule 2: Simple query only
+            onSnapshot(query(studentsCol), (snapshot) => {
+                students = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+                document.getElementById('loading-spinner').classList.add('hidden');
+                document.getElementById('table-container').classList.remove('hidden');
+                render();
+            }, (error) => {
+                console.error("Firestore sync error:", error);
+            });
+        };
+
+        // UI Handlers
+        window.setLang = (lang) => {
             currentLang = lang;
             document.getElementById('current-lang-label').innerText = lang.toUpperCase();
             render();
-        }
+        };
 
-        function setTeacherFilter(teacher) {
+        window.setTeacherFilter = (teacher) => {
             selectedTeacher = teacher;
             render();
-        }
+        };
 
-        function toggleModal(show) {
+        window.toggleModal = (show) => {
             const modal = document.getElementById('modal-overlay');
             modal.style.display = show ? 'flex' : 'none';
-        }
+        };
 
-        function openAddModal() {
+        window.openAddModal = () => {
             document.getElementById('student-form').reset();
             document.getElementById('input-id').value = "";
             document.getElementById('modal-title').innerText = translations[currentLang].modalTitleAdd;
-            toggleModal(true);
-        }
+            window.toggleModal(true);
+        };
 
-        function openEditModal(id) {
+        window.openEditModal = (id) => {
             const student = students.find(s => s.id === id);
             if (!student) return;
 
@@ -232,11 +295,13 @@
             document.getElementById('input-date').value = student.lastPaymentDate || "";
 
             document.getElementById('modal-title').innerText = translations[currentLang].modalTitleEdit;
-            toggleModal(true);
-        }
+            window.toggleModal(true);
+        };
 
-        function saveStudent(e) {
+        const saveStudent = async (e) => {
             e.preventDefault();
+            if (!currentUser) return;
+
             const id = document.getElementById('input-id').value;
             const studentData = {
                 name: document.getElementById('input-name').value,
@@ -246,37 +311,38 @@
                 lastPaymentDate: document.getElementById('input-date').value
             };
 
+            const studentsCol = collection(db, 'artifacts', appId, 'public', 'data', 'students');
+            
             if (id) {
-                // Edit existing
-                const index = students.findIndex(s => s.id == id);
-                if (index !== -1) {
-                    students[index] = { ...students[index], ...studentData };
-                }
+                const docRef = doc(db, 'artifacts', appId, 'public', 'data', 'students', id);
+                await updateDoc(docRef, studentData);
             } else {
-                // Add new
-                students.push({ id: Date.now(), ...studentData });
+                const newDocRef = doc(studentsCol); // Generate ID
+                await setDoc(newDocRef, studentData);
             }
 
-            toggleModal(false);
-            render();
-        }
+            window.toggleModal(false);
+        };
 
-        function updateLesson(id) {
+        window.updateLesson = async (id) => {
+            if (!currentUser) return;
             const student = students.find(s => s.id === id);
             if (student && student.usedLessons < student.totalLessons) {
-                student.usedLessons++;
-                render();
+                const docRef = doc(db, 'artifacts', appId, 'public', 'data', 'students', id);
+                await updateDoc(docRef, { usedLessons: student.usedLessons + 1 });
             }
-        }
+        };
 
-        function deleteStudent(id) {
+        window.deleteStudent = async (id) => {
+            if (!currentUser) return;
             if (confirm(translations[currentLang].confirmDelete)) {
-                students = students.filter(s => s.id !== id);
-                render();
+                const docRef = doc(db, 'artifacts', appId, 'public', 'data', 'students', id);
+                await deleteDoc(docRef);
             }
-        }
+        };
 
-        function render() {
+        // Render Function
+        const render = () => {
             const t = translations[currentLang];
             
             // Text UI Updates
@@ -302,16 +368,16 @@
             filterContainer.innerHTML = '';
             
             const allChip = document.createElement('button');
-            allChip.className = `filter-chip px-4 py-1.5 rounded-full text-xs font-bold border transition-all ${selectedTeacher === 'all' ? 'bg-blue-600 text-white border-blue-600' : 'bg-white text-slate-500 border-slate-200 hover:bg-slate-50'}`;
+            allChip.className = `filter-chip px-4 py-1.5 rounded-full text-xs font-bold border transition-all ${selectedTeacher === 'all' ? 'bg-blue-600 text-white border-blue-600 shadow-md shadow-blue-100' : 'bg-white text-slate-500 border-slate-200 hover:bg-slate-50'}`;
             allChip.innerText = t.filterAll;
-            allChip.onclick = () => setTeacherFilter('all');
+            allChip.onclick = () => window.setTeacherFilter('all');
             filterContainer.appendChild(allChip);
 
             teachers.forEach(teacher => {
                 const chip = document.createElement('button');
-                chip.className = `filter-chip px-4 py-1.5 rounded-full text-xs font-bold border transition-all ${selectedTeacher === teacher ? 'bg-blue-600 text-white border-blue-600' : 'bg-white text-slate-500 border-slate-200 hover:bg-slate-50'}`;
+                chip.className = `filter-chip px-4 py-1.5 rounded-full text-xs font-bold border transition-all ${selectedTeacher === teacher ? 'bg-blue-600 text-white border-blue-600 shadow-md shadow-blue-100' : 'bg-white text-slate-500 border-slate-200 hover:bg-slate-50'}`;
                 chip.innerText = teacher;
-                chip.onclick = () => setTeacherFilter(teacher);
+                chip.onclick = () => window.setTeacherFilter(teacher);
                 filterContainer.appendChild(chip);
             });
 
@@ -330,9 +396,12 @@
             document.getElementById('stat-warning-val').innerText = warning;
             document.getElementById('stat-overdue-val').innerText = overdue;
 
-            // Table Head
-            const head = document.getElementById('table-head-row');
-            head.innerHTML = `
+            // Table Body
+            const tbody = document.getElementById('student-table-body');
+            tbody.innerHTML = '';
+            
+            const tableHead = document.getElementById('table-head-row');
+            tableHead.innerHTML = `
                 <th class="px-6 py-5 text-xs font-bold text-slate-400 uppercase tracking-widest">${t.thName}</th>
                 <th class="px-6 py-5 text-xs font-bold text-slate-400 uppercase tracking-widest">${t.thTeacher}</th>
                 <th class="px-6 py-5 text-xs font-bold text-slate-400 uppercase tracking-widest">${t.thProgress}</th>
@@ -342,10 +411,6 @@
                 <th class="px-6 py-5 text-xs font-bold text-slate-400 uppercase tracking-widest text-right">${t.thActions}</th>
             `;
 
-            // Table Body
-            const tbody = document.getElementById('student-table-body');
-            tbody.innerHTML = '';
-            
             if (filteredStudents.length === 0) {
                 document.getElementById('no-data').classList.remove('hidden');
             } else {
@@ -381,9 +446,9 @@
                         </td>
                         <td class="px-6 py-5 text-right">
                             <div class="flex justify-end gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                                <button onclick="updateLesson(${s.id})" class="text-[10px] font-bold px-2 py-1.5 bg-blue-50 hover:bg-blue-600 text-blue-600 hover:text-white rounded-lg transition-all border border-blue-100 shadow-sm">${t.actionPlus}</button>
-                                <button onclick="openEditModal(${s.id})" class="p-2 text-slate-400 hover:text-blue-500 transition-colors"><i data-lucide="edit-3" class="w-4 h-4"></i></button>
-                                <button onclick="deleteStudent(${s.id})" class="p-2 text-rose-400 hover:text-rose-600 transition-colors"><i data-lucide="trash-2" class="w-4 h-4"></i></button>
+                                <button onclick="updateLesson('${s.id}')" class="text-[10px] font-bold px-2 py-1.5 bg-blue-50 hover:bg-blue-600 text-blue-600 hover:text-white rounded-lg transition-all border border-blue-100 shadow-sm">${t.actionPlus}</button>
+                                <button onclick="openEditModal('${s.id}')" class="p-2 text-slate-400 hover:text-blue-500 transition-colors"><i data-lucide="edit-3" class="w-4 h-4"></i></button>
+                                <button onclick="deleteStudent('${s.id}')" class="p-2 text-rose-400 hover:text-rose-600 transition-colors"><i data-lucide="trash-2" class="w-4 h-4"></i></button>
                             </div>
                         </td>
                     `;
@@ -391,10 +456,11 @@
                 });
             }
             lucide.createIcons();
-        }
+        };
 
+        // Initialize
         document.getElementById('student-form').addEventListener('submit', saveStudent);
-        window.onload = render;
+        initAuth();
     </script>
 </body>
 </html>
