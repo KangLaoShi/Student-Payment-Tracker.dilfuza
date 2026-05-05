@@ -176,18 +176,37 @@
                     <label id="label-name" class="block text-[10px] font-black text-slate-400 uppercase mb-2 tracking-widest text-left">学生姓名</label>
                     <input id="input-name" type="text" required class="w-full px-5 py-3.5 bg-slate-50 border border-slate-100 rounded-2xl font-bold outline-none focus:ring-4 focus:ring-blue-500/10 transition-all">
                 </div>
-                <div>
-                    <label id="label-teacher" class="block text-[10px] font-black text-slate-400 uppercase mb-2 tracking-widest text-left">负责人</label>
-                    <select id="input-teacher" required class="w-full px-5 py-3.5 bg-slate-50 border border-slate-100 rounded-2xl font-bold outline-none appearance-none">
-                        <option value="" disabled id="opt-placeholder-teacher"></option>
-                        <option value="Kanglaoshi">Kanglaoshi</option>
-                        <option value="Lilaoshi">Lilaoshi</option>
-                        <option value="Pailaoshi">Pailaoshi</option>
-                        <option value="Anlaoshi">Anlaoshi</option>
-                        <option value="Tielaoshi">Tielaoshi</option>
-                        <option value="Lanyinglaoshi">Lanyinglaoshi</option>
-                        <option value="Zenglaoshi">Zenglaoshi</option>
-                    </select>
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label id="label-teacher" class="block text-[10px] font-black text-slate-400 uppercase mb-2 tracking-widest text-left">负责人</label>
+                        <select id="input-teacher" required class="w-full px-5 py-3.5 bg-slate-50 border border-slate-100 rounded-2xl font-bold outline-none appearance-none">
+                            <option value="" disabled id="opt-placeholder-teacher"></option>
+                            <option value="Kanglaoshi">Kanglaoshi</option>
+                            <option value="Lilaoshi">Lilaoshi</option>
+                            <option value="Pailaoshi">Pailaoshi</option>
+                            <option value="Anlaoshi">Anlaoshi</option>
+                            <option value="Tielaoshi">Tielaoshi</option>
+                            <option value="Lanyinglaoshi">Lanyinglaoshi</option>
+                            <option value="Zenglaoshi">Zenglaoshi</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label id="label-class" class="block text-[10px] font-black text-slate-400 uppercase mb-2 tracking-widest text-left">班级</label>
+                        <input id="input-class" list="class-list" type="text" class="w-full px-5 py-3.5 bg-slate-50 border border-slate-100 rounded-2xl font-bold outline-none focus:ring-4 focus:ring-blue-500/10 transition-all" placeholder="选择或输入">
+                        <datalist id="class-list">
+                            <option value="HSK1-1"></option>
+                            <option value="HSK1-2"></option>
+                            <option value="HSK1-3"></option>
+                            <option value="HSK2-1"></option>
+                            <option value="HSK2-2"></option>
+                            <option value="HSK2-3"></option>
+                            <option value="HSK3-1"></option>
+                            <option value="HSK3-2"></option>
+                            <option value="HSK3-3"></option>
+                            <option value="HSK4"></option>
+                            <option value="HSK5"></option>
+                        </datalist>
+                    </div>
                 </div>
                 <div class="grid grid-cols-2 gap-4">
                     <div>
@@ -246,33 +265,33 @@
             zh: {
                 loginTitle: "学生付费跟进系统", loginSubtitle: "请输入用户名和密码", loginError: "用户名或密码错误，请检查后重试", loginPlaceholder: "用户名 (如: Kanglaoshi 或 admin)", loginPassPlaceholder: "密码 (默认: 1234)",
                 title: "学生付费跟进管理", subtitle: "协作版 · 实时云同步", addBtn: "添加学生", statTotal: "学生总数", statWarning: "即将到期", statOverdue: "需要缴费",
-                thName: "学生姓名", thTeacher: "老师", thProgress: "进度", thRemaining: "剩余", thLastPay: "付费日期", thStatus: "状态", thActions: "操作",
+                thName: "学生姓名", thTeacher: "老师", thClass: "班级", thProgress: "进度", thRemaining: "剩余", thLastPay: "付费日期", thStatus: "状态", thActions: "操作",
                 statusPaid: "充足", statusWarning: "预警", statusOverdue: "欠费", modalTitleAdd: "添加新学生", modalTitleEdit: "编辑信息", labelName: "学生姓名", 
-                labelTeacher: "负责老师", labelTotal: "课包总量", labelUsed: "已上课时", labelPayDate: "付费日期", btnCancel: "取消", btnSave: "确认保存", 
+                labelTeacher: "负责老师", labelClass: "班级名称", placeholderClass: "选择或输入", labelTotal: "课包总量", labelUsed: "已上课时", labelPayDate: "付费日期", btnCancel: "取消", btnSave: "确认保存", 
                 noData: "暂无数据", confirmDelete: "确定要永久删除吗？", filterAll: "全部", filterLabel: "筛选老师:", actionPlus: "+1 节"
             },
             uz: {
                 loginTitle: "Talabalar Nazorati", loginSubtitle: "Ism va parolingizni kiriting", loginError: "Ism yoki parol noto'g'ri", loginPlaceholder: "Ism (Masalan: Kanglaoshi yoki admin)", loginPassPlaceholder: "Parol (standart: 1234)",
                 title: "Talabalar Nazorati", subtitle: "Bulutli sinxronizatsiya", addBtn: "Talaba qo'shish", statTotal: "Jami", statWarning: "Ogohlantirish", statOverdue: "To'lov kerak",
-                thName: "Ismi", thTeacher: "O'qituvchi", thProgress: "Holati", thRemaining: "Qolgan", thLastPay: "To'lov sanasi", thStatus: "Holati", thActions: "Amallar",
+                thName: "Ismi", thTeacher: "O'qituvchi", thClass: "Guruh", thProgress: "Holati", thRemaining: "Qolgan", thLastPay: "To'lov sanasi", thStatus: "Holati", thActions: "Amallar",
                 statusPaid: "Yetarli", statusWarning: "Muddati yaqin", statusOverdue: "To'lov kerak", modalTitleAdd: "Yangi talaba", modalTitleEdit: "Tahrirlash", labelName: "Talaba ismi", 
-                labelTeacher: "Mas'ul", labelTotal: "Jami darslar", labelUsed: "O'tilgan", labelPayDate: "To'lov sanasi", btnCancel: "Bekor qilish", btnSave: "Saqlash", 
+                labelTeacher: "Mas'ul", labelClass: "Guruh", placeholderClass: "Tanlang/Kiriting", labelTotal: "Jami darslar", labelUsed: "O'tilgan", labelPayDate: "To'lov sanasi", btnCancel: "Bekor qilish", btnSave: "Saqlash", 
                 noData: "Ma'lumot yo'q", confirmDelete: "O'chirilsinmi?", filterAll: "Hammasi", filterLabel: "O'qituvchi:", actionPlus: "+1 dars"
             },
             ru: {
                 loginTitle: "Контроль оплаты", loginSubtitle: "Введите имя пользователя и пароль", loginError: "Неверное имя или пароль", loginPlaceholder: "Имя (например: Kanglaoshi или admin)", loginPassPlaceholder: "Пароль (по умолчанию: 1234)",
                 title: "Контроль оплаты", subtitle: "Синхронизация", addBtn: "Добавить", statTotal: "Всего", statWarning: "Внимание", statOverdue: "Долг",
-                thName: "Имя", thTeacher: "Учитель", thProgress: "Прогресс", thRemaining: "Осталось", thLastPay: "Дата оплаты", thStatus: "Статус", thActions: "Действия",
+                thName: "Имя", thTeacher: "Учитель", thClass: "Группа", thProgress: "Прогресс", thRemaining: "Осталось", thLastPay: "Дата оплаты", thStatus: "Статус", thActions: "Действия",
                 statusPaid: "Достаточно", statusWarning: "Истекает", statusOverdue: "Нужна оплата", modalTitleAdd: "Новый студент", modalTitleEdit: "Изменить", labelName: "Имя студента", 
-                labelTeacher: "Учитель", labelTotal: "Всего уроков", labelUsed: "Пройдено", labelPayDate: "Дата оплаты", btnCancel: "Отмена", btnSave: "Сохранить", 
+                labelTeacher: "Учитель", labelClass: "Группа", placeholderClass: "Выберите/Введите", labelTotal: "Всего уроков", labelUsed: "Пройдено", labelPayDate: "Дата оплаты", btnCancel: "Отмена", btnSave: "Сохранить", 
                 noData: "Нет записей", confirmDelete: "Удалить?", filterAll: "Все", filterLabel: "Учитель:", actionPlus: "+1 урок"
             },
             en: {
                 loginTitle: "Payment Tracker", loginSubtitle: "Enter username and password", loginError: "Invalid username or password", loginPlaceholder: "Username (e.g., Kanglaoshi or admin)", loginPassPlaceholder: "Password (default: 1234)",
                 title: "Student Tracker", subtitle: "Real-time Cloud Sync", addBtn: "Add Student", statTotal: "Total Students", statWarning: "Warning", statOverdue: "Payment Due",
-                thName: "Name", thTeacher: "Teacher", thProgress: "Progress", thRemaining: "Left", thLastPay: "Payment Date", thStatus: "Status", thActions: "Actions",
+                thName: "Name", thTeacher: "Teacher", thClass: "Class", thProgress: "Progress", thRemaining: "Left", thLastPay: "Payment Date", thStatus: "Status", thActions: "Actions",
                 statusPaid: "Paid", statusWarning: "Warning", statusOverdue: "Overdue", modalTitleAdd: "Add Student", modalTitleEdit: "Edit Student", labelName: "Student Name", 
-                labelTeacher: "Teacher", labelTotal: "Total Pack", labelUsed: "Used Lessons", labelPayDate: "Payment Date", btnCancel: "Cancel", btnSave: "Save", 
+                labelTeacher: "Teacher", labelClass: "Class", placeholderClass: "Select or type", labelTotal: "Total Pack", labelUsed: "Used Lessons", labelPayDate: "Payment Date", btnCancel: "Cancel", btnSave: "Save", 
                 noData: "No results", confirmDelete: "Delete student?", filterAll: "All", filterLabel: "Filter:", actionPlus: "+1 Lesson"
             }
         };
@@ -370,6 +389,7 @@
             window.openAddModal = () => {
                 document.getElementById('student-form').reset();
                 document.getElementById('input-id').value = "";
+                document.getElementById('input-class').value = "";
                 document.getElementById('modal-title').innerText = tDict[currentLang].modalTitleAdd;
                 
                 const teacherSelect = document.getElementById('input-teacher');
@@ -389,6 +409,7 @@
                 if (!s) return;
                 document.getElementById('input-id').value = s.id;
                 document.getElementById('input-name').value = s.name;
+                document.getElementById('input-class').value = s.studentClass || "";
                 document.getElementById('input-total').value = s.totalLessons;
                 document.getElementById('input-used').value = s.usedLessons;
                 document.getElementById('input-date').value = s.lastPaymentDate || "";
@@ -410,6 +431,7 @@
                 const id = document.getElementById('input-id').value;
                 const data = {
                     name: document.getElementById('input-name').value,
+                    studentClass: document.getElementById('input-class').value,
                     teacher: isAdmin ? document.getElementById('input-teacher').value : loggedUser,
                     totalLessons: parseInt(document.getElementById('input-total').value),
                     usedLessons: parseInt(document.getElementById('input-used').value),
@@ -465,6 +487,8 @@
             document.getElementById('filter-label').innerText = t.filterLabel;
             document.getElementById('label-name').innerText = t.labelName;
             document.getElementById('label-teacher').innerText = t.labelTeacher;
+            document.getElementById('label-class').innerText = t.labelClass;
+            document.getElementById('input-class').placeholder = t.placeholderClass;
             document.getElementById('label-total').innerText = t.labelTotal;
             document.getElementById('label-used').innerText = t.labelUsed;
             document.getElementById('label-date').innerText = t.labelPayDate;
@@ -490,6 +514,7 @@
             document.getElementById('table-head-row').innerHTML = `
                 <th class="px-6 py-5 text-[10px] font-black text-slate-400 uppercase tracking-widest">${t.thName}</th>
                 <th class="px-6 py-5 text-[10px] font-black text-slate-400 uppercase tracking-widest">${t.thTeacher}</th>
+                <th class="px-6 py-5 text-[10px] font-black text-slate-400 uppercase tracking-widest">${t.thClass}</th>
                 <th class="px-6 py-5 text-[10px] font-black text-slate-400 uppercase tracking-widest">${t.thProgress}</th>
                 <th class="px-6 py-5 text-[10px] font-black text-slate-400 uppercase tracking-widest">${t.thRemaining}</th>
                 <th class="px-6 py-5 text-[10px] font-black text-slate-400 uppercase tracking-widest">${t.thLastPay}</th>
@@ -512,6 +537,7 @@
                         <tr class="hover:bg-slate-50/50 transition-colors group">
                             <td class="px-6 py-5 font-bold text-slate-700">${s.name}</td>
                             <td class="px-6 py-5"><span class="bg-slate-100 px-3 py-1 rounded-lg text-[10px] font-bold text-slate-500 uppercase tracking-wider">${s.teacher}</span></td>
+                            <td class="px-6 py-5 font-bold text-blue-600 text-[11px] uppercase">${s.studentClass || '---'}</td>
                             <td class="px-6 py-5">
                                 <div class="flex items-center gap-3">
                                     <span class="text-xs font-black text-slate-400 w-5">${s.usedLessons}</span>
