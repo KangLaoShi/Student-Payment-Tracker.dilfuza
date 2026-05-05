@@ -41,7 +41,7 @@
                     </div>
                 </div>
                 
-                <button onclick="toggleModal(true)" class="flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-6 py-2.5 rounded-xl transition-all shadow-lg active:scale-95 font-bold">
+                <button onclick="openAddModal()" class="flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-6 py-2.5 rounded-xl transition-all shadow-lg active:scale-95 font-bold">
                     <i data-lucide="plus" class="w-5 h-5"></i> 
                     <span id="add-btn-text">添加新学生</span>
                 </button>
@@ -74,7 +74,7 @@
         </div>
 
         <!-- Teacher Filter Chips -->
-        <div class="mb-6 flex flex-wrap items-center gap-2">
+        <div class="mb-6 flex flex-wrap items-center gap-2 bg-white p-4 rounded-2xl shadow-sm border border-slate-100">
             <span id="filter-label" class="text-xs font-black text-slate-400 uppercase tracking-widest mr-2">筛选老师:</span>
             <div id="teacher-filter-container" class="flex flex-wrap gap-2">
                 <!-- JS will inject chips -->
@@ -107,7 +107,8 @@
         <div id="modal-overlay" class="fixed inset-0 bg-slate-900/40 backdrop-blur-md hidden items-center justify-center p-4 z-[100]">
             <div class="bg-white rounded-[2rem] shadow-2xl w-full max-w-md p-8 overflow-y-auto max-h-[90vh]">
                 <h3 id="modal-title" class="text-2xl font-black mb-6 text-slate-800 flex items-center gap-3">添加新学生</h3>
-                <form id="add-student-form" class="space-y-4">
+                <form id="student-form" class="space-y-4">
+                    <input type="hidden" id="input-id">
                     <div>
                         <label id="label-name" class="block text-xs font-black text-slate-400 uppercase mb-2">姓名</label>
                         <input id="input-name" type="text" required class="w-full px-5 py-3 bg-slate-50 border rounded-2xl font-bold outline-none focus:border-blue-500">
@@ -140,7 +141,7 @@
                     </div>
                     <div class="flex gap-4 mt-8">
                         <button type="button" onclick="toggleModal(false)" id="btn-cancel" class="flex-1 py-3 border rounded-2xl font-bold text-slate-500">取消</button>
-                        <button type="submit" id="btn-save" class="flex-1 py-3 bg-blue-600 text-white font-bold rounded-2xl shadow-lg">保存</button>
+                        <button type="submit" id="btn-save" class="flex-1 py-3 bg-blue-600 text-white font-bold rounded-2xl shadow-lg shadow-blue-200">保存</button>
                     </div>
                 </form>
             </div>
@@ -154,36 +155,36 @@
                 statTotal: "在籍学生", statWarning: "预警人数 (≤3节)", statOverdue: "待续费",
                 thName: "学生姓名", thTeacher: "老师", thProgress: "进度", thRemaining: "剩余", thLastPay: "上次付费", thStatus: "状态", thActions: "操作",
                 statusPaid: "充足", statusWarning: "预警", statusOverdue: "欠费",
-                modalTitle: "添加新学生", labelName: "姓名", labelTeacher: "老师", labelTotal: "总量", labelUsed: "已上", labelPayDate: "日期",
+                modalTitleAdd: "添加新学生", modalTitleEdit: "编辑学生信息", labelName: "姓名", labelTeacher: "老师", labelTotal: "总量", labelUsed: "已上", labelPayDate: "日期",
                 btnCancel: "取消", btnSave: "确认保存", noData: "暂无记录", confirmDelete: "确定删除吗？",
-                filterAll: "全部", filterLabel: "筛选老师:"
+                filterAll: "全部", filterLabel: "筛选老师:", actionPlus: "+1课"
             },
             uz: {
                 title: "Talabalar Nazorati", subtitle: "Paket: 12 dars", addBtn: "Yangi talaba",
                 statTotal: "Talabalar", statWarning: "Ogohlantirish", statOverdue: "To'lov kutilmoqda",
                 thName: "Ismi", thTeacher: "O'qituvchi", thProgress: "Holati", thRemaining: "Qolgan", thLastPay: "To'lov sanasi", thStatus: "Holati", thActions: "Amallar",
                 statusPaid: "Yetarli", statusWarning: "Muddati yaqin", statusOverdue: "To'lov kerak",
-                modalTitle: "Yangi talaba qo'shish", labelName: "Ism", labelTeacher: "O'qituvchi", labelTotal: "Jami", labelUsed: "O'tilgan", labelPayDate: "Sana",
+                modalTitleAdd: "Yangi talaba qo'shish", modalTitleEdit: "Ma'lumotlarni tahrirlash", labelName: "Ism", labelTeacher: "O'qituvchi", labelTotal: "Jami", labelUsed: "O'tilgan", labelPayDate: "Sana",
                 btnCancel: "Bekor qilish", btnSave: "Saqlash", noData: "Ma'lumot yo'q", confirmDelete: "O'chirilsinmi?",
-                filterAll: "Hammasi", filterLabel: "O'qituvchi bo'yicha:"
+                filterAll: "Hammasi", filterLabel: "O'qituvchi bo'yicha:", actionPlus: "+1 dars"
             },
             ru: {
                 title: "Контроль студентов", subtitle: "Пакет: 12 уроков", addBtn: "Добавить студента",
                 statTotal: "Всего", statWarning: "Внимание", statOverdue: "Нужна оплата",
                 thName: "Имя", thTeacher: "Учитель", thProgress: "Прогресс", thRemaining: "Осталось", thLastPay: "Оплата", thStatus: "Статус", thActions: "Действия",
                 statusPaid: "Оплачено", statusWarning: "Истекает", statusOverdue: "Долг",
-                modalTitle: "Добавить студента", labelName: "Имя", labelTeacher: "Учитель", labelTotal: "Всего", labelUsed: "Пройдено", labelPayDate: "Дата",
+                modalTitleAdd: "Добавить студента", modalTitleEdit: "Редактировать данные", labelName: "Имя", labelTeacher: "Учитель", labelTotal: "Всего", labelUsed: "Пройдено", labelPayDate: "Дата",
                 btnCancel: "Отмена", btnSave: "Сохранить", noData: "Нет записей", confirmDelete: "Удалить?",
-                filterAll: "Все", filterLabel: "Учитель:"
+                filterAll: "Все", filterLabel: "Учитель:", actionPlus: "+1 ур."
             },
             en: {
                 title: "Student Tracker", subtitle: "Package: 12 lessons/pack", addBtn: "Add Student",
                 statTotal: "Active", statWarning: "Warning", statOverdue: "Due",
                 thName: "Name", thTeacher: "Teacher", thProgress: "Progress", thRemaining: "Left", thLastPay: "Last Pay", thStatus: "Status", thActions: "Actions",
                 statusPaid: "Paid", statusWarning: "Warning", statusOverdue: "Overdue",
-                modalTitle: "Add New Student", labelName: "Name", labelTeacher: "Teacher", labelTotal: "Total", labelUsed: "Used", labelPayDate: "Date",
+                modalTitleAdd: "Add New Student", modalTitleEdit: "Edit Information", labelName: "Name", labelTeacher: "Teacher", labelTotal: "Total", labelUsed: "Used", labelPayDate: "Date",
                 btnCancel: "Cancel", btnSave: "Save", noData: "No data", confirmDelete: "Are you sure?",
-                filterAll: "All", filterLabel: "Teacher Filter:"
+                filterAll: "All", filterLabel: "Teacher Filter:", actionPlus: "+1 lesson"
             }
         };
 
@@ -198,7 +199,7 @@
 
         function setLang(lang) {
             currentLang = lang;
-            document.getElementById('current-lang-label').innerText = lang;
+            document.getElementById('current-lang-label').innerText = lang.toUpperCase();
             render();
         }
 
@@ -212,18 +213,50 @@
             modal.style.display = show ? 'flex' : 'none';
         }
 
-        function addStudent(e) {
+        function openAddModal() {
+            document.getElementById('student-form').reset();
+            document.getElementById('input-id').value = "";
+            document.getElementById('modal-title').innerText = translations[currentLang].modalTitleAdd;
+            toggleModal(true);
+        }
+
+        function openEditModal(id) {
+            const student = students.find(s => s.id === id);
+            if (!student) return;
+
+            document.getElementById('input-id').value = student.id;
+            document.getElementById('input-name').value = student.name;
+            document.getElementById('input-teacher').value = student.teacher;
+            document.getElementById('input-total').value = student.totalLessons;
+            document.getElementById('input-used').value = student.usedLessons;
+            document.getElementById('input-date').value = student.lastPaymentDate || "";
+
+            document.getElementById('modal-title').innerText = translations[currentLang].modalTitleEdit;
+            toggleModal(true);
+        }
+
+        function saveStudent(e) {
             e.preventDefault();
-            const newStudent = {
-                id: Date.now(),
+            const id = document.getElementById('input-id').value;
+            const studentData = {
                 name: document.getElementById('input-name').value,
                 teacher: document.getElementById('input-teacher').value,
                 totalLessons: parseInt(document.getElementById('input-total').value),
                 usedLessons: parseInt(document.getElementById('input-used').value),
                 lastPaymentDate: document.getElementById('input-date').value
             };
-            students.push(newStudent);
-            document.getElementById('add-student-form').reset();
+
+            if (id) {
+                // Edit existing
+                const index = students.findIndex(s => s.id == id);
+                if (index !== -1) {
+                    students[index] = { ...students[index], ...studentData };
+                }
+            } else {
+                // Add new
+                students.push({ id: Date.now(), ...studentData });
+            }
+
             toggleModal(false);
             render();
         }
@@ -246,7 +279,7 @@
         function render() {
             const t = translations[currentLang];
             
-            // Text UI
+            // Text UI Updates
             document.getElementById('page-title').innerText = t.title;
             document.getElementById('page-subtitle').innerText = t.subtitle;
             document.getElementById('add-btn-text').innerText = t.addBtn;
@@ -254,7 +287,6 @@
             document.getElementById('stat-warning-label').innerText = t.statWarning;
             document.getElementById('stat-overdue-label').innerText = t.statOverdue;
             document.getElementById('filter-label').innerText = t.filterLabel;
-            document.getElementById('modal-title').innerText = t.modalTitle;
             document.getElementById('label-name').innerText = t.labelName;
             document.getElementById('label-teacher').innerText = t.labelTeacher;
             document.getElementById('label-total').innerText = t.labelTotal;
@@ -263,19 +295,18 @@
             document.getElementById('btn-cancel').innerText = t.btnCancel;
             document.getElementById('btn-save').innerText = t.btnSave;
             document.getElementById('no-data-text').innerText = t.noData;
+            document.getElementById('opt-placeholder-teacher').innerText = t.labelTeacher;
 
-            // Filter Chips Rendering
+            // Teacher Filter Chips
             const filterContainer = document.getElementById('teacher-filter-container');
             filterContainer.innerHTML = '';
             
-            // All option
             const allChip = document.createElement('button');
             allChip.className = `filter-chip px-4 py-1.5 rounded-full text-xs font-bold border transition-all ${selectedTeacher === 'all' ? 'bg-blue-600 text-white border-blue-600' : 'bg-white text-slate-500 border-slate-200 hover:bg-slate-50'}`;
             allChip.innerText = t.filterAll;
             allChip.onclick = () => setTeacherFilter('all');
             filterContainer.appendChild(allChip);
 
-            // Individual teacher options
             teachers.forEach(teacher => {
                 const chip = document.createElement('button');
                 chip.className = `filter-chip px-4 py-1.5 rounded-full text-xs font-bold border transition-all ${selectedTeacher === teacher ? 'bg-blue-600 text-white border-blue-600' : 'bg-white text-slate-500 border-slate-200 hover:bg-slate-50'}`;
@@ -289,7 +320,7 @@
                 ? students 
                 : students.filter(s => s.teacher === selectedTeacher);
 
-            // Stats (based on filtered data)
+            // Stats Update
             const overdue = filteredStudents.filter(s => (s.totalLessons - s.usedLessons) <= 0).length;
             const warning = filteredStudents.filter(s => {
                 let rem = s.totalLessons - s.usedLessons;
@@ -302,13 +333,13 @@
             // Table Head
             const head = document.getElementById('table-head-row');
             head.innerHTML = `
-                <th class="px-6 py-5 text-xs font-bold text-slate-400 uppercase">${t.thName}</th>
-                <th class="px-6 py-5 text-xs font-bold text-slate-400 uppercase">${t.thTeacher}</th>
-                <th class="px-6 py-5 text-xs font-bold text-slate-400 uppercase">${t.thProgress}</th>
-                <th class="px-6 py-5 text-xs font-bold text-slate-400 uppercase">${t.thRemaining}</th>
-                <th class="px-6 py-5 text-xs font-bold text-slate-400 uppercase">${t.thLastPay}</th>
-                <th class="px-6 py-5 text-xs font-bold text-slate-400 uppercase">${t.thStatus}</th>
-                <th class="px-6 py-5 text-xs font-bold text-slate-400 uppercase text-right">${t.thActions}</th>
+                <th class="px-6 py-5 text-xs font-bold text-slate-400 uppercase tracking-widest">${t.thName}</th>
+                <th class="px-6 py-5 text-xs font-bold text-slate-400 uppercase tracking-widest">${t.thTeacher}</th>
+                <th class="px-6 py-5 text-xs font-bold text-slate-400 uppercase tracking-widest">${t.thProgress}</th>
+                <th class="px-6 py-5 text-xs font-bold text-slate-400 uppercase tracking-widest">${t.thRemaining}</th>
+                <th class="px-6 py-5 text-xs font-bold text-slate-400 uppercase tracking-widest">${t.thLastPay}</th>
+                <th class="px-6 py-5 text-xs font-bold text-slate-400 uppercase tracking-widest">${t.thStatus}</th>
+                <th class="px-6 py-5 text-xs font-bold text-slate-400 uppercase tracking-widest text-right">${t.thActions}</th>
             `;
 
             // Table Body
@@ -337,21 +368,22 @@
                         <td class="px-6 py-5"><span class="bg-slate-100 px-2 py-1 rounded-lg text-xs font-medium text-slate-600">${s.teacher}</span></td>
                         <td class="px-6 py-5">
                             <div class="flex items-center gap-2">
-                                <span class="text-xs font-black text-slate-600">${s.usedLessons}</span>
-                                <div class="w-16 h-1.5 bg-slate-100 rounded-full overflow-hidden">
-                                    <div class="h-full rounded-full ${remaining <= 3 ? 'bg-amber-500' : 'bg-blue-600'}" style="width: ${(s.usedLessons/s.totalLessons)*100}%"></div>
+                                <span class="text-xs font-black text-slate-600 w-4">${s.usedLessons}</span>
+                                <div class="w-16 h-2 bg-slate-100 rounded-full overflow-hidden shadow-inner">
+                                    <div class="h-full rounded-full transition-all duration-700 ${remaining <= 3 ? 'bg-amber-500' : 'bg-blue-600'}" style="width: ${(s.usedLessons/s.totalLessons)*100}%"></div>
                                 </div>
                             </div>
                         </td>
-                        <td class="px-6 py-5 font-black text-slate-800">${remaining}</td>
+                        <td class="px-6 py-5 font-black text-slate-800 text-lg">${remaining}</td>
                         <td class="px-6 py-5 text-slate-500 text-sm font-medium">${s.lastPaymentDate || '---'}</td>
                         <td class="px-6 py-5">
-                            <span class="px-3 py-1 rounded-full text-[10px] font-black uppercase border ${statusClass}">${statusLabel}</span>
+                            <span class="px-3 py-1.5 rounded-full text-[10px] font-black uppercase tracking-wider border ${statusClass}">${statusLabel}</span>
                         </td>
                         <td class="px-6 py-5 text-right">
                             <div class="flex justify-end gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                                <button onclick="updateLesson(${s.id})" class="text-xs font-bold px-2 py-1 bg-blue-50 text-blue-600 rounded border border-blue-100">+1</button>
-                                <button onclick="deleteStudent(${s.id})" class="p-1.5 text-rose-400"><i data-lucide="trash-2" class="w-4 h-4"></i></button>
+                                <button onclick="updateLesson(${s.id})" class="text-[10px] font-bold px-2 py-1.5 bg-blue-50 hover:bg-blue-600 text-blue-600 hover:text-white rounded-lg transition-all border border-blue-100 shadow-sm">${t.actionPlus}</button>
+                                <button onclick="openEditModal(${s.id})" class="p-2 text-slate-400 hover:text-blue-500 transition-colors"><i data-lucide="edit-3" class="w-4 h-4"></i></button>
+                                <button onclick="deleteStudent(${s.id})" class="p-2 text-rose-400 hover:text-rose-600 transition-colors"><i data-lucide="trash-2" class="w-4 h-4"></i></button>
                             </div>
                         </td>
                     `;
@@ -361,7 +393,7 @@
             lucide.createIcons();
         }
 
-        document.getElementById('add-student-form').addEventListener('submit', addStudent);
+        document.getElementById('student-form').addEventListener('submit', saveStudent);
         window.onload = render;
     </script>
 </body>
