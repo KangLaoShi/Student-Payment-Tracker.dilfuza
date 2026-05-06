@@ -3,7 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>NSRE Dashboard - Student Management</title>
+    <!-- 请务必在此处填入 Google Search Console 给你的验证码 -->
+    <meta name="google-site-verification" content="在这里粘贴你的Google验证码" />
+    
+    <title>NSRE Dashboard - Private Tool</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
     <style>
@@ -11,7 +14,7 @@
         
         :root {
             --brand-green: #2C5F56;
-            --brand-mint: #F1F8F6; /* 很淡的白绿色 */
+            --brand-mint: #F1F8F6;
             --brand-yellow: #FFC554;
         }
 
@@ -22,12 +25,10 @@
             color: #1A2E35;
         }
 
-        /* 隐藏滚动条 */
         .no-scrollbar::-webkit-scrollbar { display: none; }
         ::-webkit-scrollbar { width: 5px; height: 5px; }
         ::-webkit-scrollbar-thumb { background: #D1DEDC; border-radius: 10px; }
 
-        /* 高级圆角与阴影 */
         .card-modern {
             background: rgba(255, 255, 255, 0.9);
             backdrop-filter: blur(12px);
@@ -37,11 +38,9 @@
         }
 
         .btn-active:active { transform: scale(0.95); }
-        
         .hover-lift { transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
         .hover-lift:hover { transform: translateY(-4px); box-shadow: 0 20px 25px -5px rgba(44, 95, 86, 0.08); }
 
-        /* 筛选器选中态 */
         .filter-chip.active { 
             background: var(--brand-green); 
             color: white; 
@@ -51,18 +50,13 @@
         
         .lang-item.active { background-color: var(--brand-green); color: white; font-weight: 800; }
 
-        /* 白绿色渐变背景 */
         .bg-mesh {
             background-color: var(--brand-mint);
             background-image: radial-gradient(at 0% 0%, rgba(44, 95, 86, 0.05) 0px, transparent 50%),
-                              radial-gradient(at 100% 0%, rgba(255, 197, 84, 0.03) 0px, transparent 50%),
-                              radial-gradient(at 50% 100%, rgba(44, 95, 86, 0.03) 0px, transparent 50%);
+                              radial-gradient(at 100% 0%, rgba(255, 197, 84, 0.03) 0px, transparent 50%);
         }
 
-        .table-row-modern:hover {
-            background-color: rgba(44, 95, 86, 0.04);
-            transform: translateX(4px);
-        }
+        .table-row-modern:hover { background-color: rgba(44, 95, 86, 0.04); transform: translateX(4px); }
     </style>
 </head>
 <body class="bg-mesh min-h-screen">
@@ -71,49 +65,42 @@
     <div id="login-page" class="fixed inset-0 z-[500] flex items-center justify-center p-4 bg-[#1A2E35]">
         <div class="absolute inset-0 opacity-10" style="background-image: url('https://www.transparenttextures.com/patterns/carbon-fibre.png');"></div>
         <div class="bg-white rounded-[40px] shadow-2xl w-full max-w-md p-12 text-center relative z-10 border-t-8 border-[#2C5F56]">
-            <!-- Logo 区域 -->
             <div class="mb-8 text-center">
-                <img src="./logo.png" alt="NSRE Logo" class="h-16 w-auto mx-auto object-contain drop-shadow-md" onerror="this.style.display='none'; document.getElementById('logo-fallback').classList.remove('hidden');" />
-                <div id="logo-fallback" class="hidden w-20 h-20 bg-[#2C5F56] rounded-[28px] mx-auto flex items-center justify-center shadow-2xl shadow-[#2C5F56]/20">
-                    <span class="text-white font-black text-2xl italic tracking-tighter">NS</span>
+                <img src="./logo.png" alt="Logo" class="h-16 w-auto mx-auto object-contain drop-shadow-md" onerror="this.style.display='none'; document.getElementById('logo-fallback').classList.remove('hidden');" />
+                <div id="logo-fallback" class="hidden w-20 h-20 bg-[#2C5F56] rounded-[28px] mx-auto flex items-center justify-center shadow-2xl">
+                    <span class="text-white font-black text-2xl italic">NS</span>
                 </div>
             </div>
-            <h2 id="login-title" class="text-3xl font-[800] text-[#1A2E35] mb-2 tracking-tight">学生付费跟进系统</h2>
-            <p id="login-subtitle" class="text-[#2C5F56] font-bold mb-10 text-xs uppercase tracking-[0.2em]">Academic Operations Portal</p>
+            <h2 id="login-title" class="text-2xl font-[800] text-[#1A2E35] mb-2 tracking-tight">内部教学记录系统</h2>
+            <p id="login-subtitle" class="text-[#2C5F56] font-bold mb-10 text-xs uppercase tracking-[0.2em]">Private Educational Portal</p>
             
             <form id="login-form" class="space-y-5 text-left mb-6">
-                <div><input id="login-username" type="text" required class="w-full px-6 py-5 bg-[#F7FAF9] rounded-3xl font-bold outline-none border-none focus:ring-2 focus:ring-[#2C5F56]/10" placeholder="admin 或 Kanglaoshi"></div>
-                <div><input id="login-password" type="password" required class="w-full px-6 py-5 bg-[#F7FAF9] rounded-3xl font-bold outline-none border-none focus:ring-2 focus:ring-[#2C5F56]/10" placeholder="密码 (1234)"></div>
-                <button type="submit" class="w-full bg-[#2C5F56] text-white py-5 rounded-3xl font-bold shadow-xl shadow-[#2C5F56]/20 hover:opacity-90 active:scale-[0.98] transition-all mt-2 uppercase tracking-widest text-sm italic">Enter Dashboard</button>
-                <p id="login-hint" class="text-[10px] text-slate-400 text-center font-bold uppercase tracking-widest mt-4">提示: 账号 admin 或 Kanglaoshi / 密码 1234</p>
+                <!-- 移除了明文账号密码提示，提高安全性 -->
+                <div><input id="login-username" type="text" required class="w-full px-6 py-5 bg-[#F7FAF9] rounded-3xl font-bold outline-none border-none focus:ring-2 focus:ring-[#2C5F56]/10" placeholder="Username"></div>
+                <div><input id="login-password" type="password" required class="w-full px-6 py-5 bg-[#F7FAF9] rounded-3xl font-bold outline-none border-none focus:ring-2 focus:ring-[#2C5F56]/10" placeholder="Password"></div>
+                <button type="submit" class="w-full bg-[#2C5F56] text-white py-5 rounded-3xl font-bold shadow-xl hover:opacity-90 active:scale-[0.98] transition-all mt-2 text-sm italic">Unlock Dashboard</button>
             </form>
 
             <div class="flex justify-center gap-3 border-t border-slate-50 pt-6">
-                <button onclick="setLang('zh')" class="text-[10px] font-black text-slate-400 hover:text-[#2C5F56] transition-colors">ZH</button>
-                <span class="text-slate-200">/</span>
-                <button onclick="setLang('uz')" class="text-[10px] font-black text-slate-400 hover:text-[#2C5F56] transition-colors">UZ</button>
-                <span class="text-slate-200">/</span>
-                <button onclick="setLang('ru')" class="text-[10px] font-black text-slate-400 hover:text-[#2C5F56] transition-colors">RU</button>
-                <span class="text-slate-200">/</span>
-                <button onclick="setLang('en')" class="text-[10px] font-black text-slate-400 hover:text-[#2C5F56] transition-colors">EN</button>
+                <button onclick="setLang('zh')" class="text-[10px] font-black text-slate-400 hover:text-[#2C5F56]">ZH</button>
+                <button onclick="setLang('uz')" class="text-[10px] font-black text-slate-400 hover:text-[#2C5F56]">UZ</button>
+                <button onclick="setLang('ru')" class="text-[10px] font-black text-slate-400 hover:text-[#2C5F56]">RU</button>
+                <button onclick="setLang('en')" class="text-[10px] font-black text-slate-400 hover:text-[#2C5F56]">EN</button>
             </div>
+            <p id="login-error" class="text-rose-500 text-xs font-bold mt-6 hidden italic">Error.</p>
         </div>
     </div>
 
     <!-- 主页面 -->
     <div id="app-content" class="max-w-[1440px] mx-auto p-4 md:p-8 hidden">
-        
-        <!-- 头部导航 -->
-        <header class="relative z-[100] flex flex-col lg:flex-row lg:items-center justify-between mb-10 gap-6 bg-white/50 p-6 rounded-[32px] border border-white/80 backdrop-blur-md shadow-sm">
+        <header class="relative z-[100] flex flex-col lg:flex-row lg:items-center justify-between mb-10 gap-6 bg-white/50 p-6 rounded-[32px] border border-white shadow-sm backdrop-blur-md">
             <div class="flex flex-col">
-                <h1 id="page-title-main" class="text-2xl md:text-3xl font-[900] text-[#1A2E35] tracking-tight">学生付费跟进管理</h1>
+                <h1 id="page-title-main" class="text-2xl md:text-3xl font-[900] text-[#1A2E35]">学生付费跟进管理</h1>
                 <p id="page-subtitle" class="text-[#2C5F56]/50 font-bold text-[10px] uppercase tracking-[0.2em] mt-1">Management Dashboard</p>
             </div>
-            
             <div class="flex flex-wrap items-center gap-3">
-                <!-- 语言 -->
                 <div class="relative group">
-                    <button class="flex items-center gap-2 bg-white px-5 h-[52px] rounded-full text-[#1A2E35] hover:bg-slate-50 transition-all shadow-sm font-bold text-[10px] uppercase tracking-widest border border-[#D1DEDC]">
+                    <button class="flex items-center gap-2 bg-white px-5 h-[52px] rounded-full text-[#1A2E35] border border-[#D1DEDC] font-bold text-[10px] uppercase tracking-widest">
                         <i data-lucide="globe" class="w-3.5 h-3.5 text-[#2C5F56]"></i>
                         <span id="current-lang-text">ZH</span>
                         <i data-lucide="chevron-down" class="w-3 h-3 text-slate-300"></i>
@@ -122,26 +109,21 @@
                         <button onclick="setLang('zh')" class="lang-item w-full text-left px-5 py-2.5 text-[10px] font-bold rounded-xl transition-colors mb-1">中文 (ZH)</button>
                         <button onclick="setLang('uz')" class="lang-item w-full text-left px-5 py-2.5 text-[10px] font-bold rounded-xl transition-colors mb-1">O'zbek (UZ)</button>
                         <button onclick="setLang('ru')" class="lang-item w-full text-left px-5 py-2.5 text-[10px] font-bold rounded-xl transition-colors mb-1">Русский (RU)</button>
-                        <button onclick="setLang('en')" class="lang-item w-full text-left px-5 py-2.5 text-[10px] font-bold rounded-xl transition-colors text-[#1A2E35]">English (EN)</button>
+                        <button onclick="setLang('en')" class="lang-item w-full text-left px-5 py-2.5 text-[10px] font-bold rounded-xl transition-colors">English (EN)</button>
                     </div>
                 </div>
-
-                <!-- 用户 -->
-                <div class="flex items-center gap-3 bg-[#1A2E35] px-5 h-[52px] rounded-full shadow-lg shadow-[#1A2E35]/10">
+                <div class="flex items-center gap-3 bg-[#1A2E35] px-5 h-[52px] rounded-full shadow-lg">
                     <div class="w-8 h-8 bg-[#FFC554] text-[#1A2E35] rounded-lg flex items-center justify-center font-black text-[10px]" id="user-avatar">?</div>
                     <span id="logged-user-name" class="text-[11px] font-bold text-white tracking-tight">---</span>
                     <button onclick="logout()" class="ml-1 text-slate-500 hover:text-rose-400 transition-colors"><i data-lucide="power" class="w-3.5 h-3.5"></i></button>
                 </div>
-
-                <!-- 添加按钮 -->
-                <button onclick="openAddModal()" class="btn-active flex items-center gap-2 bg-[#2C5F56] text-white px-6 h-[52px] rounded-full transition-all shadow-xl shadow-[#2C5F56]/20 font-bold whitespace-nowrap text-xs">
+                <button onclick="openAddModal()" class="btn-active flex items-center gap-2 bg-[#2C5F56] text-white px-6 h-[52px] rounded-full shadow-xl shadow-[#2C5F56]/20 font-bold text-xs">
                     <i data-lucide="plus-circle" class="w-4 h-4"></i><span id="add-btn-text">添加学生</span>
                 </button>
             </div>
         </header>
 
         <main class="space-y-8">
-            <!-- 统计卡片 -->
             <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
                 <div class="card-modern p-6 flex items-center gap-6 hover-lift border-l-8 border-[#2C5F56]">
                     <div class="w-14 h-14 bg-[#F0F6F5] text-[#2C5F56] rounded-2xl flex items-center justify-center"><i data-lucide="users-2" class="w-6 h-6"></i></div>
@@ -157,26 +139,24 @@
                 </div>
             </div>
 
-            <!-- 筛选区域 (紧凑三行) -->
             <div class="card-modern p-5 space-y-2">
                 <div id="teacher-filter-wrap" class="hidden flex flex-col gap-1.5">
-                    <span id="filter-label" class="text-[9px] font-black text-[#2C5F56]/40 uppercase tracking-[0.2em] ml-2">Responsibility:</span>
+                    <span id="filter-label" class="text-[9px] font-black text-[#2C5F56]/40 uppercase ml-2">Responsibility:</span>
                     <div id="teacher-filter-container" class="flex flex-wrap gap-1.5"></div>
                 </div>
                 <div id="class-filter-wrap" class="flex flex-col gap-1.5 pt-3 border-t border-slate-50">
-                    <span id="filter-class-label" class="text-[9px] font-black text-[#2C5F56]/40 uppercase tracking-[0.2em] ml-2">Class Level:</span>
+                    <span id="filter-class-label" class="text-[9px] font-black text-[#2C5F56]/40 uppercase ml-2">Class Level:</span>
                     <div id="class-filter-container" class="flex flex-wrap gap-1.5"></div>
                 </div>
                 <div id="status-filter-wrap" class="flex flex-col gap-1.5 pt-3 border-t border-slate-50">
-                    <span id="filter-status-label" class="text-[9px] font-black text-[#2C5F56]/40 uppercase tracking-[0.2em] ml-2">Filter Status:</span>
+                    <span id="filter-status-label" class="text-[9px] font-black text-[#2C5F56]/40 uppercase ml-2">Filter Status:</span>
                     <div id="status-filter-container" class="flex flex-wrap gap-1.5"></div>
                 </div>
             </div>
 
-            <!-- 数据表格 -->
             <div class="card-modern overflow-hidden">
                 <div class="overflow-x-auto">
-                    <table class="w-full text-left border-separate border-spacing-0">
+                    <table class="w-full text-left">
                         <thead class="bg-[#F7FAF9]/80 border-b border-slate-100">
                             <tr id="table-head-row"></tr>
                         </thead>
@@ -187,77 +167,63 @@
         </main>
     </div>
 
-    <!-- 编辑 Modal -->
-    <div id="modal-overlay" class="fixed inset-0 bg-[#1A2E35]/90 backdrop-blur-lg hidden items-center justify-center p-4 z-[600] transition-all">
-        <div class="bg-white rounded-[40px] shadow-2xl w-full max-w-md p-10 overflow-y-auto max-h-[90vh] border-t-8 border-[#FFC554]" id="modal-box">
+    <!-- 所有 Modal 和 自定义确认框保持在 body 底部 -->
+    <div id="modal-overlay" class="fixed inset-0 bg-[#1A2E35]/90 backdrop-blur-lg hidden items-center justify-center p-4 z-[600]">
+        <div class="bg-white rounded-[40px] shadow-2xl w-full max-w-md p-10 overflow-y-auto max-h-[90vh] border-t-8 border-[#FFC554]">
             <div class="flex justify-between items-center mb-10">
-                <h3 id="modal-title" class="text-2xl font-[900] text-[#1A2E35] tracking-tight">编辑信息</h3>
-                <button onclick="toggleModal(false)" class="p-3 bg-slate-50 rounded-full text-slate-300 hover:text-rose-500 transition-colors"><i data-lucide="x"></i></button>
+                <h3 id="modal-title" class="text-2xl font-[900]">编辑信息</h3>
+                <button onclick="toggleModal(false)" class="p-3 text-slate-300 hover:text-rose-500"><i data-lucide="x"></i></button>
             </div>
             <form id="student-form" class="space-y-6 text-left">
                 <input type="hidden" id="input-id">
-                <div class="space-y-1">
-                    <label id="label-name" class="text-[10px] font-black text-slate-300 uppercase ml-4 tracking-widest">Name</label>
-                    <input id="input-name" type="text" required class="w-full px-6 py-5 bg-[#F7FAF9] rounded-3xl font-bold outline-none border-none">
-                </div>
+                <div><label id="label-name" class="text-[10px] font-black text-slate-300 uppercase ml-4">Name</label>
+                <input id="input-name" type="text" required class="w-full px-6 py-4 bg-[#F7FAF9] rounded-3xl font-bold outline-none border-none"></div>
+                <div><label id="label-contract" class="text-[10px] font-black text-slate-300 uppercase ml-4">Contract No.</label>
+                <input id="input-contract" type="text" class="w-full px-6 py-4 bg-[#F7FAF9] rounded-3xl font-bold outline-none border-none"></div>
                 <div class="grid grid-cols-2 gap-4">
-                    <div class="space-y-1">
-                        <label id="label-teacher" class="text-[10px] font-black text-slate-300 uppercase ml-4 tracking-widest">Teacher</label>
-                        <select id="input-teacher" required class="w-full px-6 py-5 bg-[#F7FAF9] rounded-3xl font-bold outline-none appearance-none border-none"></select>
-                    </div>
-                    <div class="space-y-1">
-                        <label id="label-class" class="text-[10px] font-black text-slate-300 uppercase ml-4 tracking-widest">Class ID</label>
-                        <input id="input-class" list="class-list" type="text" class="w-full px-6 py-5 bg-[#F7FAF9] rounded-3xl font-bold outline-none border-none">
-                    </div>
+                    <div><label id="label-teacher" class="text-[10px] font-black text-slate-300 uppercase ml-4">Teacher</label>
+                    <select id="input-teacher" required class="w-full px-6 py-4 bg-[#F7FAF9] rounded-3xl font-bold outline-none border-none appearance-none"></select></div>
+                    <div><label id="label-class" class="text-[10px] font-black text-slate-300 uppercase ml-4">Class ID</label>
+                    <input id="input-class" list="class-list" type="text" class="w-full px-6 py-4 bg-[#F7FAF9] rounded-3xl font-bold border-none"></div>
                 </div>
-                <div class="grid grid-cols-2 gap-4">
-                    <div class="space-y-1 text-center">
-                        <label id="label-total" class="text-[10px] font-black text-slate-300 uppercase tracking-widest">Package</label>
-                        <select id="input-total" class="w-full px-6 py-5 bg-[#F7FAF9] rounded-3xl font-bold outline-none border-none text-center appearance-none"></select>
-                    </div>
-                    <div class="space-y-1 text-center">
-                        <label id="label-used" class="text-[10px] font-black text-slate-300 uppercase tracking-widest">Used</label>
-                        <input id="input-used" type="number" required class="w-full px-6 py-5 bg-[#F7FAF9] rounded-3xl font-bold outline-none border-none text-center">
-                    </div>
+                <div class="grid grid-cols-2 gap-4 text-center">
+                    <div><label id="label-total" class="text-[10px] font-black text-slate-300 uppercase">Package</label>
+                    <select id="input-total" class="w-full px-6 py-4 bg-[#F7FAF9] rounded-3xl font-bold border-none text-center"></select></div>
+                    <div><label id="label-used" class="text-[10px] font-black text-slate-300 uppercase">Used</label>
+                    <input id="input-used" type="number" required class="w-full px-6 py-4 bg-[#F7FAF9] rounded-3xl font-bold border-none text-center"></div>
                 </div>
-                <div class="space-y-1">
-                    <label id="label-date" class="text-[10px] font-black text-slate-300 uppercase ml-4 tracking-widest">Payment Date</label>
-                    <input id="input-date" type="date" class="w-full px-6 py-5 bg-[#F7FAF9] rounded-3xl font-bold outline-none border-none">
-                </div>
+                <div><label id="label-date" class="text-[10px] font-black text-slate-300 uppercase ml-4">Payment Date</label>
+                <input id="input-date" type="date" class="w-full px-6 py-4 bg-[#F7FAF9] rounded-3xl font-bold border-none"></div>
                 <div class="flex gap-4 pt-6">
-                    <button type="button" onclick="toggleModal(false)" id="btn-cancel" class="flex-1 py-5 rounded-3xl font-black text-slate-400 hover:bg-slate-50 transition-colors uppercase tracking-widest text-[10px]">Cancel</button>
-                    <button type="submit" id="btn-save" class="flex-1 py-5 bg-[#2C5F56] text-white font-black rounded-3xl shadow-xl shadow-[#2C5F56]/20 active:scale-95 transition-all uppercase tracking-widest text-xs">Save</button>
+                    <button type="button" onclick="toggleModal(false)" id="btn-cancel" class="flex-1 py-4 font-black text-slate-400">Cancel</button>
+                    <button type="submit" id="btn-save" class="flex-1 py-4 bg-[#2C5F56] text-white rounded-3xl font-black">Save</button>
                 </div>
             </form>
         </div>
     </div>
 
-    <!-- 上课记录 Modal -->
-    <div id="history-modal-overlay" class="fixed inset-0 bg-[#1A2E35]/95 backdrop-blur-xl hidden items-center justify-center p-4 z-[700] transition-all">
-        <div class="bg-white rounded-[40px] shadow-2xl w-full max-w-md p-12 overflow-hidden flex flex-col max-h-[90vh] border-t-8 border-[#FFC554]" id="history-modal-box">
+    <div id="history-modal-overlay" class="fixed inset-0 bg-[#1A2E35]/95 backdrop-blur-xl hidden items-center justify-center p-4 z-[700]">
+        <div class="bg-white rounded-[40px] shadow-2xl w-full max-w-md p-12 flex flex-col max-h-[90vh] border-t-8 border-[#FFC554]">
             <div class="flex justify-between items-center mb-10 shrink-0">
-                <h3 id="history-modal-title" class="text-2xl font-[900] text-[#1A2E35] tracking-tight">Logs</h3>
-                <button onclick="toggleHistoryModal(false)" class="p-3 bg-slate-50 rounded-full text-slate-300 hover:text-[#2C5F56] transition-colors"><i data-lucide="x"></i></button>
+                <h3 id="history-modal-title" class="text-2xl font-[900]">Logs</h3>
+                <button onclick="toggleHistoryModal(false)" class="p-3 text-slate-300"><i data-lucide="x"></i></button>
             </div>
             <div class="flex gap-3 mb-8 shrink-0">
-                <input type="date" id="manual-date-input" class="flex-1 px-6 py-4 bg-[#F7FAF9] rounded-3xl font-bold outline-none border-none text-[#1A2E35]">
-                <button onclick="handleRecordAction()" id="btn-record-action" class="px-8 py-4 bg-[#2C5F56] text-white font-black rounded-3xl shadow-lg active:scale-95 transition-all uppercase text-[10px]">Add Log</button>
-                <button onclick="cancelRecordEdit()" id="btn-record-cancel" class="hidden px-4 py-4 bg-rose-50 text-rose-500 font-bold rounded-2xl">✕</button>
+                <input type="date" id="manual-date-input" class="flex-1 px-6 py-4 bg-[#F7FAF9] rounded-3xl font-bold border-none">
+                <button onclick="handleRecordAction()" id="btn-record-action" class="px-8 py-4 bg-[#2C5F56] text-white rounded-3xl font-black">Add</button>
             </div>
             <div id="history-list" class="space-y-4 overflow-y-auto pr-2 no-scrollbar flex-1 mb-8"></div>
-            <div class="shrink-0"><button onclick="toggleHistoryModal(false)" id="btn-close-history" class="w-full py-5 bg-[#F7FAF9] text-slate-400 font-black rounded-3xl active:scale-95 transition-colors uppercase tracking-widest text-[10px]">Close Window</button></div>
+            <button onclick="toggleHistoryModal(false)" id="btn-close-history" class="w-full py-5 bg-[#F7FAF9] text-slate-400 rounded-3xl font-black">Close</button>
         </div>
     </div>
 
-    <!-- 删除确认 Modal -->
-    <div id="confirm-modal-overlay" class="fixed inset-0 bg-[#1A2E35]/95 backdrop-blur-xl hidden items-center justify-center p-4 z-[999] transition-all">
-        <div class="bg-white rounded-[32px] shadow-2xl w-full max-w-sm p-8 text-center border-t-8 border-rose-500">
-            <div class="w-16 h-16 bg-rose-50 text-rose-500 rounded-2xl mx-auto flex items-center justify-center mb-6 shadow-sm"><i data-lucide="trash-2" class="w-8 h-8"></i></div>
-            <h3 id="confirm-modal-title" class="text-xl font-[900] text-[#1A2E35] mb-2 tracking-tight">确认删除</h3>
-            <p id="confirm-modal-msg" class="text-slate-400 text-sm font-medium mb-8 leading-relaxed"></p>
+    <div id="confirm-modal-overlay" class="fixed inset-0 bg-[#1A2E35]/95 backdrop-blur-xl hidden items-center justify-center p-4 z-[999]">
+        <div class="bg-white rounded-[32px] p-8 text-center border-t-8 border-rose-500 w-full max-w-sm">
+            <h3 id="confirm-modal-title" class="text-xl font-[900] mb-2">确认删除</h3>
+            <p id="confirm-modal-msg" class="text-slate-400 text-sm mb-8"></p>
             <div class="flex gap-4">
-                <button id="confirm-btn-cancel" class="flex-1 py-4 rounded-2xl font-black text-slate-400 hover:bg-slate-50 transition-colors uppercase text-[10px]">取消</button>
-                <button id="confirm-btn-ok" class="flex-1 py-4 bg-rose-500 text-white font-black rounded-2xl shadow-xl shadow-rose-900/10 active:scale-95 transition-all uppercase text-[10px]">确认删除</button>
+                <button id="confirm-btn-cancel" class="flex-1 py-4 font-black text-slate-400">取消</button>
+                <button id="confirm-btn-ok" class="flex-1 py-4 bg-rose-500 text-white rounded-2xl font-black shadow-lg">确认删除</button>
             </div>
         </div>
     </div>
@@ -274,80 +240,25 @@
 
         const tDict = {
             zh: {
-                loginTitle: "学生付费跟进系统", loginPlaceholder: "admin 或 Kanglaoshi", loginPassPlaceholder: "密码 (1234)", loginSubtitle: "Academic Operations Portal", loginHint: "提示: 账号 admin 或 Kanglaoshi / 密码 1234",
-                dashboardTitle: "学生付费跟进管理", subtitle: "协作版 · 实时云同步", addBtn: "添加学生", statTotal: "学生总数", statWarning: "即将到期", statOverdue: "欠费预警",
-                thName: "学生姓名", thTeacher: "负责", thClass: "班级", thProgress: "进度", thRemaining: "剩余", thLastPay: "最近付费", thStatus: "状态", thActions: "管理",
-                statusPaid: "充足", statusWarning: "预警", statusOverdue: "欠费", modalTitleAdd: "添加新学生", modalTitleEdit: "编辑信息", labelName: "姓名", 
-                labelTeacher: "负责老师", labelClass: "班级名称", placeholderClass: "选择或输入", placeholderTeacher: "请选择老师", labelTotal: "总量", labelUsed: "已上", labelPayDate: "最近付费日期", btnCancel: "取消", btnSave: "保存", 
-                noData: "暂无数据", confirmDelete: "确定要永久删除该学生吗？", filterAll: "全部", filterLabel: "负责人:", filterClassLabel: "班级筛选:", filterStatusLabel: "状态筛选:", actionPlus: "+1 记课", historyTitle: "上课记录", historyEmpty: "暂无记录", btnClose: "关闭窗口", manualAdd: "补签", btnUpdate: "更新日期", alertNoDate: "请先选择日期",
-                days: ["周日", "周一", "周二", "周三", "周四", "周五", "周六"], confirmDeleteRecord: "确定要删除这条上课记录吗？", btnOk: "确认", btnAbort: "取消"
-            },
-            uz: {
-                loginTitle: "Talabalar Nazorati", loginPlaceholder: "admin yoki Kanglaoshi", loginPassPlaceholder: "Parol (1234)", loginSubtitle: "Portalga Kirish", loginHint: "Login: admin yoki Kanglaoshi / Parol: 1234",
-                dashboardTitle: "To'lov Monitoringi", subtitle: "Akademik Operatsiyalari", addBtn: "Qo'shish", statTotal: "Jami", statWarning: "Ogoh", statOverdue: "Qarz",
-                thName: "Ism", thTeacher: "Mas'ul", thClass: "Guruh", thProgress: "Holat", thRemaining: "Qolgan", thLastPay: "To'lov", thStatus: "Holat", thActions: "Amal",
-                statusPaid: "Yetarli", statusWarning: "Yaqin", statusOverdue: "Qarz", modalTitleAdd: "Yangi", modalTitleEdit: "Tahrir", labelName: "Ismi", 
-                labelTeacher: "O'qituvchi", labelClass: "Guruh", placeholderClass: "Yozing", placeholderTeacher: "Tanlang", labelTotal: "Jami", labelUsed: "O'tilgan", labelPayDate: "Sana", btnCancel: "Bekor", btnSave: "Saqlash", 
-                noData: "Yo'q", confirmDelete: "O'chirilsinmi?", filterAll: "Hammasi", filterLabel: "Mas'ul:", filterClassLabel: "Guruh:", filterStatusLabel: "Holat:", actionPlus: "+1 dars", historyTitle: "Tarix", historyEmpty: "Yo'q", btnClose: "Yopish", manualAdd: "Qo'shish", btnUpdate: "Yangilash", alertNoDate: "Sana tanlang",
-                days: ["Yak", "Dush", "Sesh", "Chor", "Pay", "Jum", "Shan"], confirmDeleteRecord: "O'chirilsinmi?", btnOk: "Ha", btnAbort: "Yo'q"
-            },
-            ru: {
-                loginTitle: "Контроль оплаты", loginPlaceholder: "admin или Kanglaoshi", loginPassPlaceholder: "Пароль (1234)", loginSubtitle: "Academic Intelligence Portal", loginHint: "Логин: admin или Kanglaoshi / Пароль: 1234",
-                dashboardTitle: "Управление Оплатой", subtitle: "Синхронизация Данных", addBtn: "Добавить", statTotal: "Студентов", statWarning: "Внимание", statOverdue: "Должники",
-                thName: "ФИО Студента", thTeacher: "Преподаватель", thClass: "Группа", thProgress: "Прогресс", thRemaining: "Осталось", thLastPay: "Последняя оплата", thStatus: "Статус", thActions: "Действия",
-                statusPaid: "Достаточно", statusWarning: "Истекает", statusOverdue: "Нужна оплата", modalTitleAdd: "Добавить студента", modalTitleEdit: "Редактировать данные", labelName: "ФИО", 
-                labelTeacher: "Преподаватель", labelClass: "Класс/Группа", placeholderClass: "Введите", placeholderTeacher: "Выберите учителя", labelTotal: "Всего уроков", labelUsed: "Пройдено", labelPayDate: "Дата оплаты", btnCancel: "Отмена", btnSave: "Сохранить", 
-                noData: "Нет данных", confirmDelete: "Вы уверены, что хотите навсегда удалить этого студента?", filterAll: "Все", filterLabel: "Ответственный:", filterClassLabel: "Фильтр по классу:", filterStatusLabel: "Фильтр по статусу:", actionPlus: "+1 урок", historyTitle: "История посещений", historyEmpty: "Записей нет", btnClose: "Закрыть окно", manualAdd: "Добавить", btnUpdate: "Обновить", alertNoDate: "Сначала выберите дату",
-                days: ["Вс", "Пн", "Вт", "Ср", "Чт", "Пт", "Сб"], confirmDeleteRecord: "Удалить эту запись о посещении?", btnOk: "Да", btnAbort: "Нет"
-            },
-            en: {
-                loginTitle: "Tracker Pro", loginPlaceholder: "admin or Kanglaoshi", loginPassPlaceholder: "Password (1234)", loginSubtitle: "Academic Operations Portal", loginHint: "Tips: User admin or Kanglaoshi / Pass 1234",
-                dashboardTitle: "Dashboard", subtitle: "Academic Operations Portal", addBtn: "Add New", statTotal: "Students", statWarning: "Warning", statOverdue: "Due",
-                thName: "Full Name", thTeacher: "Rep.", thClass: "Class", thProgress: "Progress", thRemaining: "Left", thLastPay: "Last Pay", thStatus: "Status", thActions: "Actions",
-                statusPaid: "Paid", statusWarning: "Low", statusOverdue: "Due", modalTitleAdd: "New Student", modalTitleEdit: "Edit Info", labelName: "Name", 
-                labelTeacher: "Teacher", labelClass: "Class", placeholderClass: "Type", placeholderTeacher: "Select", labelTotal: "Total Pack", labelUsed: "Used", labelPayDate: "Date", btnCancel: "Cancel", btnSave: "Save", 
-                noData: "Empty", confirmDelete: "Delete student?", filterAll: "All", filterLabel: "Rep:", filterClassLabel: "Level:", filterStatusLabel: "Status:", actionPlus: "+1", historyTitle: "History", historyEmpty: "No history", btnClose: "Close", manualAdd: "Add", btnUpdate: "Update", alertNoDate: "Select date",
-                days: ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"], confirmDeleteRecord: "Delete?", btnOk: "Yes", btnAbort: "No"
-            }
+                loginTitle: "内部教学记录系统", loginPlaceholder: "Username", loginPassPlaceholder: "Password", dashboardTitle: "学生付费跟进管理", subtitle: "协作版 · 实时云同步", addBtn: "添加学生", statTotal: "学生总数", statWarning: "即将到期", statOverdue: "欠费预警", thName: "学生姓名", thTeacher: "负责", thClass: "班级", thProgress: "进度", thRemaining: "剩余", thLastPay: "最近付费", thStatus: "状态", thActions: "管理", actionPlus: "+1 记课", historyTitle: "上课记录", historyEmpty: "暂无记录", btnClose: "关闭窗口", manualAdd: "补签", btnUpdate: "更新", confirmDelete: "确定要永久删除该学生吗？", confirmDeleteRecord: "确定删除这条记录吗？", btnOk: "确认", btnAbort: "取消", labelContract: "合同号", placeholderContract: "输入号", labelName: "姓名", labelTeacher: "负责老师", labelClass: "班级", labelTotal: "总量", labelUsed: "已上", labelPayDate: "付费日期", btnCancel: "取消", btnSave: "保存", days: ["周日", "周一", "周二", "周三", "周四", "周五", "周六"] },
+            uz: { dashboardTitle: "To'lov Monitoringi", subtitle: "Operatsiyalar Portali", addBtn: "Qo'shish", statTotal: "Jami", statWarning: "Ogoh", statOverdue: "Qarz", thName: "Ism", thTeacher: "Mas'ul", thClass: "Guruh", thProgress: "Holat", thRemaining: "Qolgan", thLastPay: "To'lov", thStatus: "Holat", thActions: "Amal", actionPlus: "+1 dars", historyEmpty: "Yo'q", btnClose: "Yopish", manualAdd: "Qo'shish", confirmDelete: "O'chirilsinmi?", btnOk: "Ha", btnAbort: "Yo'q", labelContract: "Shartnoma", days: ["Yak", "Dush", "Sesh", "Chor", "Pay", "Jum", "Shan"] },
+            ru: { dashboardTitle: "Управление Оплатой", subtitle: "Синхронизация Данных", addBtn: "Добавить", statTotal: "Студентов", statWarning: "Внимание", statOverdue: "Должники", thName: "ФИО Студента", thTeacher: "Преподаватель", thClass: "Группа", thProgress: "Прогресс", thRemaining: "Осталось", thLastPay: "Последняя оплата", thStatus: "Статус", thActions: "Действия", actionPlus: "+1 урок", historyTitle: "История", historyEmpty: "Записей нет", btnClose: "Закрыть", confirmDelete: "Удалить студента навсегда?", confirmDeleteRecord: "Удалить запись?", btnOk: "Да", btnAbort: "Нет", labelContract: "№ Контракта", labelName: "ФИО", labelTeacher: "Учитель", labelClass: "Группа", labelTotal: "Всего", labelUsed: "Пройдено", labelPayDate: "Дата оплаты", btnCancel: "Отмена", btnSave: "Сохранить", days: ["Вс", "Пн", "Вт", "Ср", "Чт", "Пт", "Сб"] },
+            en: { dashboardTitle: "Dashboard", subtitle: "Sync Portal", addBtn: "Add New", statTotal: "Students", statWarning: "Warning", statOverdue: "Due", thName: "Full Name", thTeacher: "Rep.", thClass: "Class", thProgress: "Progress", thRemaining: "Left", thLastPay: "Last Pay", thStatus: "Status", thActions: "Actions", actionPlus: "+1", historyTitle: "Logs", historyEmpty: "Empty", btnClose: "Close", confirmDelete: "Delete student?", btnOk: "Yes", btnAbort: "No", labelContract: "Contract No.", days: ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"] }
         };
 
-        let currentLang = 'zh';
-        let selectedTeacher = 'all';
-        let selectedClass = 'all';
-        let selectedStatus = 'all';
-        let students = [];
-        let loggedUser = null;
-        let isAdmin = false;
-        let currentHistoryStudentId = null;
-        let editingRecordIndex = -1;
-        let db, auth;
+        let currentLang = 'zh', selectedTeacher = 'all', selectedClass = 'all', selectedStatus = 'all', students = [], loggedUser = null, isAdmin = false, currentHistoryStudentId = null, editingRecordIndex = -1, db, auth;
 
-        // 全局自定义确认逻辑
         const customConfirm = (msg, callback) => {
             const overlay = document.getElementById('confirm-modal-overlay');
-            const msgEl = document.getElementById('confirm-modal-msg');
-            const okBtn = document.getElementById('confirm-btn-ok');
-            const cancelBtn = document.getElementById('confirm-btn-cancel');
-            const t = tDict[currentLang] || tDict['zh'];
-            
-            msgEl.innerText = msg;
-            okBtn.innerText = t.btnOk || "确认";
-            cancelBtn.innerText = t.btnAbort || "取消";
-            
+            document.getElementById('confirm-modal-msg').innerText = msg;
             overlay.style.display = 'flex';
-            
-            const cleanup = () => { overlay.style.display = 'none'; };
-            
-            okBtn.onclick = () => { callback(); cleanup(); };
-            cancelBtn.onclick = () => { cleanup(); };
+            document.getElementById('confirm-btn-ok').onclick = () => { callback(); overlay.style.display = 'none'; };
+            document.getElementById('confirm-btn-cancel').onclick = () => { overlay.style.display = 'none'; };
         };
 
         const startApp = async () => {
             const app = initializeApp(firebaseConfig);
-            auth = getAuth(app);
-            db = getFirestore(app);
-
-            // 挂载全局窗口函数
+            auth = getAuth(app); db = getFirestore(app);
             window.logout = () => { sessionStorage.removeItem('loggedTeacher'); location.reload(); };
             window.setLang = (l) => { currentLang = l; render(); };
             window.setTeacherFilter = (t) => { selectedTeacher = t; selectedClass = 'all'; render(); };
@@ -355,127 +266,99 @@
             window.setStatusFilter = (s) => { selectedStatus = s; render(); };
             window.toggleModal = (show) => { document.getElementById('modal-overlay').style.display = show ? 'flex' : 'none'; };
             window.toggleHistoryModal = (show) => { if (!show) window.cancelRecordEdit(); document.getElementById('history-modal-overlay').style.display = show ? 'flex' : 'none'; };
-
             onAuthStateChanged(auth, async (user) => {
                 if (user) {
-                    const studentsCol = collection(db, 'artifacts', appId, 'public', 'data', 'students');
-                    onSnapshot(query(studentsCol), (snapshot) => {
+                    onSnapshot(query(collection(db, 'artifacts', appId, 'public', 'data', 'students')), (snapshot) => {
                         students = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
                         render();
-                        if (currentHistoryStudentId && document.getElementById('history-modal-overlay').style.display === 'flex') {
-                            window.openHistoryModal(currentHistoryStudentId);
-                        }
+                        if (currentHistoryStudentId && document.getElementById('history-modal-overlay').style.display === 'flex') window.openHistoryModal(currentHistoryStudentId);
                     });
                 }
             });
-
-            await signInAnonymously(auth);
-            checkLogin();
-
+            await signInAnonymously(auth); checkLogin();
             document.getElementById('login-form').onsubmit = (e) => {
                 e.preventDefault();
-                const name = document.getElementById('login-username').value.trim();
-                const pass = document.getElementById('login-password').value.trim();
-                if (userCredentials[name] && userCredentials[name] === pass) {
-                    sessionStorage.setItem('loggedTeacher', name);
-                    checkLogin();
-                } else {
-                    const err = document.getElementById('login-error');
-                    err.classList.remove('hidden');
-                    setTimeout(() => err.classList.add('hidden'), 3000);
-                }
+                const u = document.getElementById('login-username').value.trim(), p = document.getElementById('login-password').value.trim();
+                if (userCredentials[u] === p) { sessionStorage.setItem('loggedTeacher', u); checkLogin(); }
+                else { document.getElementById('login-error').classList.remove('hidden'); }
             };
         };
 
         const checkLogin = () => {
-            const savedUser = sessionStorage.getItem('loggedTeacher');
-            if (savedUser && (teacherList.includes(savedUser) || savedUser === 'admin')) {
-                loggedUser = savedUser;
-                isAdmin = (savedUser === 'admin');
+            const saved = sessionStorage.getItem('loggedTeacher');
+            if (saved && (teacherList.includes(saved) || saved === 'admin')) {
+                loggedUser = saved; isAdmin = (saved === 'admin');
                 document.getElementById('login-page').classList.add('hidden');
                 document.getElementById('app-content').classList.remove('hidden');
-                document.getElementById('logged-user-name').innerText = isAdmin ? 'Root Admin' : savedUser;
-                document.getElementById('user-avatar').innerText = isAdmin ? 'A' : savedUser.charAt(0).toUpperCase();
+                document.getElementById('logged-user-name').innerText = isAdmin ? 'Admin' : saved;
+                document.getElementById('user-avatar').innerText = saved[0].toUpperCase();
                 document.getElementById('teacher-filter-wrap').classList.toggle('hidden', !isAdmin);
                 render();
             }
         };
 
         window.openHistoryModal = (id) => {
-            currentHistoryStudentId = id;
-            const s = students.find(item => item.id === id);
-            if (!s) return;
+            currentHistoryStudentId = id; const s = students.find(item => item.id === id); if (!s) return;
             const t = tDict[currentLang] || tDict['zh'];
             document.getElementById('history-modal-title').innerText = s.name;
             const list = document.getElementById('history-list'); list.innerHTML = '';
-            const history = s.attendanceHistory || [];
-            if (history.length === 0) list.innerHTML = `<div class="py-12 text-center text-slate-400 italic text-sm">${t.historyEmpty}</div>`;
-            else {
-                [...history].reverse().forEach((record, revIndex) => {
-                    const originalIndex = history.length - 1 - revIndex;
-                    list.innerHTML += `<div class="flex items-center justify-between p-6 bg-[#F7FAF9] rounded-[24px] border border-white group hover:bg-[#F0F6F5] transition-all"><div class="flex items-center gap-4"><div class="w-10 h-10 rounded-2xl bg-white text-[#2C5F56] flex items-center justify-center text-xs font-black shadow-sm">${history.length - revIndex}</div><span class="text-sm font-bold text-[#1A2E35] tracking-tight">${record}</span></div><div class="flex items-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity"><button onclick="startEditRecord(${originalIndex}, '${record}')" class="p-2.5 bg-white text-slate-300 hover:text-[#2C5F56] rounded-xl transition-colors"><i data-lucide="edit-2" class="w-4 h-4"></i></button><button onclick="deleteRecord(${originalIndex})" class="p-2.5 bg-white text-slate-300 hover:text-rose-500 rounded-xl transition-colors"><i data-lucide="trash-2" class="w-4 h-4"></i></button></div></div>`;
-                });
-            }
+            (s.attendanceHistory || []).slice().reverse().forEach((record, revIdx) => {
+                const originalIdx = s.attendanceHistory.length - 1 - revIdx;
+                list.innerHTML += `<div class="flex items-center justify-between p-6 bg-[#F7FAF9] rounded-[24px] border border-white group hover:bg-[#F0F6F5] transition-all">
+                    <div class="flex items-center gap-4"><div class="w-10 h-10 rounded-2xl bg-white text-[#2C5F56] flex items-center justify-center text-xs font-black shadow-sm">${s.attendanceHistory.length - revIdx}</div><span class="text-sm font-bold text-[#1A2E35]">${record}</span></div>
+                    <div class="flex items-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                        <button onclick="startEditRecord(${originalIdx}, '${record}')" class="p-2.5 text-slate-300 hover:text-[#2C5F56]"><i data-lucide="edit-2" class="w-4 h-4"></i></button>
+                        <button onclick="deleteRecord(${originalIdx})" class="p-2.5 text-slate-300 hover:text-rose-500"><i data-lucide="trash-2" class="w-4 h-4"></i></button>
+                    </div></div>`;
+            });
             window.toggleHistoryModal(true); lucide.createIcons();
         };
 
-        window.startEditRecord = (index, currentText) => {
-            editingRecordIndex = index; const dateMatch = currentText.match(/\d{4}-\d{2}-\d{2}/);
-            if (dateMatch) document.getElementById('manual-date-input').value = dateMatch[0];
+        window.startEditRecord = (idx, text) => {
+            editingRecordIndex = idx; const m = text.match(/\d{4}-\d{2}-\d{2}/);
+            if (m) document.getElementById('manual-date-input').value = m[0];
             document.getElementById('btn-record-action').innerText = tDict[currentLang].btnUpdate;
             document.getElementById('btn-record-cancel').classList.remove('hidden');
         };
-
         window.cancelRecordEdit = () => { editingRecordIndex = -1; document.getElementById('manual-date-input').value = ""; document.getElementById('btn-record-action').innerText = tDict[currentLang].manualAdd; document.getElementById('btn-record-cancel').classList.add('hidden'); };
+        window.handleRecordAction = () => editingRecordIndex >= 0 ? updateManualRecord() : addManualRecord();
 
-        window.handleRecordAction = async () => { if (editingRecordIndex >= 0) await updateManualRecord(); else await addManualRecord(); };
-
-        window.addManualRecord = async () => {
-            const dateVal = document.getElementById('manual-date-input').value; if (!dateVal) return;
-            const s = students.find(item => item.id === currentHistoryStudentId);
-            if (s) {
-                const dateObj = new Date(dateVal.replace(/-/g, "/")); const dayName = tDict[currentLang].days[dateObj.getDay()];
-                const formattedDate = `${dateVal} (${dayName})`;
-                await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'students', currentHistoryStudentId), { usedLessons: s.usedLessons + 1, attendanceHistory: [...(s.attendanceHistory || []), formattedDate] });
-                document.getElementById('manual-date-input').value = "";
-            }
+        const addManualRecord = async () => {
+            const d = document.getElementById('manual-date-input').value; if (!d) return;
+            const s = students.find(it => it.id === currentHistoryStudentId);
+            const formatted = `${d} (${tDict[currentLang].days[new Date(d.replace(/-/g, "/")).getDay()]})`;
+            await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'students', currentHistoryStudentId), { usedLessons: s.usedLessons + 1, attendanceHistory: [...(s.attendanceHistory || []), formatted] });
+            document.getElementById('manual-date-input').value = "";
         };
 
-        window.updateManualRecord = async () => {
-            const dateVal = document.getElementById('manual-date-input').value; if (!dateVal) return;
-            const s = students.find(item => item.id === currentHistoryStudentId);
-            if (s && editingRecordIndex >= 0) {
-                const dateObj = new Date(dateVal.replace(/-/g, "/")); const dayName = tDict[currentLang].days[dateObj.getDay()];
-                const formattedDate = `${dateVal} (${dayName})`;
-                const newHistory = [...(s.attendanceHistory || [])]; newHistory[editingRecordIndex] = formattedDate;
-                await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'students', currentHistoryStudentId), { attendanceHistory: newHistory });
-                window.cancelRecordEdit();
-            }
+        const updateManualRecord = async () => {
+            const d = document.getElementById('manual-date-input').value; if (!d) return;
+            const s = students.find(it => it.id === currentHistoryStudentId);
+            const formatted = `${d} (${tDict[currentLang].days[new Date(d.replace(/-/g, "/")).getDay()]})`;
+            const nh = [...(s.attendanceHistory || [])]; nh[editingRecordIndex] = formatted;
+            await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'students', currentHistoryStudentId), { attendanceHistory: nh });
+            window.cancelRecordEdit();
         };
 
-        window.deleteRecord = async (index) => {
-            const t = tDict[currentLang] || tDict['zh'];
-            customConfirm(t.confirmDeleteRecord, async () => {
-                const s = students.find(item => item.id === currentHistoryStudentId);
-                if (s) {
-                    const newHistory = [...(s.attendanceHistory || [])]; newHistory.splice(index, 1);
-                    await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'students', currentHistoryStudentId), { usedLessons: Math.max(0, s.usedLessons - 1), attendanceHistory: newHistory });
-                }
-            });
-        };
+        window.deleteRecord = (idx) => customConfirm(tDict[currentLang].confirmDeleteRecord, async () => {
+            const s = students.find(it => it.id === currentHistoryStudentId);
+            const nh = [...(s.attendanceHistory || [])]; nh.splice(idx, 1);
+            await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'students', currentHistoryStudentId), { usedLessons: Math.max(0, s.usedLessons - 1), attendanceHistory: nh });
+        });
 
         window.openAddModal = () => {
             document.getElementById('student-form').reset(); document.getElementById('input-id').value = "";
-            const sel = document.getElementById('input-teacher'); const placeholder = tDict[currentLang].placeholderTeacher;
-            sel.innerHTML = `<option value="" disabled selected>${placeholder}</option>` + teacherList.map(t => `<option value="${t}">${t}</option>`).join('');
+            const sel = document.getElementById('input-teacher'); 
+            sel.innerHTML = `<option value="" disabled selected>${tDict[currentLang].placeholderTeacher}</option>` + teacherList.map(t => `<option value="${t}">${t}</option>`).join('');
             if (!isAdmin) { sel.value = loggedUser; sel.disabled = true; } else { sel.value = ""; sel.disabled = false; }
             const ts = document.getElementById('input-total'); ts.innerHTML = [12,24,36,48,60,72,84,96,108,120,144].map(v => `<option value="${v}">${v} 节</option>`).join('');
             document.getElementById('modal-title').innerText = tDict[currentLang].modalTitleAdd; window.toggleModal(true);
         };
 
         window.openEditModal = (id) => {
-            const s = students.find(item => item.id === id); document.getElementById('input-id').value = s.id;
-            document.getElementById('input-name').value = s.name; document.getElementById('input-class').value = s.studentClass || "";
+            const s = students.find(it => it.id === id); document.getElementById('input-id').value = s.id;
+            document.getElementById('input-name').value = s.name; document.getElementById('input-contract').value = s.contractId || "";
+            document.getElementById('input-class').value = s.studentClass || "";
             const sel = document.getElementById('input-teacher'); sel.innerHTML = teacherList.map(t => `<option value="${t}">${t}</option>`).join('');
             sel.value = s.teacher; sel.disabled = !isAdmin;
             const ts = document.getElementById('input-total'); ts.innerHTML = [12,24,36,48,60,72,84,96,108,120,144].map(v => `<option value="${v}">${v} 节</option>`).join('');
@@ -484,126 +367,89 @@
         };
 
         document.getElementById('student-form').onsubmit = async (e) => {
-            e.preventDefault(); const id = document.getElementById('input-id').value; const teacherVal = document.getElementById('input-teacher').value; if (!teacherVal) return;
-            const data = { name: document.getElementById('input-name').value, studentClass: document.getElementById('input-class').value, teacher: teacherVal, totalLessons: parseInt(document.getElementById('input-total').value), usedLessons: parseInt(document.getElementById('input-used').value), lastPaymentDate: document.getElementById('input-date').value, updatedAt: serverTimestamp() };
+            e.preventDefault(); const id = document.getElementById('input-id').value, teacherVal = document.getElementById('input-teacher').value; if (!teacherVal) return;
+            const data = { name: document.getElementById('input-name').value, contractId: document.getElementById('input-contract').value, studentClass: document.getElementById('input-class').value, teacher: teacherVal, totalLessons: parseInt(document.getElementById('input-total').value), usedLessons: parseInt(document.getElementById('input-used').value), lastPaymentDate: document.getElementById('input-date').value, updatedAt: serverTimestamp() };
             window.toggleModal(false);
             if (id) await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'students', id), data);
             else { data.attendanceHistory = []; await setDoc(doc(collection(db, 'artifacts', appId, 'public', 'data', 'students')), data); }
         };
 
         window.updateLesson = async (id) => {
-            const s = students.find(item => item.id === id);
-            if (s) {
-                const now = new Date(); const dayName = tDict[currentLang].days[now.getDay()];
-                const ds = now.getFullYear() + '-' + String(now.getMonth()+1).padStart(2,'0') + '-' + String(now.getDate()).padStart(2,'0') + ` (${dayName})`;
-                await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'students', id), { usedLessons: s.usedLessons + 1, attendanceHistory: [...(s.attendanceHistory || []), ds] });
-            }
+            const s = students.find(it => it.id === id); if (!s) return;
+            const now = new Date(); const formatted = `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}-${String(now.getDate()).padStart(2,'0')} (${tDict[currentLang].days[now.getDay()]})`;
+            await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'students', id), { usedLessons: s.usedLessons + 1, attendanceHistory: [...(s.attendanceHistory || []), formatted] });
         };
 
-        window.deleteStudent = async (id) => {
-            const t = tDict[currentLang] || tDict['zh'];
-            customConfirm(t.confirmDelete, async () => {
-                await deleteDoc(doc(db, 'artifacts', appId, 'public', 'data', 'students', id));
-            });
-        };
+        window.deleteStudent = (id) => customConfirm(tDict[currentLang].confirmDelete, async () => { await deleteDoc(doc(db, 'artifacts', appId, 'public', 'data', 'students', id)); });
 
         const render = () => {
             const t = tDict[currentLang] || tDict['zh'];
             document.getElementById('login-title').innerText = t.loginTitle;
             document.getElementById('login-username').placeholder = t.loginPlaceholder;
             document.getElementById('login-password').placeholder = t.loginPassPlaceholder;
-            document.getElementById('login-hint').innerText = t.loginHint;
             if (!loggedUser) return;
-
             document.getElementById('current-lang-text').innerText = currentLang.toUpperCase();
-            document.querySelectorAll('.lang-item').forEach(btn => { 
-                btn.classList.toggle('active', btn.innerText.includes(`(${currentLang.toUpperCase()})`)); 
-            });
-
-            let baseFiltered = isAdmin ? (selectedTeacher === 'all' ? students : students.filter(s => s.teacher === selectedTeacher)) : students.filter(s => s.teacher === loggedUser);
-            const classes = [...new Set(baseFiltered.map(s => s.studentClass).filter(c => c))].sort();
-            let classFiltered = selectedClass === 'all' ? baseFiltered : baseFiltered.filter(s => s.studentClass === selectedClass);
-            let filtered = classFiltered.filter(s => {
+            
+            let base = isAdmin ? (selectedTeacher === 'all' ? students : students.filter(s => s.teacher === selectedTeacher)) : students.filter(s => s.teacher === loggedUser);
+            const classes = [...new Set(base.map(s => s.studentClass).filter(c => c))].sort();
+            let filtered = (selectedClass === 'all' ? base : base.filter(s => s.studentClass === selectedClass)).filter(s => {
                 if (selectedStatus === 'all') return true;
                 const r = s.totalLessons - s.usedLessons;
                 if (selectedStatus === 'paid') return r > 3;
                 if (selectedStatus === 'warning') return r > 0 && r <= 3;
-                if (selectedStatus === 'overdue') return r <= 0;
-                return true;
+                return r <= 0;
             });
 
             document.getElementById('page-title-main').innerText = t.dashboardTitle;
-            document.getElementById('page-subtitle').innerText = t.subtitle;
             document.getElementById('add-btn-text').innerText = t.addBtn;
-            document.getElementById('stat-total-label').innerText = t.statTotal;
-            document.getElementById('stat-warning-label').innerText = t.statWarning;
-            document.getElementById('stat-overdue-label').innerText = t.statOverdue;
-            
-            document.getElementById('stat-total-val').innerText = classFiltered.length;
-            document.getElementById('stat-warning-val').innerText = classFiltered.filter(s => { let r = s.totalLessons - s.usedLessons; return r > 0 && r <= 3; }).length;
-            document.getElementById('stat-overdue-val').innerText = classFiltered.filter(s => (s.totalLessons - s.usedLessons) <= 0).length;
+            document.getElementById('stat-total-val').innerText = base.length;
+            document.getElementById('stat-warning-val').innerText = base.filter(s => { let r = s.totalLessons - s.usedLessons; return r > 0 && r <= 3; }).length;
+            document.getElementById('stat-overdue-val').innerText = base.filter(s => (s.totalLessons - s.usedLessons) <= 0).length;
 
             if (isAdmin) {
                 const tc = document.getElementById('teacher-filter-container');
                 tc.innerHTML = `<button onclick="setTeacherFilter('all')" class="filter-chip px-5 py-2.5 rounded-2xl text-[10px] font-black border border-[#D1DEDC] bg-white shadow-sm transition-all ${selectedTeacher==='all'?'active':''}">${t.filterAll}</button>`;
-                teacherList.forEach(name => tc.innerHTML += `<button onclick="setTeacherFilter('${name}')" class="filter-chip px-5 py-2.5 rounded-2xl text-[10px] font-black border border-[#D1DEDC] bg-white shadow-sm transition-all ${selectedTeacher===name?'active':''}">${name}</button>`);
+                teacherList.forEach(n => tc.innerHTML += `<button onclick="setTeacherFilter('${n}')" class="filter-chip px-5 py-2.5 rounded-2xl text-[10px] font-black border border-[#D1DEDC] bg-white shadow-sm transition-all ${selectedTeacher===n?'active':''}">${n}</button>`);
             }
-
             const cc = document.getElementById('class-filter-container');
             cc.innerHTML = `<button onclick="setClassFilter('all')" class="filter-chip px-5 py-2.5 rounded-2xl text-[10px] font-black border border-[#D1DEDC] bg-white shadow-sm transition-all ${selectedClass==='all'?'active':''}">${t.filterAll}</button>`;
             classes.forEach(c => cc.innerHTML += `<button onclick="setClassFilter('${c}')" class="filter-chip px-5 py-2.5 rounded-2xl text-[10px] font-black border border-[#D1DEDC] bg-white shadow-sm transition-all ${selectedClass===c?'active':''}">${c}</button>`);
 
             const sc = document.getElementById('status-filter-container');
-            sc.innerHTML = `
-                <button onclick="setStatusFilter('all')" class="filter-chip px-6 py-3 rounded-full text-[10px] font-black border border-[#D1DEDC] bg-white shadow-sm transition-all ${selectedStatus==='all'?'active':''}">${t.filterAll}</button>
+            sc.innerHTML = `<button onclick="setStatusFilter('all')" class="filter-chip px-6 py-3 rounded-full text-[10px] font-black border border-[#D1DEDC] bg-white shadow-sm transition-all ${selectedStatus==='all'?'active':''}">${t.filterAll}</button>
                 <button onclick="setStatusFilter('paid')" class="filter-chip px-6 py-3 rounded-full text-[10px] font-black border border-[#D1DEDC] bg-white shadow-sm transition-all ${selectedStatus==='paid'?'active':''}">${t.statusPaid}</button>
                 <button onclick="setStatusFilter('warning')" class="filter-chip px-6 py-3 rounded-full text-[10px] font-black border border-[#D1DEDC] bg-white shadow-sm transition-all ${selectedStatus==='warning'?'active':''}">${t.statusWarning}</button>
-                <button onclick="setStatusFilter('overdue')" class="filter-chip px-6 py-3 rounded-full text-[10px] font-black border border-[#D1DEDC] bg-white shadow-sm transition-all ${selectedStatus==='overdue'?'active':''}">${t.statusOverdue}</button>
-            `;
+                <button onclick="setStatusFilter('overdue')" class="filter-chip px-6 py-3 rounded-full text-[10px] font-black border border-[#D1DEDC] bg-white shadow-sm transition-all ${selectedStatus==='overdue'?'active':''}">${t.statusOverdue}</button>`;
 
             document.getElementById('table-head-row').innerHTML = `<th class="px-8 py-6 min-w-[140px] w-48 text-[10px] font-black text-slate-400 uppercase tracking-widest">${t.thName}</th><th class="px-8 py-6 text-[10px] font-black text-slate-400 uppercase tracking-widest">${t.thTeacher}</th><th class="px-8 py-6 text-[10px] font-black text-slate-400 uppercase tracking-widest">${t.thClass}</th><th class="px-8 py-6 w-40 text-[10px] font-black text-slate-400 uppercase tracking-widest">${t.thProgress}</th><th class="px-8 py-6 text-[10px] font-black text-slate-400 uppercase tracking-widest">${t.thRemaining}</th><th class="px-8 py-6 text-[10px] font-black text-slate-400 uppercase tracking-widest text-center">${t.thLastPay}</th><th class="px-8 py-6 text-[10px] font-black text-slate-400 uppercase tracking-widest text-center">${t.thStatus}</th><th class="px-8 py-6 text-right w-24 text-[10px] font-black text-slate-400 uppercase tracking-widest">${t.thActions}</th>`;
 
-            const tbody = document.getElementById('student-table-body');
-            tbody.innerHTML = '';
+            const tbody = document.getElementById('student-table-body'); tbody.innerHTML = '';
             filtered.sort((a,b) => (a.totalLessons-a.usedLessons) - (b.totalLessons-b.usedLessons)).forEach(s => {
                 const rem = s.totalLessons - s.usedLessons;
-                const status = rem <= 0 ? {l:t.statusOverdue, c:"bg-rose-50 text-rose-500"} : (rem <= 3 ? {l:t.statusWarning, c:"bg-amber-50 text-amber-600"} : {l:t.statusPaid, c:"bg-[#F0F6F5] text-[#2C5F56]"});
-                tbody.innerHTML += `
-                    <tr class="table-row-modern transition-all duration-300">
-                        <td class="px-8 py-7"><div onclick="openHistoryModal('${s.id}')" class="font-extrabold text-[#1A2E35] text-sm cursor-pointer flex items-center gap-2 hover:text-[#2C5F56] transition-colors"><i data-lucide="calendar-check" class="w-4 h-4 text-slate-200"></i> ${s.name}</div></td>
-                        <td class="px-8 py-7"><span class="bg-[#F0F6F5] text-[#2C5F56] px-4 py-2 rounded-2xl text-[9px] font-black uppercase tracking-wider shadow-sm border border-white">${s.teacher}</span></td>
-                        <td class="px-8 py-7 font-bold text-slate-400 text-[11px] uppercase whitespace-nowrap tracking-wide">${s.studentClass || '---'}</td>
-                        <td class="px-8 py-7 w-40"><div class="flex items-center gap-3"><span class="text-xs font-black ${rem<0?'text-rose-500':'text-slate-400'}">${s.usedLessons}</span><div class="w-20 h-3 bg-slate-100 rounded-full overflow-hidden shadow-inner"><div class="h-full rounded-full ${rem<0?'bg-rose-600':(rem<=3?'bg-[#FFC554]':'bg-[#2C5F56]')}" style="width:${Math.min((s.usedLessons/s.totalLessons)*100,100)}%"></div></div></div></td>
-                        <td class="px-8 py-7 font-[900] ${rem<0?'text-rose-500':'text-[#1A2E35]'} text-xl tracking-tight">${rem}</td>
-                        <td class="px-8 py-7 text-slate-400 text-xs font-bold text-center italic">${s.lastPaymentDate || '---'}</td>
-                        <td class="px-8 py-7 text-center"><span class="px-4 py-2 rounded-full text-[9px] font-black border border-white whitespace-nowrap shadow-sm uppercase tracking-widest ${status.c}">${status.l}</span></td>
-                        <td class="px-8 py-7 text-right whitespace-nowrap w-24">
-                            <div class="flex justify-end gap-2">
-                                <button onclick="updateLesson('${s.id}')" class="bg-[#2C5F56] text-white text-[9px] font-black px-4 py-2.5 rounded-full active:scale-95 transition-all shadow-lg shadow-[#2C5F56]/10 uppercase" title="上课+1">${t.actionPlus}</button>
-                                <button onclick="openEditModal('${s.id}')" class="p-2.5 bg-white text-slate-200 hover:text-[#2C5F56] rounded-xl transition-all shadow-sm border border-slate-50" title="编辑"><i data-lucide="edit-3" class="w-4 h-4"></i></button>
-                                <button onclick="deleteStudent('${s.id}')" class="p-2.5 bg-white text-slate-200 hover:text-rose-500 rounded-xl transition-all shadow-sm border border-slate-50" title="删除"><i data-lucide="trash-2" class="w-4 h-4"></i></button>
-                            </div>
-                        </td>
-                    </tr>
-                `;
+                const st = rem <= 0 ? {l:t.statusOverdue, c:"bg-rose-50 text-rose-500"} : (rem <= 3 ? {l:t.statusWarning, c:"bg-amber-50 text-amber-600"} : {l:t.statusPaid, c:"bg-[#F0F6F5] text-[#2C5F56]"});
+                tbody.innerHTML += `<tr class="table-row-modern transition-all">
+                    <td class="px-8 py-7"><div onclick="openHistoryModal('${s.id}')" class="font-extrabold text-[#1A2E35] text-sm cursor-pointer flex items-center gap-2 hover:text-[#2C5F56] transition-colors"><i data-lucide="calendar-check" class="w-4 h-4 text-slate-200"></i><div><div>${s.name}</div><div class="text-[10px] text-slate-400 font-medium tracking-tight uppercase">${s.contractId || '---'}</div></div></div></td>
+                    <td class="px-8 py-7"><span class="bg-[#F0F6F5] text-[#2C5F56] px-4 py-2 rounded-2xl text-[9px] font-black uppercase tracking-wider shadow-sm border border-white">${s.teacher}</span></td>
+                    <td class="px-8 py-7 font-bold text-slate-400 text-[11px] uppercase">${s.studentClass || '---'}</td>
+                    <td class="px-8 py-7 w-40"><div class="flex items-center gap-3"><span class="text-xs font-black ${rem<0?'text-rose-500':'text-slate-400'}">${s.usedLessons}</span><div class="w-20 h-3 bg-slate-100 rounded-full overflow-hidden shadow-inner"><div class="h-full rounded-full ${rem<0?'bg-rose-600':(rem<=3?'bg-[#FFC554]':'bg-[#2C5F56]')}" style="width:${Math.min((s.usedLessons/s.totalLessons)*100,100)}%"></div></div></div></td>
+                    <td class="px-8 py-7 font-[900] ${rem<0?'text-rose-500':'text-[#1A2E35]'} text-xl tracking-tight">${rem}</td>
+                    <td class="px-8 py-7 text-slate-400 text-xs font-bold text-center italic">${s.lastPaymentDate || '---'}</td>
+                    <td class="px-8 py-7 text-center"><span class="px-4 py-2 rounded-full text-[9px] font-black border border-white whitespace-nowrap shadow-sm uppercase tracking-widest ${st.c}">${st.l}</span></td>
+                    <td class="px-8 py-7 text-right whitespace-nowrap w-24"><div class="flex justify-end gap-2">
+                        <button onclick="updateLesson('${s.id}')" class="bg-[#2C5F56] text-white text-[9px] font-black px-4 py-2.5 rounded-full active:scale-95 transition-all shadow-lg shadow-[#2C5F56]/10 uppercase">${t.actionPlus}</button>
+                        <button onclick="openEditModal('${s.id}')" class="p-2.5 bg-white text-slate-200 hover:text-[#2C5F56] rounded-xl transition-all shadow-sm border border-slate-50"><i data-lucide="edit-3" class="w-4 h-4"></i></button>
+                        <button onclick="deleteStudent('${s.id}')" class="p-2.5 bg-white text-slate-200 hover:text-rose-500 rounded-xl shadow-sm border border-slate-50"><i data-lucide="trash-2" class="w-4 h-4"></i></button>
+                    </div></td></tr>`;
             });
-            
-            document.getElementById('label-name').innerText = t.labelName;
-            document.getElementById('label-teacher').innerText = t.labelTeacher;
-            document.getElementById('label-class').innerText = t.labelClass;
-            document.getElementById('label-total').innerText = t.labelTotal;
-            document.getElementById('label-used').innerText = t.labelUsed;
-            document.getElementById('label-date').innerText = t.labelPayDate;
-            document.getElementById('btn-cancel').innerText = t.btnCancel;
-            document.getElementById('btn-save').innerText = t.btnSave;
-            document.getElementById('btn-record-action').innerText = editingRecordIndex >= 0 ? t.btnUpdate : t.manualAdd;
-            document.getElementById('btn-close-history').innerText = t.btnClose;
-            document.getElementById('filter-label').innerText = t.filterLabel;
-            document.getElementById('filter-class-label').innerText = t.filterClassLabel;
+            document.getElementById('label-name').innerText = t.labelName; document.getElementById('label-contract').innerText = t.labelContract;
+            document.getElementById('label-teacher').innerText = t.labelTeacher; document.getElementById('label-class').innerText = t.labelClass;
+            document.getElementById('label-total').innerText = t.labelTotal; document.getElementById('label-used').innerText = t.labelUsed;
+            document.getElementById('label-date').innerText = t.labelPayDate; document.getElementById('btn-cancel').innerText = t.btnCancel;
+            document.getElementById('btn-save').innerText = t.btnSave; document.getElementById('btn-close-history').innerText = t.btnClose;
+            document.getElementById('filter-label').innerText = t.filterLabel; document.getElementById('filter-class-label').innerText = t.filterClassLabel;
             document.getElementById('filter-status-label').innerText = t.filterStatusLabel;
             lucide.createIcons();
         };
-
         startApp();
     </script>
 </body>
