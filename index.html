@@ -48,7 +48,7 @@
         
         .lang-item.active { background-color: var(--brand-green); color: white; font-weight: 800; }
 
-        /* 新增：用于伪装密码框的 CSS，机器识别为普通文本，视觉显示为黑点 */
+        /* 用于伪装密码框的 CSS，机器识别为普通文本，视觉显示为黑点 */
         .pin-mask { -webkit-text-security: disc; }
 
         .bg-mesh {
@@ -62,7 +62,7 @@
 </head>
 <body class="bg-mesh min-h-screen">
     
-    <!-- 访问入口页面 (已移除所有带有 login 字眼的 ID) -->
+    <!-- 访问入口页面 -->
     <div id="entry-gate" class="fixed inset-0 z-[500] flex items-center justify-center p-4 bg-[#1A2E35]">
         <div class="absolute inset-0 opacity-10" style="background-image: url('https://www.transparenttextures.com/patterns/carbon-fibre.png');"></div>
         <div class="bg-white rounded-[40px] shadow-2xl w-full max-w-md p-12 text-center relative z-10 border-t-8 border-[#2C5F56]">
@@ -77,7 +77,7 @@
             
             <div id="auth-container" class="space-y-5 text-left mb-6">
                 <div><input id="entry-name" type="text" class="w-full px-6 py-5 bg-[#F7FAF9] rounded-3xl font-bold outline-none border-none focus:ring-2 focus:ring-[#2C5F56]/10" placeholder="教师姓名 (例如: Kanglaoshi)"></div>
-                <!-- 关键安全修改：type="text" 配合 pin-mask 样式，绕过密码框安全检测 -->
+                <!-- type="text" 配合 pin-mask 样式，绕过密码框安全检测 -->
                 <div><input id="entry-pin" type="text" class="w-full px-6 py-5 bg-[#F7FAF9] rounded-3xl font-bold outline-none border-none focus:ring-2 focus:ring-[#2C5F56]/10 pin-mask" placeholder="访问识别码 (PIN)"></div>
                 <button id="btn-enter" class="w-full bg-[#2C5F56] text-white py-5 rounded-3xl font-bold shadow-xl hover:opacity-90 active:scale-[0.98] transition-all mt-2 text-sm">进入工作台</button>
             </div>
@@ -168,7 +168,7 @@
         </main>
     </div>
 
-    <!-- 所有 Modal 和 自定义确认框保持在 body 底部 -->
+    <!-- Modal 和确认框 -->
     <div id="modal-overlay" class="fixed inset-0 bg-[#1A2E35]/90 backdrop-blur-lg hidden items-center justify-center p-4 z-[600]">
         <div class="bg-white rounded-[40px] shadow-2xl w-full max-w-md p-10 overflow-y-auto max-h-[90vh] border-t-8 border-[#FFC554]">
             <div class="flex justify-between items-center mb-10">
@@ -240,21 +240,22 @@
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-        import { getAuth, signInAnonymously, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
         import { getFirestore, doc, setDoc, collection, onSnapshot, updateDoc, deleteDoc, query, serverTimestamp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
-        const firebaseConfig = { apiKey: "AIzaSyDsuB8A4RBJz3PlDvzAEhKA3FEDoDmFfh8", authDomain: "studenttracker-a8384.firebaseapp.com", projectId: "studenttracker-a8384", storageBucket: "studenttracker-a8384.firebasestorage.app", messagingSenderId: "181463996376", appId: "1:181463996376:web:77b32e8a82a63c5eb004ad" };
+        // Dynamic config setup for Canvas compatibility
+        const defaultFirebaseConfig = { apiKey: "AIzaSyDsuB8A4RBJz3PlDvzAEhKA3FEDoDmFfh8", authDomain: "studenttracker-a8384.firebaseapp.com", projectId: "studenttracker-a8384", storageBucket: "studenttracker-a8384.firebasestorage.app", messagingSenderId: "181463996376", appId: "1:181463996376:web:77b32e8a82a63c5eb004ad" };
+        const firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : defaultFirebaseConfig;
         const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-tracker';
         
         const teacherList = ["Kanglaoshi", "Lilaoshi", "Pailaoshi", "Anlaoshi", "Tielaoshi", "Lanyinglaoshi", "Zenglaoshi"];
         const teacherPins = { "Director": "1234", "Kanglaoshi": "1234", "Lilaoshi": "1234", "Pailaoshi": "1234", "Anlaoshi": "1234", "Tielaoshi": "1234", "Lanyinglaoshi": "1234", "Zenglaoshi": "1234" };
 
         const tDict = {
-            zh: {
-                portalTitle: "内部教学记录系统", portalSub: "私有教学管理面板", entryName: "教师姓名 (例如: Kanglaoshi)", entryPin: "访问识别码 (PIN)", btnEnter: "进入工作台", errPin: "识别码错误，请重新输入。", dashboardTitle: "学生付费跟进管理", subtitle: "协作版 · 实时云同步", addBtn: "添加学生", statTotal: "学生总数", statWarning: "即将到期", statOverdue: "欠费预警", thName: "学生姓名", thTeacher: "负责", thClass: "班级", thProgress: "进度", thRemaining: "剩余", thLastPay: "最近付费", thStatus: "状态", thActions: "管理", actionPlus: "+1 记课", historyTitle: "上课记录", historyEmpty: "暂无记录", btnClose: "关闭窗口", manualAdd: "补签", btnUpdate: "更新", confirmTitle: "确认操作", confirmDelete: "确定要永久删除该学生吗？", confirmDeleteRecord: "确定删除这条记录吗？", btnOk: "确认", btnAbort: "取消", labelContract: "合同号", placeholderContract: "输入号", labelName: "姓名", placeholderName: "输入姓名", labelTeacher: "负责老师", labelClass: "班级", placeholderClass: "选择或输入", placeholderTeacher: "请选择老师", labelTotal: "总量", labelUsed: "已上", labelPayDate: "付费日期", btnCancel: "取消", btnSave: "保存", filterLabel: "负责人:", filterClassLabel: "班级筛选:", filterStatusLabel: "状态筛选:", filterAll: "全部", statusPaid: "充足", statusWarning: "预警", statusOverdue: "欠费", modalTitleAdd: "添加新学生", modalTitleEdit: "编辑信息", days: ["周日", "周一", "周二", "周三", "周四", "周五", "周六"] },
-            uz: { portalTitle: "O'qituvchilar Portali", portalSub: "Xususiy Ta'lim Portali", entryName: "O'qituvchi Ismi", entryPin: "Kirish PIN-kodi", btnEnter: "Tizimga kirish", errPin: "PIN noto'g'ri. Qayta urinib ko'ring.", dashboardTitle: "To'lov Monitoringi", subtitle: "Operatsiyalar Portali", addBtn: "Qo'shish", statTotal: "Jami", statWarning: "Ogoh", statOverdue: "Qarz", thName: "Ism", thTeacher: "Mas'ul", thClass: "Guruh", thProgress: "Holat", thRemaining: "Qolgan", thLastPay: "To'lov", thStatus: "Holat", thActions: "Amal", actionPlus: "+1 dars", historyTitle: "Tarix", historyEmpty: "Yo'q", btnClose: "Yopish", manualAdd: "Qo'shish", btnUpdate: "Yangilash", confirmTitle: "Tasdiqlang", confirmDelete: "O'chirilsinmi?", confirmDeleteRecord: "Yozuv o'chirilsinmi?", btnOk: "Ha", btnAbort: "Yo'q", labelContract: "Shartnoma", placeholderContract: "Raqam", labelName: "Ismi", placeholderName: "Ismni kiriting", labelTeacher: "O'qituvchi", labelClass: "Guruh", placeholderClass: "Yozing", placeholderTeacher: "Tanlang", labelTotal: "Jami", labelUsed: "O'tilgan", labelPayDate: "Sana", btnCancel: "Bekor", btnSave: "Saqlash", filterLabel: "Mas'ul:", filterClassLabel: "Guruh:", filterStatusLabel: "Holat:", filterAll: "Hammasi", statusPaid: "Yetarli", statusWarning: "Yaqin", statusOverdue: "Qarz", modalTitleAdd: "Yangi talaba", modalTitleEdit: "Tahrirlash", days: ["Yak", "Dush", "Sesh", "Chor", "Pay", "Jum", "Shan"] },
-            ru: { portalTitle: "Рабочая область учителя", portalSub: "Частный Образовательный Портал", entryName: "Имя учителя", entryPin: "PIN-код доступа", btnEnter: "Войти", errPin: "Неверный PIN-код.", dashboardTitle: "Управление Оплатой", subtitle: "Синхронизация Данных", addBtn: "Добавить", statTotal: "Студентов", statWarning: "Внимание", statOverdue: "Должники", thName: "ФИО Студента", thTeacher: "Преподаватель", thClass: "Группа", thProgress: "Прогресс", thRemaining: "Осталось", thLastPay: "Последняя оплата", thStatus: "Статус", thActions: "Действия", actionPlus: "+1 урок", historyTitle: "История", historyEmpty: "Записей нет", btnClose: "Закрыть", manualAdd: "Добавить", btnUpdate: "Обновить", confirmTitle: "Подтверждение", confirmDelete: "Удалить студента навсегда?", confirmDeleteRecord: "Удалить запись?", btnOk: "Да", btnAbort: "Нет", labelContract: "№ Контракта", placeholderContract: "Номер", labelName: "ФИО", placeholderName: "Введите имя", labelTeacher: "Учитель", labelClass: "Группа", placeholderClass: "Введите", placeholderTeacher: "Выберите учителя", labelTotal: "Всего уроков", labelUsed: "Пройдено", labelPayDate: "Дата оплаты", btnCancel: "Отмена", btnSave: "Сохранить", filterLabel: "Ответственный:", filterClassLabel: "Класс:", filterStatusLabel: "Статус:", filterAll: "Все", statusPaid: "Оплачено", statusWarning: "Срок", statusOverdue: "Долг", modalTitleAdd: "Добавить студента", modalTitleEdit: "Редактировать", days: ["Вс", "Пн", "Вт", "Ср", "Чт", "Пт", "Сб"] },
-            en: { portalTitle: "Teacher Workspace", portalSub: "Private Educational Portal", entryName: "Teacher Name", entryPin: "Access PIN", btnEnter: "Unlock Dashboard", errPin: "Invalid PIN.", dashboardTitle: "Dashboard", subtitle: "Sync Portal", addBtn: "Add New", statTotal: "Students", statWarning: "Warning", statOverdue: "Due", thName: "Full Name", thTeacher: "Rep.", thClass: "Class", thProgress: "Progress", thRemaining: "Left", thLastPay: "Last Pay", thStatus: "Status", thActions: "Actions", actionPlus: "+1", historyTitle: "Logs", historyEmpty: "Empty", btnClose: "Close", manualAdd: "Add", btnUpdate: "Update", confirmTitle: "Confirm", confirmDelete: "Delete student?", confirmDeleteRecord: "Delete log?", btnOk: "Yes", btnAbort: "No", labelContract: "Contract No.", placeholderContract: "Enter No.", labelName: "Name", placeholderName: "Enter name", labelTeacher: "Teacher", labelClass: "Class", placeholderClass: "Type", placeholderTeacher: "Select", labelTotal: "Total Pack", labelUsed: "Used", labelPayDate: "Date", btnCancel: "Cancel", btnSave: "Save", filterLabel: "Rep:", filterClassLabel: "Level:", filterStatusLabel: "Status:", filterAll: "All", statusPaid: "Paid", statusWarning: "Low", statusOverdue: "Due", modalTitleAdd: "Add New Student", modalTitleEdit: "Edit Info", days: ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"] }
+            zh: { portalTitle: "内部教学记录系统", portalSub: "私有教学管理面板", entryName: "教师姓名 (例如: Kanglaoshi)", entryPin: "访问识别码 (PIN)", btnEnter: "进入工作台", errPin: "识别码错误，请重新输入。", dashboardTitle: "学生付费跟进管理", subtitle: "协作版 · 实时云同步", addBtn: "添加学生", statTotal: "学生总数", statWarning: "即将到期", statOverdue: "欠费预警", thName: "学生姓名", thTeacher: "负责", thClass: "班级", thProgress: "进度", thRemaining: "剩余", thLastPay: "最近付费", thStatus: "状态", thActions: "管理", actionPlus: "+1 记课", historyTitle: "上课记录", historyEmpty: "暂无记录", btnClose: "关闭窗口", manualAdd: "补签", btnUpdate: "更新", confirmTitle: "确认操作", confirmDelete: "确定要永久删除该学生吗？", confirmDeleteRecord: "确定删除这条记录吗？", btnOk: "确认", btnAbort: "取消", labelContract: "合同号", placeholderContract: "输入号", labelName: "姓名", placeholderName: "输入姓名", labelTeacher: "负责老师", labelClass: "班级", placeholderClass: "选择或输入", placeholderTeacher: "请选择老师", labelTotal: "总量", labelUsed: "已上", labelPayDate: "付费日期", btnCancel: "取消", btnSave: "保存", filterLabel: "负责人:", filterClassLabel: "班级筛选:", filterStatusLabel: "状态筛选:", filterAll: "全部", statusPaid: "充足", statusWarning: "预警", statusOverdue: "欠费", statusFrozen: "冻结", actionFreeze: "冻结", actionUnfreeze: "解冻", modalTitleAdd: "添加新学生", modalTitleEdit: "编辑信息", days: ["周日", "周一", "周二", "周三", "周四", "周五", "周六"] },
+            uz: { portalTitle: "O'qituvchilar Portali", portalSub: "Xususiy Ta'lim Portali", entryName: "O'qituvchi Ismi", entryPin: "Kirish PIN-kodi", btnEnter: "Tizimga kirish", errPin: "PIN noto'g'ri. Qayta urinib ko'ring.", dashboardTitle: "To'lov Monitoringi", subtitle: "Operatsiyalar Portali", addBtn: "Qo'shish", statTotal: "Jami", statWarning: "Ogoh", statOverdue: "Qarz", thName: "Ism", thTeacher: "Mas'ul", thClass: "Guruh", thProgress: "Holat", thRemaining: "Qolgan", thLastPay: "To'lov", thStatus: "Holat", thActions: "Amal", actionPlus: "+1 dars", historyTitle: "Tarix", historyEmpty: "Yo'q", btnClose: "Yopish", manualAdd: "Qo'shish", btnUpdate: "Yangilash", confirmTitle: "Tasdiqlang", confirmDelete: "O'chirilsinmi?", confirmDeleteRecord: "Yozuv o'chirilsinmi?", btnOk: "Ha", btnAbort: "Yo'q", labelContract: "Shartnoma", placeholderContract: "Raqam", labelName: "Ismi", placeholderName: "Ismni kiriting", labelTeacher: "O'qituvchi", labelClass: "Guruh", placeholderClass: "Yozing", placeholderTeacher: "Tanlang", labelTotal: "Jami", labelUsed: "O'tilgan", labelPayDate: "Sana", btnCancel: "Bekor", btnSave: "Saqlash", filterLabel: "Mas'ul:", filterClassLabel: "Guruh:", filterStatusLabel: "Holat:", filterAll: "Hammasi", statusPaid: "Yetarli", statusWarning: "Yaqin", statusOverdue: "Qarz", statusFrozen: "Muzlatilgan", actionFreeze: "Muzlatish", actionUnfreeze: "Faollashtirish", modalTitleAdd: "Yangi talaba", modalTitleEdit: "Tahrirlash", days: ["Yak", "Dush", "Sesh", "Chor", "Pay", "Jum", "Shan"] },
+            ru: { portalTitle: "Рабочая область учителя", portalSub: "Частный Образовательный Портал", entryName: "Имя учителя", entryPin: "PIN-код доступа", btnEnter: "Войти", errPin: "Неверный PIN-код.", dashboardTitle: "Управление Оплатой", subtitle: "Синхронизация Данных", addBtn: "Добавить", statTotal: "Студентов", statWarning: "Внимание", statOverdue: "Должники", thName: "ФИО Студента", thTeacher: "Преподаватель", thClass: "Группа", thProgress: "Прогресс", thRemaining: "Осталось", thLastPay: "Последняя оплата", thStatus: "Статус", thActions: "Действия", actionPlus: "+1 урок", historyTitle: "История", historyEmpty: "Записей нет", btnClose: "Закрыть", manualAdd: "Добавить", btnUpdate: "Обновить", confirmTitle: "Подтверждение", confirmDelete: "Удалить студента навсегда?", confirmDeleteRecord: "Удалить запись?", btnOk: "Да", btnAbort: "Нет", labelContract: "№ Контракта", placeholderContract: "Номер", labelName: "ФИО", placeholderName: "Введите имя", labelTeacher: "Учитель", labelClass: "Группа", placeholderClass: "Введите", placeholderTeacher: "Выберите учителя", labelTotal: "Всего уроков", labelUsed: "Пройдено", labelPayDate: "Дата оплаты", btnCancel: "Отмена", btnSave: "Сохранить", filterLabel: "Ответственный:", filterClassLabel: "Класс:", filterStatusLabel: "Статус:", filterAll: "Все", statusPaid: "Оплачено", statusWarning: "Срок", statusOverdue: "Долг", statusFrozen: "Заморожен", actionFreeze: "Заморозить", actionUnfreeze: "Разморозить", modalTitleAdd: "Добавить студента", modalTitleEdit: "Редактировать", days: ["Вс", "Пн", "Вт", "Ср", "Чт", "Пт", "Сб"] },
+            en: { portalTitle: "Teacher Workspace", portalSub: "Private Educational Portal", entryName: "Teacher Name", entryPin: "Access PIN", btnEnter: "Unlock Dashboard", errPin: "Invalid PIN.", dashboardTitle: "Dashboard", subtitle: "Sync Portal", addBtn: "Add New", statTotal: "Students", statWarning: "Warning", statOverdue: "Due", thName: "Full Name", thTeacher: "Rep.", thClass: "Class", thProgress: "Progress", thRemaining: "Left", thLastPay: "Last Pay", thStatus: "Status", thActions: "Actions", actionPlus: "+1", historyTitle: "Logs", historyEmpty: "Empty", btnClose: "Close", manualAdd: "Add", btnUpdate: "Update", confirmTitle: "Confirm", confirmDelete: "Delete student?", confirmDeleteRecord: "Delete log?", btnOk: "Yes", btnAbort: "No", labelContract: "Contract No.", placeholderContract: "Enter No.", labelName: "Name", placeholderName: "Enter name", labelTeacher: "Teacher", labelClass: "Class", placeholderClass: "Type", placeholderTeacher: "Select", labelTotal: "Total Pack", labelUsed: "Used", labelPayDate: "Date", btnCancel: "Cancel", btnSave: "Save", filterLabel: "Rep:", filterClassLabel: "Level:", filterStatusLabel: "Status:", filterAll: "All", statusPaid: "Paid", statusWarning: "Low", statusOverdue: "Due", statusFrozen: "Frozen", actionFreeze: "Freeze", actionUnfreeze: "Unfreeze", modalTitleAdd: "Add New Student", modalTitleEdit: "Edit Info", days: ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"] }
         };
 
         let currentLang = 'zh', selectedTeacher = 'all', selectedClass = 'all', selectedStatus = 'all', students = [], loggedUser = null, isAdmin = false, currentHistoryStudentId = null, editingRecordIndex = -1, db, auth;
@@ -273,7 +274,9 @@
 
         const startApp = async () => {
             const app = initializeApp(firebaseConfig);
-            auth = getAuth(app); db = getFirestore(app);
+            auth = getAuth(app); 
+            db = getFirestore(app);
+            
             window.logout = () => { sessionStorage.removeItem('active_staff_session'); location.reload(); };
             window.setLang = (l) => { currentLang = l; render(); };
             window.setTeacherFilter = (t) => { selectedTeacher = t; selectedClass = 'all'; render(); };
@@ -281,6 +284,7 @@
             window.setStatusFilter = (s) => { selectedStatus = s; render(); };
             window.toggleModal = (show) => { document.getElementById('modal-overlay').style.display = show ? 'flex' : 'none'; };
             window.toggleHistoryModal = (show) => { if (!show) window.cancelRecordEdit(); document.getElementById('history-modal-overlay').style.display = show ? 'flex' : 'none'; };
+            
             onAuthStateChanged(auth, async (user) => {
                 if (user) {
                     const studentsCol = collection(db, 'artifacts', appId, 'public', 'data', 'students');
@@ -290,11 +294,22 @@
                         if (currentHistoryStudentId && document.getElementById('history-modal-overlay').style.display === 'flex') {
                             window.openHistoryModal(currentHistoryStudentId);
                         }
+                    }, (error) => {
+                        console.error("Firestore snapshot error:", error);
                     });
                 }
             });
 
-            await signInAnonymously(auth);
+            // Handle Preview Environment Auth Pattern
+            const initAuth = async () => {
+                if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
+                    await signInWithCustomToken(auth, __initial_auth_token);
+                } else {
+                    await signInAnonymously(auth);
+                }
+            };
+            await initAuth();
+            
             verifySession();
 
             const processAuth = () => {
@@ -444,7 +459,7 @@
             const data = { name: document.getElementById('input-name').value, contractId: document.getElementById('input-contract').value, studentClass: document.getElementById('input-class').value, teacher: teacherVal, totalLessons: parseInt(document.getElementById('input-total').value), usedLessons: parseInt(document.getElementById('input-used').value), lastPaymentDate: document.getElementById('input-date').value, updatedAt: serverTimestamp() };
             window.toggleModal(false);
             if (id) await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'students', id), data);
-            else { data.attendanceHistory = []; await setDoc(doc(collection(db, 'artifacts', appId, 'public', 'data', 'students')), data); }
+            else { data.attendanceHistory = []; data.isFrozen = false; await setDoc(doc(collection(db, 'artifacts', appId, 'public', 'data', 'students')), data); }
         };
 
         window.updateLesson = async (id) => {
@@ -454,6 +469,22 @@
         };
 
         window.deleteStudent = (id) => customConfirm(tDict[currentLang].confirmDelete, async () => { await deleteDoc(doc(db, 'artifacts', appId, 'public', 'data', 'students', id)); });
+
+        window.toggleFreeze = async (id) => {
+            const s = students.find(it => it.id === id); if (!s) return;
+            const t = tDict[currentLang] || tDict['zh'];
+            const newFrozenState = !s.isFrozen;
+            const actionText = newFrozenState ? t.statusFrozen : t.actionUnfreeze;
+            
+            const now = new Date(); 
+            const dateStr = `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}-${String(now.getDate()).padStart(2,'0')} (${t.days[now.getDay()]})`;
+            const logEntry = `${dateStr} [${actionText}]`;
+            
+            await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'students', id), { 
+                isFrozen: newFrozenState,
+                attendanceHistory: [...(s.attendanceHistory || []), logEntry]
+            });
+        };
 
         const render = () => {
             const t = tDict[currentLang] || tDict['zh'];
@@ -475,6 +506,8 @@
             let classFiltered = selectedClass === 'all' ? baseFiltered : baseFiltered.filter(s => s.studentClass === selectedClass);
             let filtered = classFiltered.filter(s => {
                 if (selectedStatus === 'all') return true;
+                if (selectedStatus === 'frozen') return s.isFrozen;
+                if (s.isFrozen) return false; // Hide frozen students from other status filters
                 const r = s.totalLessons - s.usedLessons;
                 if (selectedStatus === 'paid') return r > 3;
                 if (selectedStatus === 'warning') return r > 0 && r <= 3;
@@ -506,22 +539,33 @@
             sc.innerHTML = `<button onclick="setStatusFilter('all')" class="filter-chip px-6 py-3 rounded-full text-[10px] font-black border border-[#D1DEDC] bg-white shadow-sm transition-all ${selectedStatus==='all'?'active':''}">${t.filterAll}</button>
                 <button onclick="setStatusFilter('paid')" class="filter-chip px-6 py-3 rounded-full text-[10px] font-black border border-[#D1DEDC] bg-white shadow-sm transition-all ${selectedStatus==='paid'?'active':''}">${t.statusPaid}</button>
                 <button onclick="setStatusFilter('warning')" class="filter-chip px-6 py-3 rounded-full text-[10px] font-black border border-[#D1DEDC] bg-white shadow-sm transition-all ${selectedStatus==='warning'?'active':''}">${t.statusWarning}</button>
-                <button onclick="setStatusFilter('overdue')" class="filter-chip px-6 py-3 rounded-full text-[10px] font-black border border-[#D1DEDC] bg-white shadow-sm transition-all ${selectedStatus==='overdue'?'active':''}">${t.statusOverdue}</button>`;
+                <button onclick="setStatusFilter('overdue')" class="filter-chip px-6 py-3 rounded-full text-[10px] font-black border border-[#D1DEDC] bg-white shadow-sm transition-all ${selectedStatus==='overdue'?'active':''}">${t.statusOverdue}</button>
+                <button onclick="setStatusFilter('frozen')" class="filter-chip px-6 py-3 rounded-full text-[10px] font-black border border-[#D1DEDC] bg-white shadow-sm transition-all ${selectedStatus==='frozen'?'active':''}">${t.statusFrozen}</button>`;
 
-            document.getElementById('table-head-row').innerHTML = `<th class="px-8 py-6 min-w-[140px] w-48 text-[10px] font-black text-slate-400 uppercase tracking-widest">${t.thName}</th><th class="px-8 py-6 text-[10px] font-black text-slate-400 uppercase tracking-widest">${t.thTeacher}</th><th class="px-8 py-6 text-[10px] font-black text-slate-400 uppercase tracking-widest">${t.thClass}</th><th class="px-8 py-6 w-40 text-[10px] font-black text-slate-400 uppercase tracking-widest">${t.thProgress}</th><th class="px-8 py-6 text-[10px] font-black text-slate-400 uppercase tracking-widest">${t.thRemaining}</th><th class="px-8 py-6 text-[10px] font-black text-slate-400 uppercase tracking-widest text-center">${t.thLastPay}</th><th class="px-8 py-6 text-[10px] font-black text-slate-400 uppercase tracking-widest text-center">${t.thStatus}</th><th class="px-8 py-6 text-right w-24 text-[10px] font-black text-slate-400 uppercase tracking-widest">${t.thActions}</th>`;
+            document.getElementById('table-head-row').innerHTML = `<th class="px-8 py-6 min-w-[140px] w-48 text-[10px] font-black text-slate-400 uppercase tracking-widest">${t.thName}</th><th class="px-8 py-6 text-[10px] font-black text-slate-400 uppercase tracking-widest">${t.thTeacher}</th><th class="px-8 py-6 text-[10px] font-black text-slate-400 uppercase tracking-widest">${t.thClass}</th><th class="px-8 py-6 w-40 text-[10px] font-black text-slate-400 uppercase tracking-widest">${t.thProgress}</th><th class="px-8 py-6 text-[10px] font-black text-slate-400 uppercase tracking-widest">${t.thRemaining}</th><th class="px-8 py-6 text-[10px] font-black text-slate-400 uppercase tracking-widest text-center">${t.thLastPay}</th><th class="px-8 py-6 text-[10px] font-black text-slate-400 uppercase tracking-widest text-center">${t.thStatus}</th><th class="px-8 py-6 text-right w-32 text-[10px] font-black text-slate-400 uppercase tracking-widest">${t.thActions}</th>`;
 
             const tbody = document.getElementById('student-table-body');
             tbody.innerHTML = '';
-            filtered.sort((a,b) => (a.totalLessons-a.usedLessons) - (b.totalLessons-b.usedLessons)).forEach(s => {
+            filtered.sort((a,b) => {
+                if(a.isFrozen !== b.isFrozen) return a.isFrozen ? 1 : -1; // Frozen at the bottom
+                return (a.totalLessons-a.usedLessons) - (b.totalLessons-b.usedLessons);
+            }).forEach(s => {
                 const rem = s.totalLessons - s.usedLessons;
-                const st = rem <= 0 ? {l:t.statusOverdue, c:"bg-rose-50 text-rose-500"} : (rem <= 3 ? {l:t.statusWarning, c:"bg-amber-50 text-amber-600"} : {l:t.statusPaid, c:"bg-[#F0F6F5] text-[#2C5F56]"});
+                let st = rem <= 0 ? {l:t.statusOverdue, c:"bg-rose-50 text-rose-500"} : (rem <= 3 ? {l:t.statusWarning, c:"bg-amber-50 text-amber-600"} : {l:t.statusPaid, c:"bg-[#F0F6F5] text-[#2C5F56]"});
+                if (s.isFrozen) {
+                    st = {l: t.statusFrozen, c: "bg-blue-50 text-blue-500 border-blue-200"};
+                }
+                
                 tbody.innerHTML += `
-                    <tr class="table-row-modern transition-all duration-300">
+                    <tr class="table-row-modern transition-all duration-300 ${s.isFrozen ? 'bg-blue-50/70' : ''}">
                         <td class="px-8 py-7">
                             <div onclick="openHistoryModal('${s.id}')" class="font-extrabold text-[#1A2E35] text-sm cursor-pointer flex items-center gap-2 hover:text-[#2C5F56] transition-colors">
                                 <i data-lucide="calendar-check" class="w-4 h-4 text-slate-200"></i>
                                 <div>
-                                    <div>${s.name}</div>
+                                    <div class="flex items-center gap-2">
+                                        ${s.name}
+                                        ${s.isFrozen ? '<i data-lucide="snowflake" class="w-3.5 h-3.5 text-blue-500"></i>' : ''}
+                                    </div>
                                     <div class="text-[10px] text-slate-400 font-medium tracking-tight uppercase">${s.contractId || '---'}</div>
                                 </div>
                             </div>
@@ -532,9 +576,10 @@
                         <td class="px-8 py-7 font-[900] ${rem<0?'text-rose-500':'text-[#1A2E35]'} text-xl tracking-tight">${rem}</td>
                         <td class="px-8 py-7 text-slate-400 text-xs font-bold text-center italic">${s.lastPaymentDate || '---'}</td>
                         <td class="px-8 py-7 text-center"><span class="px-4 py-2 rounded-full text-[9px] font-black border border-white whitespace-nowrap shadow-sm uppercase tracking-widest ${st.c}">${st.l}</span></td>
-                        <td class="px-8 py-7 text-right whitespace-nowrap w-24">
-                            <div class="flex justify-end gap-2">
-                                <button onclick="updateLesson('${s.id}')" class="bg-[#2C5F56] text-white text-[9px] font-black px-4 py-2.5 rounded-full active:scale-95 transition-all shadow-lg shadow-[#2C5F56]/10 uppercase" title="上课+1">${t.actionPlus}</button>
+                        <td class="px-8 py-7 text-right whitespace-nowrap w-32">
+                            <div class="flex justify-end gap-1.5">
+                                <button onclick="updateLesson('${s.id}')" class="bg-[#2C5F56] text-white text-[9px] font-black px-3 py-2.5 rounded-full active:scale-95 transition-all shadow-lg shadow-[#2C5F56]/10 uppercase ${s.isFrozen ? 'opacity-50 cursor-not-allowed' : ''}" title="上课+1" ${s.isFrozen ? 'disabled' : ''}>${t.actionPlus}</button>
+                                <button onclick="toggleFreeze('${s.id}')" class="p-2.5 bg-white ${s.isFrozen ? 'text-blue-500' : 'text-slate-200'} hover:text-blue-600 rounded-xl transition-all shadow-sm border border-slate-50" title="${s.isFrozen ? t.actionUnfreeze : t.actionFreeze}"><i data-lucide="snowflake" class="w-4 h-4"></i></button>
                                 <button onclick="openEditModal('${s.id}')" class="p-2.5 bg-white text-slate-200 hover:text-[#2C5F56] rounded-xl transition-all shadow-sm border border-slate-50" title="编辑"><i data-lucide="edit-3" class="w-4 h-4"></i></button>
                                 <button onclick="deleteStudent('${s.id}')" class="p-2.5 bg-white text-slate-200 hover:text-rose-500 rounded-xl shadow-sm border border-slate-50" title="删除"><i data-lucide="trash-2" class="w-4 h-4"></i></button>
                             </div>
