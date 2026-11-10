@@ -1368,7 +1368,11 @@
             document.getElementById('table-head-row').innerHTML = `<th class="px-8 py-6 min-w-[200px] w-56 text-[10px] font-black text-slate-400 uppercase tracking-widest">${t.thName}</th><th class="px-8 py-6 text-[10px] font-black text-slate-400 uppercase tracking-widest">${t.thTeacher}</th><th class="px-8 py-6 text-[10px] font-black text-slate-400 uppercase tracking-widest">${t.thClass}</th><th class="px-8 py-6 w-40 text-[10px] font-black text-slate-400 uppercase tracking-widest">${t.thProgress}</th><th class="px-8 py-6 text-[10px] font-black text-slate-400 uppercase tracking-widest">${t.thRemaining}</th><th class="px-8 py-6 text-[10px] font-black text-slate-400 uppercase tracking-widest text-center">${t.thLastPay}</th><th class="px-8 py-6 text-[10px] font-black text-slate-400 uppercase tracking-widest text-center">${t.thStatus}</th><th class="px-8 py-6 text-right w-[300px] text-[10px] font-black text-slate-400 uppercase tracking-widest">${t.thActions}</th>`;
 
             const tbody = document.getElementById('student-table-body'); tbody.innerHTML = '';
-            filtered.sort((a,b) => { if(a.isArchived !== b.isArchived) return a.isArchived ? 1 : -1; if(a.isFrozen !== b.isFrozen) return a.isFrozen ? 1 : -1; return ((a.totalLessons||0)-(a.usedLessons||0)) - ((b.totalLessons||0)-(b.usedLessons||0)); }).forEach(s => {
+            filtered.sort((a,b) => { 
+                if(a.isArchived !== b.isArchived) return a.isArchived ? 1 : -1; 
+                if(a.isFrozen !== b.isFrozen) return a.isFrozen ? 1 : -1; 
+                return (a.name || '').toLowerCase().localeCompare((b.name || '').toLowerCase()); 
+            }).forEach(s => {
                 const sTot = s.totalLessons || 0; const sUsed = s.usedLessons || 0; const rem = sTot - sUsed;
                 const stdClass = getStandardClass(s.studentClass); const displayClass = stdClass === 'Other' ? (s.studentClass || '---') : stdClass;
                 let st; if (sTot === 0) st = {l: t.statusTrial, c: "bg-purple-50 text-purple-600 border-purple-200"}; else st = rem <= 0 ? {l:t.statusOverdue, c:"bg-rose-50 text-rose-500"} : (rem <= 3 ? {l:t.statusWarning, c:"bg-amber-50 text-amber-600"} : {l:t.statusPaid, c:"bg-[#F0F6F5] text-[#2C5F56]"});
