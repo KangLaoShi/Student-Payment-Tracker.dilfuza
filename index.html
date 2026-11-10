@@ -1116,20 +1116,30 @@
             editingRecordIndex = idx; const m = s.attendanceHistory[idx].match(/\d{4}-\d{2}-\d{2}/);
             if (m) document.getElementById('manual-date-input').value = m[0];
             document.getElementById('btn-record-action').innerText = tDict[currentLang].btnUpdate;
+            document.getElementById('btn-record-action').onclick = window.updateManualRecord;
             document.getElementById('btn-record-cancel').classList.remove('hidden');
         };
-        window.cancelRecordEdit = () => { editingRecordIndex = -1; document.getElementById('manual-date-input').value = ""; document.getElementById('btn-record-action').innerText = tDict[currentLang].manualAdd; document.getElementById('btn-record-cancel').classList.add('hidden'); };
-        window.handleRecordAction = () => editingRecordIndex >= 0 ? updateManualRecord() : addManualRecord();
 
-        const addManualRecord = async () => {
-            const d = document.getElementById('manual-date-input').value; if (!d) return;
-            const s = students.find(it => it.id === currentHistoryStudentId);
-            const formatted = `${d} (${tDict[currentLang].days[new Date(d.replace(/-/g, "/")).getDay()]})`;
-            await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'students', currentHistoryStudentId), { attendanceHistory: [...(s.attendanceHistory || []), formatted] });
-            document.getElementById('manual-date-input').value = "";
+        window.cancelRecordEdit = () => {
+            editingRecordIndex = -1;
+            document.getElementById('manual-date-input').value = '';
+            document.getElementById('btn-record-action').innerText = tDict[currentLang].manualAdd;
+            document.getElementById('btn-record-action').onclick = window.handleRecordAction;
+            document.getElementById('btn-record-cancel').classList.add('hidden');
         };
 
-        const updateManualRecord = async () => {
+        window.handleRecordAction = async () => {
+            const d = document.getElementById('manual-date-input').value; if (!d) return;
+            const s = students.find(it => it.id === currentHistoryStudentId); if (!s) return;
+            const formatted = `${d} (${tDict[currentLang].days[new Date(d.replace(/-/g, "/")).getDay()]})`;
+            await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'students', currentHistoryStudentId), { 
+                attendanceHistory: [...(s.attendanceHistory || []), formatted],
+                usedLessons: (s.usedLessons || 0) + 1
+            });
+            document.getElementById('manual-date-input').value = '';
+        };
+
+        window.updateManualRecord = async () => {
             const d = document.getElementById('manual-date-input').value; if (!d) return;
             const s = students.find(it => it.id === currentHistoryStudentId); if (!s || !s.attendanceHistory) return;
             const originalRecord = s.attendanceHistory[editingRecordIndex]; const originalAction = checkAction(originalRecord);
@@ -1148,8 +1158,23 @@
 
         window.deleteRecord = (idx) => customConfirm(tDict[currentLang].confirmDeleteRecord, async () => {
             const s = students.find(it => it.id === currentHistoryStudentId);
+            const originalRecord = s.attendanceHistory[idx];
             const nh = [...(s.attendanceHistory || [])]; nh.splice(idx, 1);
-            await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'students', currentHistoryStudentId), { attendanceHistory: nh });
+            
+            // 识别记录类型
+            const action = checkAction(originalRecord);
+            const isPayment = originalRecord.includes('[+') || originalRecord.includes('续费');
+            
+            let newUsedLessons = s.usedLessons || 0;
+            // 只有普通的签到记录和缺勤扣课记录，删除时才会退还（减少）已上课时数
+            if (action.type === 'absent' || (action.type === 'normal' && !isPayment)) {
+                newUsedLessons = Math.max(0, newUsedLessons - 1);
+            }
+
+            await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'students', currentHistoryStudentId), { 
+                attendanceHistory: nh,
+                usedLessons: newUsedLessons
+            });
         });
 
         window.openAddModal = () => {
